@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.skill-tree-section {
+  padding: 2rem;
+  background: linear-gradient(to right, rgb(0, 0, 0), rgb(67, 67, 67));
+  color: white;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.skill-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.skill-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.skill-node {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem .8rem;
+  background: linear-gradient(to right, #333, #444);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.skill-node:hover {
+  transform: scale(1.1);
+  background: linear-gradient(to right, #444, #555);
+}
+
+.skill-icon {
+  font-size: 1.5rem;
+}
+
+.skill-name {
+  font-weight: bold;
+}
+
+.skill-children {
+  margin-top: 1rem;
+  padding-left: .5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skill-leaf {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: #222;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.skill-level {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* Outer Circle Rotation */
+@keyframes rotateClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Inner Circle Rotation */
+@keyframes rotateCounterClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.outer-circle {
+  border-color: #F59E0B transparent #F59E0B transparent;
+  animation: rotateClockwise 4s linear infinite;
+  will-change: transform;
+}
+
+.inner-circle {
+  border-color: #ffffff transparent #ffffff transparent;
+  animation: rotateCounterClockwise 4s linear infinite;
+  will-change: transform;
+}
+
+/* General card styling */
+.certificate-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Image in the card */
+.certificate-image {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Scale up the card on hover */
+.certificate-card:hover .certificate-image {
+  transform: scale(1.05);
+}
+
+/* Modal overlay */
+.certificate-overlay {
+  position: fixed;
+  inset: 0; /* Cover the entire viewport */
+  background: rgba(0, 0, 0, 0.7); /* Dark transparent background */
+  backdrop-filter: blur(10px); /* Apply Gaussian blur */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none; /* Prevent interference */
+  transition: opacity 0.3s ease-in-out;
+  z-index: 50;
+}
+
+/* Show modal on card hover */
+.certificate-card:hover .certificate-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Modal image */
+.certificate-modal-image {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transform: scale(0.9);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Smoothly scale modal image */
+.certificate-overlay:hover .certificate-modal-image {
+  transform: scale(1);
+}
+
+.X_Button{
+
+  position: relative;
+  right: 50px;
+  top: 100px;
+}
+
+.blur-background {
+  filter: blur(8px);
+  transition: filter 0.3s ease-in-out;
+}
+
