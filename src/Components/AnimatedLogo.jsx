@@ -38,7 +38,7 @@ timeline
   .to(iRef.current, { y: 0, scale: 1, duration: 0.5, ease: "bounce.out" });
       // Typing Effect for Quote
     //   const quoteText = "Talk is Cheap, Show me Code";
-      const quoteText = "Muhammad Ishaque";
+      const quoteText = "Patience is not simply the ability to wait - it's how we behave while we're waiting";
       const chars = quoteText.split("");
       let text = "";
   
@@ -90,10 +90,10 @@ timeline
     return (
       <div
         ref={containerRef}
-        className="flex flex-col items-center justify-center h-screen"
-        style={{
-            background: "linear-gradient(to right, rgb(20, 30, 48), rgb(36, 59, 85))"
-        }}
+        className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-[#152331] to-[#000000]"
+        // style={{
+        //     background: "linear-gradient(to right, rgb(20, 30, 48), rgb(36, 59, 85))"
+        // }}
       >
         {/* Loader */}
         <div className="flex space-x-4 text-6xl font-extrabold text-white">
@@ -126,6 +126,7 @@ timeline
           className="text-yellow-400 text-2xl mt-12 tracking-wide text-center font-extrabold"
           style={{
             textShadow: "0px 0px 15px rgba(255, 255, 255, 0.8)",
+            fontFamily: "Italianno-Regular",
           }}
         ></div>
       </div>
