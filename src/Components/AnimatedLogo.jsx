@@ -20,7 +20,7 @@ timeline
     duration: 1,
     ease: "power1.inOut",
   })
-  .to(mRef.current, { y: 0, scale: 1, duration: 0.5, ease: "bounce.out" });
+  .to(mRef.current, { y: 0, scale: 1, duration: 1, ease: "bounce.out" });
 
 // Initial Animation for "I"
 timeline
@@ -35,15 +35,15 @@ timeline
     },
     "<" // "<" makes this animation start at the same time as the previous one
   )
-  .to(iRef.current, { y: 0, scale: 1, duration: 0.5, ease: "bounce.out" });
+  .to(iRef.current, { y: 0, scale: 1, duration: 1, ease: "bounce.out" });
       // Typing Effect for Quote
     //   const quoteText = "Talk is Cheap, Show me Code";
-      const quoteText = "Patience is not simply the ability to wait - it's how we behave while we're waiting";
+      const quoteText = "Good Things are Comming";
       const chars = quoteText.split("");
       let text = "";
   
       chars.forEach((char, index) => {
-        timeline.to({}, { duration: 0.05 });
+        timeline.to({}, { duration: 0.02 });
         timeline.add(() => {
           text += char;
           textRef.current.textContent = text;
@@ -123,7 +123,7 @@ timeline
         {/* Quote with Typing Effect */}
         <div
           ref={textRef}
-          className="text-yellow-400 text-2xl mt-12 tracking-wide text-center font-extrabold"
+          className="text-yellow-400 text-4xl mt-12 tracking-wide text-center font-extrabold"
           style={{
             textShadow: "0px 0px 15px rgba(255, 255, 255, 0.8)",
             fontFamily: "Italianno-Regular",
