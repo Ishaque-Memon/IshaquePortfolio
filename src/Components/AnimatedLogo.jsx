@@ -38,12 +38,12 @@ timeline
   .to(iRef.current, { y: 0, scale: 1, duration: 1, ease: "bounce.out" });
       // Typing Effect for Quote
     //   const quoteText = "Talk is Cheap, Show me Code";
-      const quoteText = "Good Things are Comming";
+      const quoteText = "Good Things are Coming";
       const chars = quoteText.split("");
       let text = "";
   
       chars.forEach((char, index) => {
-        timeline.to({}, { duration: 0.02 });
+        timeline.to({}, { duration: 0.05 });
         timeline.add(() => {
           text += char;
           textRef.current.textContent = text;
