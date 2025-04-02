@@ -11,6 +11,7 @@ import AnimatedLogo from './Components/AnimatedLogo';
 import Certificates from './Components/Certificates';
 import FooterSection from './Components/FooterSection';
 import Education from './Components/Education';
+import ScrollBot from './Components/ScrollBot';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +43,7 @@ function App() {
           <Projects />
           <ContactForm />
           <FooterSection />
+          <ScrollBot />
         </div>
       )}
     </>

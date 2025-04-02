@@ -38,7 +38,7 @@ timeline
   .to(iRef.current, { y: 0, scale: 1, duration: 1, ease: "bounce.out" });
       // Typing Effect for Quote
     //   const quoteText = "Talk is Cheap, Show me Code";
-      const quoteText = "Good Things are Coming";
+      const quoteText = "Be patient, good things take time...";
       const chars = quoteText.split("");
       let text = "";
   
@@ -90,19 +90,21 @@ timeline
     return (
       <div
         ref={containerRef}
-        className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-[#152331] to-[#000000]"
-        // style={{
-        //     background: "linear-gradient(to right, rgb(20, 30, 48), rgb(36, 59, 85))"
-        // }}
+        className="flex flex-col items-center justify-center h-screen "
+        style={{
+            // background: "linear-gradient(to right, rgb(20, 30, 48), rgb(36, 59, 85))"
+            backgroundImage: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"
+        }}
       >
         {/* Loader */}
-        <div className="flex space-x-4 text-6xl font-extrabold text-white">
+        <div className="flex space-x-4 text-8xl font-extrabold text-white">
           {/* "M" Letter */}
           <div
             ref={mRef}
             className="relative text-yellow-400"
             style={{
-            textShadow:"0 0 8px #F59E0B, 0 0 16px #F59E0B",
+              // textShadow:"0 10px 30px rgba(0, 0, 0, 0.5)",
+              textShadow: "0px 0px 20px rgba(255, 255, 255, 1)",
             }}
           >
             M
@@ -123,10 +125,10 @@ timeline
         {/* Quote with Typing Effect */}
         <div
           ref={textRef}
-          className="text-yellow-400 text-4xl mt-12 tracking-wide text-center font-extrabold"
+          className=" text-black text-2xl mt-12 tracking-wide text-center font-extrabold"
           style={{
-            textShadow: "0px 0px 15px rgba(255, 255, 255, 0.8)",
-            fontFamily: "Italianno-Regular",
+            textShadow:"0 10px 30px rgba(0, 0, 0, 0.5)",
+            fontFamily: "Italianno-Regular, cursive",
           }}
         ></div>
       </div>
