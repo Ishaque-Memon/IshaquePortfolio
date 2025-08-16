@@ -104,7 +104,7 @@ const ModernHome = () => {
           {/* Content */}
           <motion.div
             ref={textRef}
-            className="text-center lg:text-left space-y-8"
+            className="text-center lg:text-left space-y-8 order-2 lg:order-1"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -221,7 +221,7 @@ const ModernHome = () => {
 
           {/* Profile Image */}
           <motion.div
-            className="flex justify-center lg:justify-end"
+            className="flex justify-center lg:justify-end order-1 lg:order-2"
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
