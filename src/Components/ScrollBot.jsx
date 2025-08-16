@@ -42,11 +42,11 @@ const ScrollButton = () => {
 
       pulseTween.current = gsap.to(el, {
         boxShadow: isDarkMode 
-          ? "0 0 20px rgba(99, 102, 241, 0.4)" 
-          : "0 0 20px rgba(255, 157, 0, 0.4)",
+          ? "0 8px 32px rgba(0, 0, 0, 0.4), 0 0 30px rgba(99, 102, 241, 0.3)" 
+          : "0 8px 32px rgba(0, 0, 0, 0.15), 0 0 30px rgba(59, 130, 246, 0.3)",
         repeat: -1,
         yoyo: true,
-        duration: 1.5,
+        duration: 2,
         ease: "sine.inOut",
       });
     } else {
@@ -64,7 +64,8 @@ const ScrollButton = () => {
 
   const handleMouseEnter = () => {
     gsap.to(buttonRef.current, {
-      scale: 1.15,
+      scale: 1.05,
+      y: -2,
       duration: 0.3,
       ease: "power2.out",
     });
@@ -73,6 +74,7 @@ const ScrollButton = () => {
   const handleMouseLeave = () => {
     gsap.to(buttonRef.current, {
       scale: 1,
+      y: 0,
       duration: 0.3,
       ease: "power2.inOut",
     });
@@ -103,75 +105,92 @@ const ScrollButton = () => {
         onClick={scrollAction}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        className={`fixed bottom-8 right-8 w-16 h-16 rounded-2xl flex justify-center items-center cursor-pointer z-50 transition-all duration-300 backdrop-blur-md border group ${
+          isDarkMode 
+            ? 'bg-gradient-to-br from-neutral-800/90 via-neutral-900/90 to-black/90 border-neutral-700/50 hover:border-primary-400/50 shadow-lg shadow-black/25' 
+            : 'bg-gradient-to-br from-white/90 via-gray-50/90 to-gray-100/90 border-gray-200/50 hover:border-primary-500/50 shadow-lg shadow-gray-900/10'
+        }`}
         style={{
-          position: "fixed",
-          bottom: "30px",
-          right: "30px",
-          width: "65px",
-          height: "65px",
-          borderRadius: "50%",
-          background: isDarkMode 
-            ? "linear-gradient(145deg, #6366f1, #8b5cf6)" 
-            : "linear-gradient(145deg, #FFB703, #FB8500)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          cursor: "pointer",
-          zIndex: 1000,
           opacity: 0,
           transform: "translateY(30px)",
-          transition: "transform 0.3s ease",
           boxShadow: isDarkMode
-            ? "0 4px 15px rgba(99, 102, 241, 0.2)"
-            : "0 4px 15px rgba(255, 183, 3, 0.2)",
+            ? "0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.1)"
+            : "0 8px 32px rgba(0, 0, 0, 0.1), 0 0 20px rgba(59, 130, 246, 0.1)",
         }}
       >
+        {/* Animated background glow */}
+        <div 
+          className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+            isDarkMode
+              ? 'bg-gradient-to-br from-primary-500/20 to-accent-500/20'
+              : 'bg-gradient-to-br from-primary-400/20 to-blue-500/20'
+          }`}
+        />
+        
+        {/* Rotating orbital ring */}
         <div
           ref={orbitRef}
-          style={{
-            position: "absolute",
-            width: "80px",
-            height: "80px",
-            border: isDarkMode
-              ? "2px dashed rgba(255,255,255,0.3)"
-              : "2px dashed rgba(255,255,255,0.2)",
-            borderRadius: "50%",
-            pointerEvents: "none",
-          }}
+          className={`absolute w-20 h-20 rounded-full border-2 border-dashed pointer-events-none ${
+            isDarkMode
+              ? 'border-primary-400/30'
+              : 'border-primary-500/30'
+          }`}
         />
-        {isAtBottom ? (
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4 15L12 7L20 15"
-              stroke="#ffffff"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ) : (
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4 9L12 17L20 9"
-              stroke="#ffffff"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
+        
+        {/* Inner content with icon */}
+        <div className={`relative z-10 p-3 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+          isDarkMode
+            ? 'bg-gradient-to-br from-primary-500/20 to-purple-500/20'
+            : 'bg-gradient-to-br from-primary-400/20 to-blue-500/20'
+        }`}>
+          {isAtBottom ? (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transition-colors duration-300 ${
+                isDarkMode ? 'text-primary-400' : 'text-primary-600'
+              }`}
+            >
+              <path
+                d="M4 15L12 7L20 15"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transition-colors duration-300 ${
+                isDarkMode ? 'text-primary-400' : 'text-primary-600'
+              }`}
+            >
+              <path
+                d="M4 9L12 17L20 9"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </div>
+        
+        {/* Corner accent dots */}
+        <div className={`absolute top-2 right-2 w-1 h-1 rounded-full ${
+          isDarkMode ? 'bg-primary-400/60' : 'bg-primary-500/60'
+        }`} />
+        <div className={`absolute bottom-2 left-2 w-1 h-1 rounded-full ${
+          isDarkMode ? 'bg-accent-400/60' : 'bg-blue-500/60'
+        }`} />
       </div>
     </>
   );

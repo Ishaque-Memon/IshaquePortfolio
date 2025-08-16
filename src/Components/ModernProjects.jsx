@@ -4,6 +4,7 @@ import { FiExternalLink, FiGithub, FiEye, FiCode, FiStar, FiArrowRight } from "r
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SectionLoader from "./SectionLoader.jsx";
 import WelcomePage from "../assets/ImageGallery/0.png?url";
 import LoginPage from "../assets/ImageGallery/1.png?url";
 import FacultyPortal from "../assets/ImageGallery/2.png?url";
@@ -111,13 +112,19 @@ const ModernProjects = () => {
   ];
 
   return (
-    <section
-      id="projects"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 ${
-        isDarkMode ? 'bg-neutral-900' : 'bg-white'
-      } transition-colors duration-300`}
+    <SectionLoader 
+      loadingTime={2200}
+      loaderVariant="spinner"
+      loadingText="Loading Projects..."
+      sectionName="Projects"
     >
+      <section
+        id="projects"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 ${
+          isDarkMode ? 'bg-neutral-900' : 'bg-white'
+        } transition-colors duration-300`}
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -198,7 +205,7 @@ const ModernProjects = () => {
                       <FiEye className="w-4 h-4" />
                       <span>View Live</span>
                     </motion.a>
-                    <motion.a
+                    {/* <motion.a
                       href={projects[0].githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -208,7 +215,7 @@ const ModernProjects = () => {
                     >
                       <FiGithub className="w-4 h-4" />
                       <span>Code</span>
-                    </motion.a>
+                    </motion.a> */}
                   </div>
                   <span className="px-3 py-1 bg-green-500/20 backdrop-blur-sm rounded-full text-green-400 text-sm font-medium">
                     {projects[0].status}
@@ -537,6 +544,7 @@ const ModernProjects = () => {
         </motion.div>
       </div>
     </section>
+    </SectionLoader>
   );
 };
 

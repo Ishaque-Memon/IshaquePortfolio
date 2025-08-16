@@ -13,6 +13,7 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MyPicture from "../assets/MyPicture/Ishaq4.jpeg?url";
+import SectionLoader from "./SectionLoader.jsx";
 import ResumeImage from "../assets/Resume/M.Ishaque.pdf?url";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -121,13 +122,19 @@ const ModernAbout = () => {
   ];
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 transition-colors duration-300 ${
-        isDarkMode ? "bg-neutral-900" : "bg-white"
-      }`}
+    <SectionLoader 
+      loadingTime={1800}
+      loaderVariant="pulse"
+      loadingText="Loading About Section..."
+      sectionName="About"
     >
+      <section
+        id="about"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 transition-colors duration-300 ${
+          isDarkMode ? "bg-neutral-900" : "bg-white"
+        }`}
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -371,6 +378,7 @@ const ModernAbout = () => {
         </motion.div>
       </div>
     </section>
+    </SectionLoader>
   );
 };
 

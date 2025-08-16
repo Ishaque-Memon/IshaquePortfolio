@@ -14,6 +14,7 @@ import {
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SectionLoader from "./SectionLoader.jsx";
 
 // Import certificate images
 import Certificate0 from "../assets/Certificates/Certificate0.png?url";
@@ -193,13 +194,19 @@ const ModernCertificates = () => {
   };
 
   return (
-    <section
-      id="certificates"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 ${
-        isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
-      } transition-colors duration-300 relative overflow-hidden`}
+    <SectionLoader 
+      loadingTime={1900}
+      loaderVariant="pulse"
+      loadingText="Loading Certificates..."
+      sectionName="Certificates"
     >
+      <section
+        id="certificates"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 ${
+          isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
+        } transition-colors duration-300 relative overflow-hidden`}
+      >
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
@@ -396,7 +403,7 @@ const ModernCertificates = () => {
         >
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { label: "Certifications Earned", value: "10+", icon: FiAward },
+              { label: "Certifications Earned", value: "7+", icon: FiAward },
               { label: "Learning Hours", value: "500+", icon: FiCalendar },
               { label: "Skills Acquired", value: "25+", icon: FiCheckCircle }
             ].map((stat, index) => {
@@ -613,6 +620,7 @@ const ModernCertificates = () => {
         )}
       </AnimatePresence>
     </section>
+    </SectionLoader>
   );
 };
 

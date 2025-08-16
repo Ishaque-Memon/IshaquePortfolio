@@ -79,8 +79,8 @@ const ModernHeader = () => {
         animate={isScrolled ? "scrolled" : "transparent"}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            
+          <div className="flex items-center justify-center h-16 lg:h-20">
+
             {/* Logo */}
             <Link
               to="home"
@@ -88,7 +88,7 @@ const ModernHeader = () => {
               duration={1000}
               className="cursor-pointer z-10"
             >
-              <div className="flex items-center space-x-5">
+              <div className="flex flex-col items-center space-x-5">
                 {/* Static MI Logo - No Animation */}
                 <div className="flex items-center space-x-3 text-6xl font-black">
                   <span
@@ -118,18 +118,19 @@ const ModernHeader = () => {
                     I
                   </span>
                 </div>
-                <div className="hidden sm:block">
+                {/* <div className="hidden sm:block">
                   <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
                     Muhammad Ishaque
                   </h1>
                   <p className={`text-base ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
                     Full Stack Developer
                   </p>
-                </div>
+                </div> */}
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Hidden since we're using dock */}
+            {/* 
             <nav className="hidden lg:flex items-center space-x-1">
               {navItems.map((item, index) => (
                 <Link
@@ -171,86 +172,43 @@ const ModernHeader = () => {
                 </Link>
               ))}
             </nav>
+            */}
 
-            {/* Right Side Controls */}
-            <div className="flex items-center space-x-4">
-              {/* Theme Toggle */}
-              <motion.button
-                onClick={toggleTheme}
-                className={`p-2 rounded-lg transition-all duration-300 ${
-                  isDarkMode 
-                    ? 'bg-neutral-800 text-yellow-400 hover:bg-neutral-700' 
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: 1,
-                  transition: { delay: 0.4, duration: 0.3 }
-                }}
-              >
-                <AnimatePresence mode="wait">
-                  {isDarkMode ? (
-                    <motion.div
-                      key="sun"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <FiSun className="w-5 h-5" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="moon"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <FiMoon className="w-5 h-5" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
-
-              {/* Mobile Menu Button */}
-              <motion.button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`lg:hidden p-2 rounded-lg transition-all duration-300 ${
-                  isDarkMode 
-                    ? 'bg-neutral-800 text-white hover:bg-neutral-700' 
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <AnimatePresence mode="wait">
-                  {isMobileMenuOpen ? (
-                    <motion.div
-                      key="close"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <FiX className="w-6 h-6" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="menu"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <FiMenu className="w-6 h-6" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
-            </div>
+            {/* Mobile Menu Button - Keep only for mobile */}
+            <motion.button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`lg:hidden absolute right-4 p-2 rounded-lg transition-all duration-300 ${
+                isDarkMode 
+                  ? 'bg-neutral-800 text-white hover:bg-neutral-700' 
+                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <AnimatePresence mode="wait">
+                {isMobileMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <FiX className="w-6 h-6" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <FiMenu className="w-6 h-6" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
       </motion.header>

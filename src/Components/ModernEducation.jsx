@@ -5,6 +5,7 @@ import { HiAcademicCap } from "react-icons/hi";
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SectionLoader from "./SectionLoader.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -139,13 +140,19 @@ const ModernEducation = () => {
   };
 
   return (
-    <section
-      id="education"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 ${
-        isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
-      } transition-colors duration-300 relative overflow-hidden`}
+    <SectionLoader 
+      loadingTime={1700}
+      loaderVariant="dots"
+      loadingText="Loading Education..."
+      sectionName="Education"
     >
+      <section
+        id="education"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 ${
+          isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
+        } transition-colors duration-300 relative overflow-hidden`}
+      >
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
@@ -344,7 +351,7 @@ const ModernEducation = () => {
         >
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { label: "Years of Education", value: "9", icon: FiCalendar },
+              { label: "Years of Education", value: "16", icon: FiCalendar },
               { label: "Academic Status", value: "Graduate", icon: HiAcademicCap },
               { label: "Team Projects", value: "1", icon: FiBookOpen }
             ].map((stat, index) => {
@@ -384,6 +391,7 @@ const ModernEducation = () => {
         </motion.div>
       </div>
     </section>
+    </SectionLoader>
   );
 };
 

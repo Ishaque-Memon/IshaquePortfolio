@@ -12,6 +12,7 @@ import {
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SectionLoader from "./SectionLoader.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -119,13 +120,19 @@ const ModernSkills = () => {
   };
 
   return (
-    <section
-      id="skills"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 ${
-        isDarkMode ? 'bg-neutral-950' : 'bg-neutral-100'
-      } transition-colors duration-300`}
+    <SectionLoader 
+      loadingTime={1600}
+      loaderVariant="wave"
+      loadingText="Loading Skills..."
+      sectionName="Skills"
     >
+      <section
+        id="skills"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 ${
+          isDarkMode ? 'bg-neutral-950' : 'bg-neutral-100'
+        } transition-colors duration-300`}
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -267,6 +274,7 @@ const ModernSkills = () => {
         </motion.div>
       </div>
     </section>
+    </SectionLoader>
   );
 };
 

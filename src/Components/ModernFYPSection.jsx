@@ -18,6 +18,7 @@ import {
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SectionLoader from "./SectionLoader.jsx";
 import presentationPDF from "../assets/Presentation/FYP(1) OBE 21SW49,43,28.pdf";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -121,13 +122,19 @@ const ModernFYPSection = () => {
   };
 
   return (
-    <section
-      id="fyp"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 ${
-        isDarkMode ? 'bg-neutral-900' : 'bg-white'
-      } transition-colors duration-300 relative overflow-hidden`}
+    <SectionLoader 
+      loadingTime={2100}
+      loaderVariant="spinner"
+      loadingText="Loading Final Year Project..."
+      sectionName="FYP"
     >
+      <section
+        id="fyp"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 ${
+          isDarkMode ? 'bg-neutral-900' : 'bg-white'
+        } transition-colors duration-300 relative overflow-hidden`}
+      >
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
@@ -452,6 +459,7 @@ const ModernFYPSection = () => {
         </motion.div>
       </div>
     </section>
+    </SectionLoader>
   );
 };
 

@@ -99,7 +99,7 @@ const ModernFooterSection = () => {
   return (
     <footer
       className={`relative overflow-hidden ${
-        isDarkMode ? 'bg-neutral-900' : 'bg-neutral-900'
+        isDarkMode ? 'bg-neutral-900' : 'bg-gray-50'
       }`}
     >
       {/* Background Elements */}
@@ -122,10 +122,14 @@ const ModernFooterSection = () => {
             {/* Brand Section */}
             <motion.div variants={itemVariants} className="lg:col-span-2">
               <div className="mb-8">
-                <h3 className="text-3xl font-bold text-white mb-4">
+                <h3 className={`text-3xl font-bold mb-4 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                   Muhammad <span className="gradient-text">Ishaque</span>
                 </h3>
-                <p className="text-neutral-300 text-lg leading-relaxed max-w-md">
+                <p className={`text-lg leading-relaxed max-w-md ${
+                  isDarkMode ? 'text-neutral-300' : 'text-gray-600'
+                }`}>
                   Software Engineering student specializing in full-stack development. 
                   Building innovative web solutions and learning cutting-edge technologies.
                 </p>
@@ -133,7 +137,9 @@ const ModernFooterSection = () => {
 
               {/* Social Links */}
               <div className="mb-8">
-                <h4 className="text-white font-semibold mb-4">Follow Me</h4>
+                <h4 className={`font-semibold mb-4 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>Follow Me</h4>
                 <div className="flex space-x-4">
                   {footerLinks.social.map((social, index) => {
                     const IconComponent = social.icon;
@@ -143,7 +149,11 @@ const ModernFooterSection = () => {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-3 bg-neutral-800 rounded-xl text-neutral-400 transition-all duration-300 hover:bg-neutral-700 ${social.color}`}
+                        className={`p-3 rounded-xl transition-all duration-300 ${
+                          isDarkMode 
+                            ? 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700' 
+                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        } ${social.color}`}
                         whileHover={{ scale: 1.1, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -157,7 +167,9 @@ const ModernFooterSection = () => {
 
             {/* Quick Links */}
             <motion.div variants={itemVariants}>
-              <h4 className="text-white font-semibold mb-6">Quick Links</h4>
+              <h4 className={`font-semibold mb-6 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Quick Links</h4>
               <ul className="space-y-3">
                 {footerLinks.navigation.map((link, index) => {
                   const IconComponent = link.icon;
@@ -165,10 +177,16 @@ const ModernFooterSection = () => {
                     <li key={index}>
                       <motion.button
                         onClick={() => scrollToSection(link.sectionId)}
-                        className="flex items-center space-x-3 text-neutral-300 hover:text-primary-400 transition-colors duration-300 group"
+                        className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                          isDarkMode 
+                            ? 'text-neutral-300 hover:text-primary-400' 
+                            : 'text-gray-600 hover:text-primary-600'
+                        }`}
                         whileHover={{ x: 5 }}
                       >
-                        <IconComponent className="w-4 h-4 group-hover:text-primary-400" />
+                        <IconComponent className={`w-4 h-4 ${
+                          isDarkMode ? 'group-hover:text-primary-400' : 'group-hover:text-primary-600'
+                        }`} />
                         <span>{link.label}</span>
                       </motion.button>
                     </li>
@@ -179,7 +197,9 @@ const ModernFooterSection = () => {
 
             {/* Contact Info */}
             <motion.div variants={itemVariants}>
-              <h4 className="text-white font-semibold mb-6">Get in Touch</h4>
+              <h4 className={`font-semibold mb-6 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Get in Touch</h4>
               <div className="space-y-4">
                 {footerLinks.contact.map((contact, index) => {
                   const IconComponent = contact.icon;
@@ -189,14 +209,22 @@ const ModernFooterSection = () => {
                       href={contact.href}
                       target={contact.label === "Location" ? "_blank" : undefined}
                       rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
-                      className="flex items-center space-x-3 text-neutral-300 hover:text-primary-400 transition-colors duration-300 group"
+                      className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                        isDarkMode 
+                          ? 'text-neutral-300 hover:text-primary-400' 
+                          : 'text-gray-600 hover:text-primary-600'
+                      }`}
                       whileHover={{ x: 5 }}
                     >
-                      <div className="p-2 bg-neutral-800 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300">
+                      <div className={`p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300 ${
+                        isDarkMode ? 'bg-neutral-800' : 'bg-gray-200'
+                      }`}>
                         <IconComponent className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="text-sm text-neutral-400">{contact.label}</p>
+                        <p className={`text-sm ${
+                          isDarkMode ? 'text-neutral-400' : 'text-gray-500'
+                        }`}>{contact.label}</p>
                         <p className="font-medium">{contact.value}</p>
                       </div>
                     </motion.a>
@@ -205,10 +233,16 @@ const ModernFooterSection = () => {
               </div>
 
               {/* Availability Status */}
-              <div className="mt-8 p-4 bg-green-900/20 border border-green-500/30 rounded-xl">
+              <div className={`mt-8 p-4 rounded-xl ${
+                isDarkMode 
+                  ? 'bg-green-900/20 border border-green-500/30' 
+                  : 'bg-green-100 border border-green-300'
+              }`}>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-green-400 font-semibold text-sm">Available for new projects</span>
+                  <span className={`font-semibold text-sm ${
+                    isDarkMode ? 'text-green-400' : 'text-green-700'
+                  }`}>Available for new projects</span>
                 </div>
               </div>
             </motion.div>
@@ -216,7 +250,9 @@ const ModernFooterSection = () => {
         </motion.div>
 
         {/* Divider */}
-        <div className="border-t border-neutral-800"></div>
+        <div className={`border-t ${
+          isDarkMode ? 'border-neutral-800' : 'border-gray-300'
+        }`}></div>
 
         {/* Bottom Bar */}
         <motion.div
@@ -229,23 +265,27 @@ const ModernFooterSection = () => {
           <div className="flex flex-col md:flex-row items-center justify-between">
             
             {/* Copyright */}
-            <div className="flex items-center space-x-2 text-neutral-400 mb-4 md:mb-0">
+            <div className={`flex items-center space-x-2 mb-4 md:mb-0 ${
+              isDarkMode ? 'text-neutral-400' : 'text-gray-600'
+            }`}>
               <span>&copy; {new Date().getFullYear()}</span>
               <span>Made with</span>
               {/* <FiHeart className="w-4 h-4 text-red-500 animate-pulse" /> */}
               <span>by</span>
-              <span className="font-semibold text-white">Muhammad Ishaque</span>
+              <span className={`font-semibold ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Muhammad Ishaque</span>
             </div>
 
             {/* Tech Stack */}
-            <div className="flex items-center space-x-4 text-neutral-400 text-sm">
+            {/* <div className="flex items-center space-x-4 text-neutral-400 text-sm">
               <span>Built with:</span>
               <div className="flex items-center space-x-2">
                 <span className="px-2 py-1 bg-neutral-800 rounded text-xs">React</span>
                 <span className="px-2 py-1 bg-neutral-800 rounded text-xs">Tailwind</span>
                 <span className="px-2 py-1 bg-neutral-800 rounded text-xs">Framer Motion</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </motion.div>
       </div>

@@ -19,6 +19,7 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import emailjs from "emailjs-com";
+import SectionLoader from "./SectionLoader.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -174,13 +175,19 @@ const ModernContact = () => {
   };
 
   return (
-    <section
-      id="contact"
-      ref={sectionRef}
-      className={`py-20 lg:py-32 ${
-        isDarkMode ? 'bg-neutral-900' : 'bg-white'
-      } transition-colors duration-300 relative overflow-hidden`}
+    <SectionLoader 
+      loadingTime={1500}
+      loaderVariant="orbit"
+      loadingText="Loading Contact..."
+      sectionName="Contact"
     >
+      <section
+        id="contact"
+        ref={sectionRef}
+        className={`py-20 lg:py-32 ${
+          isDarkMode ? 'bg-neutral-900' : 'bg-white'
+        } transition-colors duration-300 relative overflow-hidden`}
+      >
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-full blur-3xl"></div>
@@ -548,6 +555,7 @@ const ModernContact = () => {
         </div>
       </div>
     </section>
+    </SectionLoader>
   );
 };
 

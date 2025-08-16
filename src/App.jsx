@@ -13,6 +13,7 @@ import ModernCertificates from './Components/ModernCertificates';
 import ModernFooterSection from './Components/ModernFooterSection';
 import ModernEducation from './Components/ModernEducation';
 import ScrollBot from './Components/ScrollBot';
+import MacOSDock from './Components/MacOSDock';
 import './App.css';
 
 const AppContent = () => {
@@ -69,6 +70,7 @@ const AppContent = () => {
             <ModernFooterSection />
           </div>
           <ScrollBot />
+          <MacOSDock />
         </div>
       )}
     </>
