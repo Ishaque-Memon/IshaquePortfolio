@@ -89,9 +89,9 @@ const ModernHeader = () => {
               className="cursor-pointer z-10"
             >
               <div className="flex items-center space-x-5">
-                {/* Animated MI Logo - Proper AnimatedLogo Style */}
+                {/* Static MI Logo - No Animation */}
                 <div className="flex items-center space-x-3 text-6xl font-black">
-                  <motion.span
+                  <span
                     className="gradient-text block"
                     style={{
                       fontSize: "2.5rem",
@@ -101,20 +101,10 @@ const ModernHeader = () => {
                         ? "0px 0px 20px rgba(255,255,255,0.5)"
                         : "0px 0px 20px rgba(0,0,0,0.3)",
                     }}
-                    animate={{
-                      y: [-20, 0, -20],
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 360, 720]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "power1.inOut"
-                    }}
                   >
                     M
-                  </motion.span>
-                  <motion.span
+                  </span>
+                  <span
                     className={`block ${isDarkMode ? "text-white" : "text-neutral-900"}`}
                     style={{
                       fontSize: "2.5rem",
@@ -124,19 +114,9 @@ const ModernHeader = () => {
                         ? "0px 0px 15px rgba(255,255,255,0.4)"
                         : "0px 0px 15px rgba(0,0,0,0.3)",
                     }}
-                    animate={{
-                      y: [20, 0, 20],
-                      scale: [1, 1.2, 1],
-                      rotate: [0, -360, -720]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "power1.inOut"
-                    }}
                   >
                     I
-                  </motion.span>
+                  </span>
                 </div>
                 <div className="hidden sm:block">
                   <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
