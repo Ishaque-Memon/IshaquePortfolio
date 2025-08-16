@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-
+import { useTheme } from "../contexts/ThemeContext.jsx";
 
 const AnimatedLogo = ({ onFinish }) => {
+    const { isDarkMode } = useTheme();
     const mRef = useRef(null);
     const iRef = useRef(null);
     const textRef = useRef(null);
@@ -54,7 +55,9 @@ timeline
       timeline.to(
         textRef.current,
         {
-          textShadow: "0px 0px 20px rgba(255, 255, 255, 1)",
+          textShadow: isDarkMode 
+            ? "0px 0px 20px rgba(255, 255, 255, 0.8)"
+            : "0px 0px 20px rgba(0, 0, 0, 0.5)",
           duration: 0.8,
           yoyo: true,
           repeat: 3,
@@ -85,26 +88,31 @@ timeline
       return () => {
         timeline.kill();
       };
-    }, [onFinish]);
+    }, [onFinish, isDarkMode]);
   
     return (
       <div
         ref={containerRef}
-        className="flex flex-col items-center justify-center h-screen "
-        style={{
-            // background: "linear-gradient(to right, rgb(20, 30, 48), rgb(36, 59, 85))"
-            backgroundImage: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"
-        }}
+        className={`flex flex-col items-center justify-center h-screen transition-colors duration-300 ${
+          isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
+        }`}
       >
+        {/* Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-full blur-3xl"></div>
+        </div>
+
         {/* Loader */}
-        <div className="flex space-x-4 text-8xl font-extrabold text-white">
+        <div className="relative flex space-x-4 text-8xl font-extrabold">
           {/* "M" Letter */}
           <div
             ref={mRef}
-            className="relative text-yellow-400"
+            className="relative gradient-text"
             style={{
-              // textShadow:"0 10px 30px rgba(0, 0, 0, 0.5)",
-              textShadow: "0px 0px 20px rgba(255, 255, 255, 1)",
+              textShadow: isDarkMode 
+                ? "0px 0px 20px rgba(255, 255, 255, 0.5)"
+                : "0px 0px 20px rgba(0, 0, 0, 0.3)",
             }}
           >
             M
@@ -113,9 +121,11 @@ timeline
           {/* "I" Letter */}
           <div
             ref={iRef}
-            className="relative"
+            className={`relative ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}
             style={{
-              textShadow: "0px 0px 15px rgba(255, 255, 255, 0.8)",
+              textShadow: isDarkMode 
+                ? "0px 0px 15px rgba(255, 255, 255, 0.4)"
+                : "0px 0px 15px rgba(0, 0, 0, 0.3)",
             }}
           >
             I
@@ -125,10 +135,14 @@ timeline
         {/* Quote with Typing Effect */}
         <div
           ref={textRef}
-          className=" text-black text-2xl mt-12 tracking-wide text-center font-extrabold"
+          className={`relative text-2xl mt-12 tracking-wide text-center font-bold ${
+            isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+          }`}
           style={{
-            textShadow:"0 10px 30px rgba(0, 0, 0, 0.5)",
-            fontFamily: "Italianno-Regular, cursive",
+            textShadow: isDarkMode 
+              ? "0 2px 10px rgba(0, 0, 0, 0.3)"
+              : "0 2px 10px rgba(255, 255, 255, 0.5)",
+            fontFamily: "Inter, sans-serif",
           }}
         ></div>
       </div>

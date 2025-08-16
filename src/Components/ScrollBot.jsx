@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { useTheme } from "../contexts/ThemeContext.jsx";
 
 const ScrollButton = () => {
+  const { isDarkMode } = useTheme();
   const [isAtBottom, setIsAtBottom] = useState(false);
   const [shouldShow, setShouldShow] = useState(false);
   const buttonRef = useRef(null);
@@ -39,7 +41,9 @@ const ScrollButton = () => {
       });
 
       pulseTween.current = gsap.to(el, {
-        boxShadow: "0 0 20px rgba(255, 157, 0, 0.4)",
+        boxShadow: isDarkMode 
+          ? "0 0 20px rgba(99, 102, 241, 0.4)" 
+          : "0 0 20px rgba(255, 157, 0, 0.4)",
         repeat: -1,
         yoyo: true,
         duration: 1.5,
@@ -106,7 +110,9 @@ const ScrollButton = () => {
           width: "65px",
           height: "65px",
           borderRadius: "50%",
-          background: "linear-gradient(145deg, #FFB703, #FB8500)",
+          background: isDarkMode 
+            ? "linear-gradient(145deg, #6366f1, #8b5cf6)" 
+            : "linear-gradient(145deg, #FFB703, #FB8500)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -115,6 +121,9 @@ const ScrollButton = () => {
           opacity: 0,
           transform: "translateY(30px)",
           transition: "transform 0.3s ease",
+          boxShadow: isDarkMode
+            ? "0 4px 15px rgba(99, 102, 241, 0.2)"
+            : "0 4px 15px rgba(255, 183, 3, 0.2)",
         }}
       >
         <div
@@ -123,7 +132,9 @@ const ScrollButton = () => {
             position: "absolute",
             width: "80px",
             height: "80px",
-            border: "2px dashed rgba(255,255,255,0.2)",
+            border: isDarkMode
+              ? "2px dashed rgba(255,255,255,0.3)"
+              : "2px dashed rgba(255,255,255,0.2)",
             borderRadius: "50%",
             pointerEvents: "none",
           }}

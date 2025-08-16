@@ -1,0 +1,256 @@
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiGithub,
+  FiLinkedin,
+  FiInstagram,
+  FiTwitter,
+  FiHome,
+  FiUser,
+  FiCode,
+  FiBriefcase,
+  FiAward,
+  FiMessageCircle,
+  FiHeart,
+} from "react-icons/fi";
+import { useTheme } from "../contexts/ThemeContext.jsx";
+
+const ModernFooterSection = () => {
+  const { isDarkMode } = useTheme();
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const footerLinks = {
+    navigation: [
+      { label: "Home", sectionId: "home", icon: FiHome },
+      { label: "About", sectionId: "about", icon: FiUser },
+      { label: "Skills", sectionId: "skills", icon: FiCode },
+      { label: "Projects", sectionId: "projects", icon: FiBriefcase },
+      { label: "Education", sectionId: "education", icon: FiAward },
+      { label: "Contact", sectionId: "contact", icon: FiMessageCircle }
+    ],
+    social: [
+      {
+        icon: FiGithub,
+        label: "GitHub",
+        href: "https://github.com/Ishaque-Memon",
+        color: "hover:text-gray-400"
+      },
+      {
+        icon: FiLinkedin,
+        label: "LinkedIn",
+        href: "https://www.linkedin.com/in/muhammad-ishaque-574492249/",
+        color: "hover:text-blue-400"
+      }
+    ],
+    contact: [
+      {
+        icon: FiMail,
+        label: "Email",
+        value: "m.ishaq031530@gmail.com",
+        href: "mailto:m.ishaq031530@gmail.com"
+      },
+      {
+        icon: FiPhone,
+        label: "Phone",
+        value: "+92 315 3057848",
+        href: "tel:+923153057848"
+      },
+      {
+        icon: FiMapPin,
+        label: "Location",
+        value: "Qasimabad, Hyderabad",
+        href: "https://maps.google.com/"
+      }
+    ]
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  return (
+    <footer
+      className={`relative overflow-hidden ${
+        isDarkMode ? 'bg-neutral-900' : 'bg-neutral-900'
+      }`}
+    >
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Main Footer Content */}
+      <div className="relative z-10">
+        <motion.div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <div className="grid lg:grid-cols-3 gap-12">
+            
+            {/* Brand Section */}
+            <motion.div variants={itemVariants} className="lg:col-span-2">
+              <div className="mb-8">
+                <h3 className="text-3xl font-bold text-white mb-4">
+                  Muhammad <span className="gradient-text">Ishaque</span>
+                </h3>
+                <p className="text-neutral-300 text-lg leading-relaxed max-w-md">
+                  Software Engineering student specializing in full-stack development. 
+                  Building innovative web solutions and learning cutting-edge technologies.
+                </p>
+              </div>
+
+              {/* Social Links */}
+              <div className="mb-8">
+                <h4 className="text-white font-semibold mb-4">Follow Me</h4>
+                <div className="flex space-x-4">
+                  {footerLinks.social.map((social, index) => {
+                    const IconComponent = social.icon;
+                    return (
+                      <motion.a
+                        key={index}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`p-3 bg-neutral-800 rounded-xl text-neutral-400 transition-all duration-300 hover:bg-neutral-700 ${social.color}`}
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                      </motion.a>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Quick Links */}
+            <motion.div variants={itemVariants}>
+              <h4 className="text-white font-semibold mb-6">Quick Links</h4>
+              <ul className="space-y-3">
+                {footerLinks.navigation.map((link, index) => {
+                  const IconComponent = link.icon;
+                  return (
+                    <li key={index}>
+                      <motion.button
+                        onClick={() => scrollToSection(link.sectionId)}
+                        className="flex items-center space-x-3 text-neutral-300 hover:text-primary-400 transition-colors duration-300 group"
+                        whileHover={{ x: 5 }}
+                      >
+                        <IconComponent className="w-4 h-4 group-hover:text-primary-400" />
+                        <span>{link.label}</span>
+                      </motion.button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </motion.div>
+
+            {/* Contact Info */}
+            <motion.div variants={itemVariants}>
+              <h4 className="text-white font-semibold mb-6">Get in Touch</h4>
+              <div className="space-y-4">
+                {footerLinks.contact.map((contact, index) => {
+                  const IconComponent = contact.icon;
+                  return (
+                    <motion.a
+                      key={index}
+                      href={contact.href}
+                      target={contact.label === "Location" ? "_blank" : undefined}
+                      rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
+                      className="flex items-center space-x-3 text-neutral-300 hover:text-primary-400 transition-colors duration-300 group"
+                      whileHover={{ x: 5 }}
+                    >
+                      <div className="p-2 bg-neutral-800 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300">
+                        <IconComponent className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-neutral-400">{contact.label}</p>
+                        <p className="font-medium">{contact.value}</p>
+                      </div>
+                    </motion.a>
+                  );
+                })}
+              </div>
+
+              {/* Availability Status */}
+              <div className="mt-8 p-4 bg-green-900/20 border border-green-500/30 rounded-xl">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 font-semibold text-sm">Available for new projects</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Divider */}
+        <div className="border-t border-neutral-800"></div>
+
+        {/* Bottom Bar */}
+        <motion.div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            
+            {/* Copyright */}
+            <div className="flex items-center space-x-2 text-neutral-400 mb-4 md:mb-0">
+              <span>&copy; {new Date().getFullYear()}</span>
+              <span>Made with</span>
+              {/* <FiHeart className="w-4 h-4 text-red-500 animate-pulse" /> */}
+              <span>by</span>
+              <span className="font-semibold text-white">Muhammad Ishaque</span>
+            </div>
+
+            {/* Tech Stack */}
+            <div className="flex items-center space-x-4 text-neutral-400 text-sm">
+              <span>Built with:</span>
+              <div className="flex items-center space-x-2">
+                <span className="px-2 py-1 bg-neutral-800 rounded text-xs">React</span>
+                <span className="px-2 py-1 bg-neutral-800 rounded text-xs">Tailwind</span>
+                <span className="px-2 py-1 bg-neutral-800 rounded text-xs">Framer Motion</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </footer>
+  );
+};
+
+export default ModernFooterSection;
