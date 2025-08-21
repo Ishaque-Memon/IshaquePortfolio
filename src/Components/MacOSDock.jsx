@@ -29,7 +29,7 @@ const dimensionsConfig = [
     orientation: "vertical",
     iconSize: 42,
     spacing: 8,
-    position: { top: 260, right: 20 },
+    position: { top: 260, right: 22 },
   },
   {
     name: "iPhone 8-ish (375x667)",
@@ -39,7 +39,7 @@ const dimensionsConfig = [
     orientation: "vertical",
     iconSize: 38,
     spacing: 10,
-    position: { top: 160, right: 20 },
+    position: { top: 160, right: 22 },
   },
   {
     name: "Samsung Galaxy A51 (412x914)",
@@ -49,7 +49,7 @@ const dimensionsConfig = [
     orientation: "vertical",
     iconSize: 40,
     spacing: 10,
-    position: { top: 250, right: 20 },
+    position: { top: 250, right: 22 },
   },
   {
     name: "iPhone 11 Pro Max-ish (414x896)",
@@ -59,10 +59,20 @@ const dimensionsConfig = [
     orientation: "vertical",
     iconSize: 40,
     spacing: 10,
-    position: { top: 220, right: 20 },
+    position: { top: 220, right: 22 },
   },
   {
-    name: "Landscape 1024x600 - center horizontal",
+    name: "Specific tablet 912x1368",
+    matchType: "exact",
+    width: 912,
+    height: 1368,
+    orientation: "vertical",
+    iconSize: 75,
+    spacing: 10,
+    position: { top: 350, right: 30 },
+  },
+  {
+    name: "Landscape 1024x600",
     matchType: "exact",
     width: 1024,
     height: 600,
@@ -70,6 +80,16 @@ const dimensionsConfig = [
     iconSize: 54,
     spacing: 12,
     position: { centered: true, bottom: 20, left: "20%" },
+  },
+  {
+    name: "Landscape 1280x800",
+    matchType: "exact",
+    width: 1280,
+    height: 800,
+    orientation: "horizontal",
+    iconSize: 60,
+    spacing: 14,
+    position: { centered: true, bottom: 24, left: "25%" },
   },
   {
     name: "Common Vertical tablet - 768x1024",
@@ -113,7 +133,7 @@ const dimensionsConfig = [
     orientation: "vertical",
     iconSize: 40,
     spacing: 6,
-    position: { top: 240, right: 20}
+    position: { top: 240, right: 22}
   },
   {
     name: "Medium phones / small tablets",
@@ -137,7 +157,7 @@ const dimensionsConfig = [
     orientation: "vertical",
     iconSize: 72,
     spacing: 10,
-    position: { top: 220, right: 20 },
+    position: { top: 220, right: 24 },
   },
   {
     name: "horizontal Standard tablets / small laptops",
@@ -149,15 +169,15 @@ const dimensionsConfig = [
     orientation: "horizontal",
     iconSize: 72,
     spacing: 10,
-    position: { centered: true, bottom: 30, left:"12%" }
+    position: { centered: true, bottom: 30, left:"13.5%" }
   },
   {
     name: "Default fallback",
     matchType: "default",
     orientation: "vertical",
-    iconSize: 74,
+    iconSize: 64,
     spacing: 10,
-    position: { topPercent: 22, rightPercent: 3.5 },
+    position: { topPercent: 22, rightPercent: 1.4 },
     indicatorSize: { width: 4, height: 48 }
   }
 ];
@@ -170,6 +190,11 @@ const MacOSDock = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMainLoaderComplete, setIsMainLoaderComplete] = useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false); // Safari fix
+  const [isAutoHidden, setIsAutoHidden] = useState(false); // Auto-hide state for landscape
+  const [lastMouseActivity, setLastMouseActivity] = useState(Date.now());
+  const autoHideTimerRef = useRef(null);
+  const dockRef = useRef(null);
   const [screenConfig, setScreenConfig] = useState({
     isMobile: false,
     isTablet: false,
@@ -287,18 +312,60 @@ const MacOSDock = () => {
 
       setScreenConfig(final);
       setIsMobile(final.isMobile);
+      
+      // Mark as initialized after first proper config update
+      if (!isInitialized) {
+        setIsInitialized(true);
+      }
     };
 
+    // Safari fix: Force multiple updates to ensure proper rendering
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
     updateScreenConfig();
-    const t = setTimeout(updateScreenConfig, 40);
-    window.addEventListener('resize', updateScreenConfig);
-    window.addEventListener('orientationchange', updateScreenConfig);
+    
+    // For Safari, do additional delayed updates to fix rendering glitches
+    if (isSafari) {
+      const safariTimers = [
+        setTimeout(updateScreenConfig, 50),
+        setTimeout(updateScreenConfig, 100),
+        setTimeout(updateScreenConfig, 200),
+        setTimeout(updateScreenConfig, 500)
+      ];
+      
+      // Safari-specific: Force repaint after page load
+      setTimeout(() => {
+        if (document.readyState === 'complete') {
+          updateScreenConfig();
+        }
+      }, 750);
+      
+      // Additional fix for Safari's viewport change detection
+      const handleSafariResize = () => {
+        updateScreenConfig();
+        // Double-check after a brief delay
+        setTimeout(updateScreenConfig, 16);
+      };
+      
+      window.addEventListener('resize', handleSafariResize);
+      window.addEventListener('orientationchange', handleSafariResize);
+      
+      return () => {
+        safariTimers.forEach(clearTimeout);
+        window.removeEventListener('resize', handleSafariResize);
+        window.removeEventListener('orientationchange', handleSafariResize);
+      };
+    } else {
+      const t = setTimeout(updateScreenConfig, 40);
+      window.addEventListener('resize', updateScreenConfig);
+      window.addEventListener('orientationchange', updateScreenConfig);
 
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener('resize', updateScreenConfig);
-      window.removeEventListener('orientationchange', updateScreenConfig);
-    };
+      return () => {
+        clearTimeout(t);
+        window.removeEventListener('resize', updateScreenConfig);
+        window.removeEventListener('orientationchange', updateScreenConfig);
+      };
+    }
   }, []);
 
   // Main loader peek logic
@@ -366,6 +433,108 @@ const MacOSDock = () => {
     return () => window.removeEventListener('ui:overlay-change', handler);
   }, []);
 
+  // Auto-hide logic for landscape mode (macOS-style behavior)
+  useEffect(() => {
+    const isLandscape = screenConfig.orientation === "horizontal";
+    
+    if (!isLandscape || !isMainLoaderComplete || isOverlayOpen) {
+      setIsAutoHidden(false);
+      return;
+    }
+
+    const AUTO_HIDE_DELAY = 3000; // 3 seconds of inactivity
+    const EDGE_DETECTION_ZONE = 100; // pixels from bottom edge to trigger show
+
+    const resetAutoHideTimer = () => {
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+      }
+      
+      setIsAutoHidden(false);
+      setLastMouseActivity(Date.now());
+
+      autoHideTimerRef.current = setTimeout(() => {
+        if (!isHovered && !isOverlayOpen) {
+          setIsAutoHidden(true);
+        }
+      }, AUTO_HIDE_DELAY);
+    };
+
+    const handleMouseMove = (e) => {
+      const now = Date.now();
+      const timeSinceLastActivity = now - lastMouseActivity;
+      
+      // Only reset timer if enough time has passed to avoid excessive timer resets
+      if (timeSinceLastActivity > 500) {
+        resetAutoHideTimer();
+      }
+
+      // Show dock when mouse approaches bottom edge (landscape mode)
+      const distanceFromBottom = window.innerHeight - e.clientY;
+      if (distanceFromBottom <= EDGE_DETECTION_ZONE && isAutoHidden) {
+        setIsAutoHidden(false);
+        resetAutoHideTimer();
+      }
+    };
+
+    const handleMouseLeave = () => {
+      if (!isHovered) {
+        autoHideTimerRef.current = setTimeout(() => {
+          setIsAutoHidden(true);
+        }, 1000); // Faster hide when mouse leaves viewport
+      }
+    };
+
+    const handleKeyPress = () => {
+      resetAutoHideTimer();
+    };
+
+    const handleScroll = () => {
+      resetAutoHideTimer();
+    };
+
+    // Initial timer setup
+    resetAutoHideTimer();
+
+    // Add event listeners
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('keydown', handleKeyPress);
+    document.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+      }
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('keydown', handleKeyPress);
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, [screenConfig.orientation, isMainLoaderComplete, isOverlayOpen, isHovered, lastMouseActivity]);
+
+  // Handle dock hover states for auto-hide
+  const handleDockMouseEnter = () => {
+    setIsHovered(true);
+    setIsAutoHidden(false);
+    if (autoHideTimerRef.current) {
+      clearTimeout(autoHideTimerRef.current);
+    }
+  };
+
+  const handleDockMouseLeave = () => {
+    setIsHovered(false);
+    setLastMouseActivity(Date.now());
+    
+    if (screenConfig.orientation === "horizontal") {
+      autoHideTimerRef.current = setTimeout(() => {
+        if (!isOverlayOpen) {
+          setIsAutoHidden(true);
+        }
+      }, 2000); // 2 second delay after leaving dock
+    }
+  };
+
   const handleIndicatorInteraction = () => {
     if (isMobile) {
       setIsVisible(!isVisible);
@@ -376,7 +545,24 @@ const MacOSDock = () => {
         }, 5000);
       }
     } else {
-      setIsHovered(true);
+      // For landscape mode with auto-hide
+      if (screenConfig.orientation === "horizontal" && isAutoHidden) {
+        setIsAutoHidden(false);
+        setIsVisible(true);
+        setIsHovered(true);
+        
+        // Auto-hide again after 3 seconds
+        if (autoHideTimerRef.current) {
+          clearTimeout(autoHideTimerRef.current);
+        }
+        autoHideTimerRef.current = setTimeout(() => {
+          if (!isHovered && !isOverlayOpen) {
+            setIsAutoHidden(true);
+          }
+        }, 3000);
+      } else {
+        setIsHovered(true);
+      }
     }
   };
 
@@ -533,19 +719,57 @@ const MacOSDock = () => {
     return s;
   })();
 
+  // Safari detection
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
   return (
     <>
       {/* Indicator */}
       <motion.div
-        className={`fixed z-40 ${isDarkMode ? 'bg-white/40' : 'bg-black/40'} rounded-full cursor-pointer select-none`}
-        style={indicatorStyle}
+        className={`fixed z-40 ${isDarkMode ? 'bg-white/40' : 'bg-black/40'} rounded-full cursor-pointer select-none ${
+          isSafari ? 'safari-indicator' : ''
+        } ${!isInitialized ? 'opacity-0' : ''}`}
+        style={{
+          ...indicatorStyle,
+          // Safari-specific fixes
+          ...(isSafari && {
+            WebkitTransform: indicatorStyle.transform,
+            WebkitBackfaceVisibility: 'hidden',
+            WebkitPerspective: '1000px',
+            willChange: 'transform, opacity'
+          })
+        }}
         onClick={screenConfig.isMobile ? handleIndicatorInteraction : undefined}
         onMouseEnter={!screenConfig.isMobile ? handleIndicatorInteraction : undefined}
         onMouseLeave={!screenConfig.isMobile ? (() => setIsHovered(false)) : undefined}
         initial={{ opacity: 0, scale: 0 }}
         animate={{
-          opacity: (!isVisible && isMainLoaderComplete && !isOverlayOpen) ? 1 : 0,
-          scale: (!isVisible && isMainLoaderComplete && !isOverlayOpen) ? 1 : 0
+          opacity: (() => {
+            if (!isMainLoaderComplete || isOverlayOpen || !isInitialized) return 0;
+            
+            // For horizontal orientation (landscape with horizontal dock at bottom)
+            if (screenConfig.orientation === "horizontal") {
+              // Show indicator when dock is auto-hidden OR when dock is not visible
+              return (isAutoHidden || !isVisible) ? 1 : 0;
+            }
+            
+            // For vertical orientation (portrait + landscape devices with vertical dock on side)
+            // Show indicator when dock is not visible (original behavior)
+            return (!isVisible) ? 1 : 0;
+          })(),
+          scale: (() => {
+            if (!isMainLoaderComplete || isOverlayOpen || !isInitialized) return 0;
+            
+            // For horizontal orientation (landscape with horizontal dock at bottom)
+            if (screenConfig.orientation === "horizontal") {
+              // Show indicator when dock is auto-hidden OR when dock is not visible
+              return (isAutoHidden || !isVisible) ? 1 : 0;
+            }
+            
+            // For vertical orientation (portrait + landscape devices with vertical dock on side)
+            // Show indicator when dock is not visible (original behavior)
+            return (!isVisible) ? 1 : 0;
+          })()
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         whileHover={{ scale: screenConfig.isMobile ? 1 : 1.2, opacity: 0.8 }}
@@ -554,25 +778,57 @@ const MacOSDock = () => {
 
       {/* Main dock */}
       <motion.div
-        className={`fixed z-50 ${isDarkMode ? 'bg-black/20 backdrop-blur-md border border-white/10' : 'bg-white/20 backdrop-blur-md border border-black/10'} rounded-2xl shadow-2xl`}
-        style={dockStyle}
-        onMouseEnter={!screenConfig.isMobile ? (() => setIsHovered(true)) : undefined}
+        className={`fixed z-50 ${isDarkMode ? 'bg-black/20 backdrop-blur-md border border-white/10' : 'bg-white/20 backdrop-blur-md border border-black/10'} rounded-2xl shadow-2xl ${
+          isSafari ? 'safari-dock' : ''
+        } ${!isInitialized ? 'opacity-0' : ''} ${
+          screenConfig.orientation === "horizontal" ? (isAutoHidden ? 'dock-auto-hide' : 'dock-auto-show') : ''
+        }`}
+        style={isSafari ? {
+          ...dockStyle,
+          WebkitTransform: dockStyle.transform,
+          WebkitBackfaceVisibility: 'hidden',
+          WebkitPerspective: '1000px',
+          willChange: 'transform, opacity'
+        } : dockStyle}
+        onMouseEnter={!screenConfig.isMobile ? handleDockMouseEnter : undefined}
         onMouseLeave={!screenConfig.isMobile ? (() => {
-          setIsHovered(false);
-          mouseY.set(Infinity);
+          handleDockMouseLeave();
+          setHoveredIndex(null);
+          // Reset mouseY to a large value to ensure all icons return to base size
+          mouseY.set(999999);
         }) : undefined}
         onMouseMove={!screenConfig.isMobile ? ((e) => mouseY.set(e.nativeEvent.clientY)) : undefined}
         onTouchStart={screenConfig.isMobile ? (() => setIsHovered(true)) : undefined}
+        ref={dockRef}
         initial={{ opacity: 0, scale: 0.8, x: 100 }}
         animate={{
-          opacity: (isVisible && isMainLoaderComplete && !isOverlayOpen) ? 1 : 0,
-          scale: (isVisible && isMainLoaderComplete && !isOverlayOpen) ? 1 : 0.8,
-          x: (isVisible && isMainLoaderComplete && !isOverlayOpen) ? 0 : 100
+          opacity: (isVisible && isMainLoaderComplete && !isOverlayOpen && isInitialized) ? 1 : 0,
+          scale: (isVisible && isMainLoaderComplete && !isOverlayOpen && isInitialized) ? 1 : 0.8,
+          x: (() => {
+            if (!isVisible || !isMainLoaderComplete || isOverlayOpen || !isInitialized) return 100;
+            
+            // Auto-hide animation for landscape mode
+            if (screenConfig.orientation === "horizontal" && isAutoHidden) {
+              return screenConfig.position?.centered ? 0 : 80; // Slide down for horizontal dock
+            }
+            
+            return 0;
+          })(),
+          y: (() => {
+            if (!isVisible || !isMainLoaderComplete || isOverlayOpen || !isInitialized) return 0;
+            
+            // Auto-hide animation for landscape mode (slide down)
+            if (screenConfig.orientation === "horizontal" && isAutoHidden) {
+              return 60; // Slide down by 60px
+            }
+            
+            return 0;
+          })()
         }}
         transition={{
-          duration: 0.5,
-          ease: "easeOut",
-          delay: isMainLoaderComplete ? 0.2 : 0
+          duration: isSafari ? 0.6 : 0.5,
+          ease: screenConfig.orientation === "horizontal" && (isAutoHidden || !isAutoHidden) ? "easeInOut" : "easeOut",
+          delay: (isMainLoaderComplete && isInitialized) ? 0.2 : 0
         }}
       >
         <div
@@ -612,52 +868,118 @@ const DockItem = ({
   screenConfig
 }) => {
   const ref = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  
+  // Debounced tooltip visibility with aggressive cleanup
+  useEffect(() => {
+    let timeoutId;
+    if (hoveredIndex === index && !screenConfig.isMobile && isHovered) {
+      timeoutId = setTimeout(() => setShowTooltip(true), 200);
+    } else {
+      setShowTooltip(false);
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [hoveredIndex, index, screenConfig.isMobile, isHovered]);
+  
   const distance = useTransform(mouseY, (val) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { y: 0, height: 0 };
+    // If mouse is not over the dock area or value is very large (reset), return a large distance
+    if (!isHovered || val > 99999) return 1000;
     return val - bounds.y - bounds.height / 2;
   });
 
   const baseSize = screenConfig.iconSize;
   const hoverMultiplier = screenConfig.isMobile ? 1.15 : 1.6;
+  
   const widthSync = useTransform(
     distance,
     [-150, 0, 150],
     [baseSize * 0.8, baseSize * hoverMultiplier, baseSize * 0.8]
   );
+  
   const width = useSpring(widthSync, {
     mass: screenConfig.isMobile ? 0.2 : 0.1,
     stiffness: screenConfig.isMobile ? 200 : 150,
     damping: screenConfig.isMobile ? 15 : 12
   });
 
+  // Reset to base size when not hovered or when hoveredIndex is null
+  useEffect(() => {
+    if (!isHovered || hoveredIndex === null) {
+      width.set(baseSize);
+      setShowTooltip(false); // Force cleanup tooltip
+    }
+  }, [isHovered, hoveredIndex, baseSize, width]);
+
   const IconComponent = item.icon;
+
+  // Calculate tooltip position based on orientation and boundaries
+  const getTooltipPosition = () => {
+    if (screenConfig.orientation === 'vertical') {
+      // For vertical dock, try left first, then right
+      return {
+        right: 'calc(100% + 12px)',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        left: 'auto'
+      };
+    } else {
+      // For horizontal dock, position above
+      return {
+        bottom: 'calc(100% + 12px)',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        top: 'auto'
+      };
+    }
+  };
+
+  const tooltipPosition = getTooltipPosition();
 
   return (
     <motion.div
       ref={ref}
       className="relative flex flex-row items-center"
-      onMouseEnter={() => setHoveredIndex(index)}
-      onMouseLeave={() => setHoveredIndex(null)}
+      onMouseEnter={() => {
+        setHoveredIndex(index);
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        setHoveredIndex(null);
+        setIsHovered(false);
+      }}
     >
-      {/* Tooltip */}
-      <motion.div
-        className={`absolute px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap pointer-events-none ${isDarkMode ? 'bg-gray-900 text-white border border-gray-700' : 'bg-white text-gray-900 border border-gray-200'} shadow-lg`}
-        style={{
-          left: screenConfig.isMobile ? '-80px' : '-88px',
-          fontSize: screenConfig.isMobile ? '12px' : '14px',
-          display: screenConfig.isMobile && hoveredIndex === index ? 'none' : 'block'
-        }}
-        initial={{ opacity: 0, x: 10, scale: 0.8 }}
-        animate={{
-          opacity: hoveredIndex === index && !screenConfig.isMobile ? 1 : 0,
-          x: hoveredIndex === index && !screenConfig.isMobile ? 0 : 10,
-          scale: hoveredIndex === index && !screenConfig.isMobile ? 1 : 0.8
-        }}
-        transition={{ duration: 0.2 }}
-      >
-        {item.label}
-        <div className={`absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent ${isDarkMode ? 'border-l-gray-900' : 'border-l-white'}`} />
-      </motion.div>
+      {/* Simplified Tooltip with unique key */}
+      {showTooltip && (
+        <motion.div
+          key={`tooltip-${item.id}-${index}`}
+          className={`absolute px-3 py-2 rounded-lg text-sm font-medium pointer-events-none whitespace-nowrap ${isDarkMode ? 'bg-gray-900 text-white border border-gray-700' : 'bg-white text-gray-900 border border-gray-200'} shadow-lg backdrop-blur-sm`}
+          style={{
+            ...tooltipPosition,
+            fontSize: screenConfig.isMobile ? '12px' : '14px',
+            maxWidth: screenConfig.isMobile ? '120px' : '180px',
+            zIndex: 60,
+            position: 'absolute' // Ensure proper positioning
+          }}
+          initial={{ opacity: 0, scale: 0.8, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          layoutId={`tooltip-${item.id}`} // Prevent layout thrashing
+        >
+          {item.label}
+          
+          {/* Simple Arrow */}
+          {screenConfig.orientation === 'vertical' ? (
+            <div className={`absolute top-1/2 -right-1 transform -translate-y-1/2 border-4 border-transparent ${isDarkMode ? 'border-l-gray-900' : 'border-l-white'}`} />
+          ) : (
+            <div className={`absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent ${isDarkMode ? 'border-t-gray-900' : 'border-t-white'}`} />
+          )}
+        </motion.div>
+      )}
 
       {/* Icon button */}
       <motion.button
