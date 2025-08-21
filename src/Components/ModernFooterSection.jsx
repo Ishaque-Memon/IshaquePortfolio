@@ -111,23 +111,23 @@ const ModernFooterSection = () => {
       {/* Main Footer Content */}
       <div className="relative z-10">
         <motion.div
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <div className="grid lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
             
             {/* Brand Section */}
-            <motion.div variants={itemVariants} className="lg:col-span-2">
-              <div className="mb-8">
-                <h3 className={`text-3xl font-bold mb-4 ${
+            <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-2">
+              <div className="mb-6 sm:mb-8">
+                <h3 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>
                   Muhammad <span className="gradient-text">Ishaque</span>
                 </h3>
-                <p className={`text-lg leading-relaxed max-w-md ${
+                <p className={`text-base sm:text-lg leading-relaxed max-w-md ${
                   isDarkMode ? 'text-neutral-300' : 'text-gray-600'
                 }`}>
                   Software Engineering student specializing in full-stack development. 
@@ -136,11 +136,11 @@ const ModernFooterSection = () => {
               </div>
 
               {/* Social Links */}
-              <div className="mb-8">
-                <h4 className={`font-semibold mb-4 ${
+              <div className="mb-6 sm:mb-8">
+                <h4 className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>Follow Me</h4>
-                <div className="flex space-x-4">
+                <div className="flex flex-wrap gap-3 sm:gap-4">
                   {footerLinks.social.map((social, index) => {
                     const IconComponent = social.icon;
                     return (
@@ -149,7 +149,7 @@ const ModernFooterSection = () => {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-3 rounded-xl transition-all duration-300 ${
+                        className={`p-2.5 sm:p-3 rounded-xl transition-all duration-300 ${
                           isDarkMode 
                             ? 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700' 
                             : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -157,7 +157,7 @@ const ModernFooterSection = () => {
                         whileHover={{ scale: 1.1, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                        <IconComponent className="w-5 h-5" />
+                        <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
                       </motion.a>
                     );
                   })}
@@ -167,24 +167,24 @@ const ModernFooterSection = () => {
 
             {/* Quick Links */}
             <motion.div variants={itemVariants}>
-              <h4 className={`font-semibold mb-6 ${
+              <h4 className={`text-base sm:text-lg font-semibold mb-4 sm:mb-6 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Quick Links</h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2 sm:space-y-3">
                 {footerLinks.navigation.map((link, index) => {
                   const IconComponent = link.icon;
                   return (
                     <li key={index}>
                       <motion.button
                         onClick={() => scrollToSection(link.sectionId)}
-                        className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                        className={`flex items-center space-x-2 sm:space-x-3 transition-colors duration-300 group text-sm sm:text-base ${
                           isDarkMode 
                             ? 'text-neutral-300 hover:text-primary-400' 
                             : 'text-gray-600 hover:text-primary-600'
                         }`}
                         whileHover={{ x: 5 }}
                       >
-                        <IconComponent className={`w-4 h-4 ${
+                        <IconComponent className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
                           isDarkMode ? 'group-hover:text-primary-400' : 'group-hover:text-primary-600'
                         }`} />
                         <span>{link.label}</span>
@@ -197,10 +197,10 @@ const ModernFooterSection = () => {
 
             {/* Contact Info */}
             <motion.div variants={itemVariants}>
-              <h4 className={`font-semibold mb-6 ${
+              <h4 className={`text-base sm:text-lg font-semibold mb-4 sm:mb-6 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Get in Touch</h4>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {footerLinks.contact.map((contact, index) => {
                   const IconComponent = contact.icon;
                   return (
@@ -209,23 +209,23 @@ const ModernFooterSection = () => {
                       href={contact.href}
                       target={contact.label === "Location" ? "_blank" : undefined}
                       rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
-                      className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                      className={`flex items-center space-x-2 sm:space-x-3 transition-colors duration-300 group ${
                         isDarkMode 
                           ? 'text-neutral-300 hover:text-primary-400' 
                           : 'text-gray-600 hover:text-primary-600'
                       }`}
                       whileHover={{ x: 5 }}
                     >
-                      <div className={`p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300 ${
+                      <div className={`p-1.5 sm:p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300 ${
                         isDarkMode ? 'bg-neutral-800' : 'bg-gray-200'
                       }`}>
-                        <IconComponent className="w-4 h-4" />
+                        <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </div>
                       <div>
-                        <p className={`text-sm ${
+                        <p className={`text-xs sm:text-sm ${
                           isDarkMode ? 'text-neutral-400' : 'text-gray-500'
                         }`}>{contact.label}</p>
-                        <p className="font-medium">{contact.value}</p>
+                        <p className="font-medium text-sm sm:text-base">{contact.value}</p>
                       </div>
                     </motion.a>
                   );
@@ -233,14 +233,14 @@ const ModernFooterSection = () => {
               </div>
 
               {/* Availability Status */}
-              <div className={`mt-8 p-4 rounded-xl ${
+              <div className={`mt-6 sm:mt-8 p-3 sm:p-4 rounded-xl ${
                 isDarkMode 
                   ? 'bg-green-900/20 border border-green-500/30' 
                   : 'bg-green-100 border border-green-300'
               }`}>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className={`font-semibold text-sm ${
+                  <span className={`font-semibold text-xs sm:text-sm ${
                     isDarkMode ? 'text-green-400' : 'text-green-700'
                   }`}>Available for new projects</span>
                 </div>
@@ -256,23 +256,24 @@ const ModernFooterSection = () => {
 
         {/* Bottom Bar */}
         <motion.div
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
             
             {/* Copyright */}
-            <div className={`flex items-center space-x-2 mb-4 md:mb-0 ${
+            <div className={`flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 text-center sm:text-left ${
               isDarkMode ? 'text-neutral-400' : 'text-gray-600'
             }`}>
-              <span>&copy; {new Date().getFullYear()}</span>
-              <span>Made with</span>
-              {/* <FiHeart className="w-4 h-4 text-red-500 animate-pulse" /> */}
-              <span>by</span>
-              <span className={`font-semibold ${
+              <span className="text-sm">&copy; {new Date().getFullYear()}</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="text-xs sm:text-sm">© 2025 Secure Expense Tracker. All rights reserved.</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="text-xs sm:text-sm">Developed by</span>
+              <span className={`font-semibold text-sm ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Muhammad Ishaque</span>
             </div>

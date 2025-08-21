@@ -6,7 +6,6 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import MyPicture from "../assets/MyPicture/Ishaque.jpg?url";
 import ResumePDF from "../assets/Resume/M.Ishaque.pdf?url";
-import SectionLoader from "./SectionLoader.jsx";
 
 const ModernHome = () => {
   const { isDarkMode } = useTheme();
@@ -85,15 +84,9 @@ const ModernHome = () => {
   };
 
   return (
-    <SectionLoader 
-      loadingTime={2000}
-      loaderVariant="orbit"
-      loadingText="Initializing Portfolio..."
-      sectionName="Home"
-    >
-      <section
-        id="home"
-        className={`relative min-h-screen flex items-center justify-center overflow-hidden ${
+    <section
+      id="home"
+      className={`relative min-h-screen flex items-center justify-center overflow-hidden ${
           isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
         }`}
       >
@@ -273,7 +266,6 @@ const ModernHome = () => {
         </div>
       </div>
     </section>
-    </SectionLoader>
   );
 };
 

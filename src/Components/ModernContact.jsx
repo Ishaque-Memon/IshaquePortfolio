@@ -19,7 +19,6 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import emailjs from "emailjs-com";
-import SectionLoader from "./SectionLoader.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -175,68 +174,62 @@ const ModernContact = () => {
   };
 
   return (
-    <SectionLoader 
-      loadingTime={1500}
-      loaderVariant="orbit"
-      loadingText="Loading Contact..."
-      sectionName="Contact"
+    <section
+      id="contact"
+      ref={sectionRef}
+      className={`py-12 sm:py-16 md:py-20 lg:py-32 ${
+        isDarkMode ? 'bg-neutral-900' : 'bg-white'
+      } transition-colors duration-300 relative overflow-hidden`}
     >
-      <section
-        id="contact"
-        ref={sectionRef}
-        className={`py-20 lg:py-32 ${
-          isDarkMode ? 'bg-neutral-900' : 'bg-white'
-        } transition-colors duration-300 relative overflow-hidden`}
-      >
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/5 to-primary-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-br from-accent-500/5 to-primary-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         
         {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className={`text-4xl lg:text-5xl font-bold mb-6 ${
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 ${
             isDarkMode ? 'text-white' : 'text-neutral-900'
           }`}>
             Let's Start a <span className="gradient-text">Conversation</span>
           </h2>
-          <p className={`text-xl max-w-3xl mx-auto ${
+          <p className={`text-lg sm:text-xl max-w-3xl mx-auto ${
             isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
           }`}>
             Have a project in mind? I'd love to hear from you. Send me a message
             and I'll respond as soon as possible.
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full mt-8"></div>
+          <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full mt-6 sm:mt-8"></div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
           
           {/* Contact Information */}
           <motion.div
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
             <motion.div variants={itemVariants}>
-              <h3 className={`text-2xl lg:text-3xl font-bold mb-8 ${
+              <h3 className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-6 sm:mb-8 ${
                 isDarkMode ? 'text-white' : 'text-neutral-900'
               }`}>
                 Get in Touch
               </h3>
               
               {/* Contact Info Cards */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {contactInfo.map((info, index) => {
                   const IconComponent = info.icon;
                   return (
@@ -245,7 +238,7 @@ const ModernContact = () => {
                       href={info.href}
                       target={info.label === "Location" ? "_blank" : undefined}
                       rel={info.label === "Location" ? "noopener noreferrer" : undefined}
-                      className={`block p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
+                      className={`block p-4 sm:p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
                         isDarkMode 
                           ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' 
                           : 'bg-neutral-50 border-neutral-200 hover:border-neutral-300'
@@ -253,17 +246,17 @@ const ModernContact = () => {
                       whileHover={{ y: -2, scale: 1.02 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="flex items-center space-x-4">
-                        <div className={`p-3 rounded-xl bg-gradient-to-r ${info.color}/20`}>
-                          <IconComponent className={`w-6 h-6 ${isDarkMode ? 'text-white' : 'text-neutral-700'}`} />
+                      <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className={`p-2.5 sm:p-3 rounded-xl bg-gradient-to-r ${info.color}/20`}>
+                          <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 ${isDarkMode ? 'text-white' : 'text-neutral-700'}`} />
                         </div>
                         <div>
-                          <h4 className={`font-semibold ${
+                          <h4 className={`font-semibold text-sm sm:text-base ${
                             isDarkMode ? 'text-white' : 'text-neutral-900'
                           }`}>
                             {info.label}
                           </h4>
-                          <p className={`${
+                          <p className={`text-sm sm:text-base ${
                             isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                           }`}>
                             {info.value}
@@ -278,12 +271,12 @@ const ModernContact = () => {
 
             {/* Social Links */}
             <motion.div variants={itemVariants}>
-              <h4 className={`text-lg font-semibold mb-4 ${
+              <h4 className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
                 isDarkMode ? 'text-white' : 'text-neutral-900'
               }`}>
                 Follow Me
               </h4>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-3 sm:gap-4">
                 {socialLinks.map((social, index) => {
                   const IconComponent = social.icon;
                   return (
@@ -292,7 +285,7 @@ const ModernContact = () => {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-3 rounded-xl border transition-all duration-300 ${
+                      className={`p-2.5 sm:p-3 rounded-xl border transition-all duration-300 ${
                         isDarkMode 
                           ? 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-600' 
                           : 'bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300'
@@ -300,7 +293,7 @@ const ModernContact = () => {
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <IconComponent className="w-5 h-5" />
+                      <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.a>
                   );
                 })}
@@ -310,21 +303,21 @@ const ModernContact = () => {
             {/* Availability Status */}
             <motion.div
               variants={itemVariants}
-              className={`p-6 rounded-2xl border ${
+              className={`p-4 sm:p-6 rounded-2xl border ${
                 isDarkMode 
                   ? 'bg-green-900/20 border-green-700/50' 
                   : 'bg-green-50 border-green-200'
               }`}
             >
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className={`font-semibold ${
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className={`font-semibold text-sm sm:text-base ${
                   isDarkMode ? 'text-green-400' : 'text-green-700'
                 }`}>
                   Available for new projects
                 </span>
               </div>
-              <p className={`mt-2 text-sm ${
+              <p className={`mt-2 text-xs sm:text-sm ${
                 isDarkMode ? 'text-green-300' : 'text-green-600'
               }`}>
                 I'm currently accepting new freelance projects and collaboration opportunities.
@@ -340,27 +333,27 @@ const ModernContact = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <div className={`p-8 rounded-3xl border ${
+            <div className={`p-6 sm:p-8 rounded-3xl border ${
               isDarkMode 
                 ? 'bg-neutral-800 border-neutral-700' 
                 : 'bg-neutral-50 border-neutral-200'
             }`}>
-              <h3 className={`text-2xl font-bold mb-8 ${
+              <h3 className={`text-xl sm:text-2xl font-bold mb-6 sm:mb-8 ${
                 isDarkMode ? 'text-white' : 'text-neutral-900'
               }`}>
                 Send Me a Message
               </h3>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 {/* Name Field */}
                 <div className="form-element">
-                  <label className={`block text-sm font-semibold mb-2 ${
+                  <label className={`block text-xs sm:text-sm font-semibold mb-2 ${
                     isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                   }`}>
                     Your Name
                   </label>
                   <div className="relative">
-                    <FiUser className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                    <FiUser className={`absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 z-10 ${
                       isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
                     }`} />
                     <input
@@ -369,7 +362,7 @@ const ModernContact = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className={`w-full pl-12 pr-4 py-4 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                      className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm sm:text-base rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
                         isDarkMode 
                           ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
                           : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
@@ -381,13 +374,13 @@ const ModernContact = () => {
 
                 {/* Email Field */}
                 <div className="form-element">
-                  <label className={`block text-sm font-semibold mb-2 ${
+                  <label className={`block text-xs sm:text-sm font-semibold mb-2 ${
                     isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                   }`}>
                     Email Address
                   </label>
                   <div className="relative">
-                    <FiMail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                    <FiMail className={`absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 z-10 ${
                       isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
                     }`} />
                     <input
@@ -396,7 +389,7 @@ const ModernContact = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className={`w-full pl-12 pr-4 py-4 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                      className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm sm:text-base rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
                         isDarkMode 
                           ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
                           : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
@@ -408,13 +401,13 @@ const ModernContact = () => {
 
                 {/* Phone Field */}
                 <div className="form-element">
-                  <label className={`block text-sm font-semibold mb-2 ${
+                  <label className={`block text-xs sm:text-sm font-semibold mb-2 ${
                     isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                   }`}>
                     Phone Number
                   </label>
                   <div className="relative">
-                    <FiPhone className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                    <FiPhone className={`absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 z-10 ${
                       isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
                     }`} />
                     <input
@@ -423,7 +416,7 @@ const ModernContact = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       required
-                      className={`w-full pl-12 pr-4 py-4 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                      className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm sm:text-base rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
                         isDarkMode 
                           ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
                           : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
@@ -436,13 +429,13 @@ const ModernContact = () => {
 
                 {/* Message Field */}
                 <div className="form-element">
-                  <label className={`block text-sm font-semibold mb-2 ${
+                  <label className={`block text-xs sm:text-sm font-semibold mb-2 ${
                     isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                   }`}>
                     Message
                   </label>
                   <div className="relative">
-                    <FiMessageCircle className={`absolute left-4 top-4 w-5 h-5 z-10 ${
+                    <FiMessageCircle className={`absolute left-3 sm:left-4 top-3 sm:top-4 w-4 h-4 sm:w-5 sm:h-5 z-10 ${
                       isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
                     }`} />
                     <textarea
@@ -450,8 +443,8 @@ const ModernContact = () => {
                       value={formData.message}
                       onChange={handleInputChange}
                       required
-                      rows={6}
-                      className={`w-full pl-12 pr-4 py-4 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none ${
+                      rows={5}
+                      className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm sm:text-base rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none ${
                         isDarkMode 
                           ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
                           : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
@@ -465,7 +458,7 @@ const ModernContact = () => {
                 <motion.button
                   type="submit"
                   disabled={formStatus === 'sending'}
-                  className={`w-full py-4 px-8 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                  className={`w-full py-3 sm:py-4 px-6 sm:px-8 text-sm sm:text-base rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
                     formStatus === 'sending'
                       ? 'bg-neutral-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 shadow-lg hover:shadow-xl'
@@ -482,7 +475,7 @@ const ModernContact = () => {
                         exit={{ opacity: 0 }}
                         className="flex items-center space-x-2"
                       >
-                        <FiClock className="w-5 h-5 animate-spin" />
+                        <FiClock className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                         <span>Sending...</span>
                       </motion.div>
                     ) : formStatus === 'success' ? (
@@ -493,7 +486,7 @@ const ModernContact = () => {
                         exit={{ opacity: 0 }}
                         className="flex items-center space-x-2"
                       >
-                        <FiCheckCircle className="w-5 h-5" />
+                        <FiCheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>Message Sent!</span>
                       </motion.div>
                     ) : formStatus === 'error' ? (
@@ -504,7 +497,7 @@ const ModernContact = () => {
                         exit={{ opacity: 0 }}
                         className="flex items-center space-x-2"
                       >
-                        <FiX className="w-5 h-5" />
+                        <FiX className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>Failed to Send</span>
                       </motion.div>
                     ) : (
@@ -515,7 +508,7 @@ const ModernContact = () => {
                         exit={{ opacity: 0 }}
                         className="flex items-center space-x-2"
                       >
-                        <FiSend className="w-5 h-5" />
+                        <FiSend className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>Send Message</span>
                       </motion.div>
                     )}
@@ -529,9 +522,9 @@ const ModernContact = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="text-center p-4 bg-green-500/10 border border-green-500/20 rounded-xl"
+                      className="text-center p-3 sm:p-4 bg-green-500/10 border border-green-500/20 rounded-xl"
                     >
-                      <p className="text-green-500 font-medium">
+                      <p className="text-green-500 font-medium text-sm sm:text-base">
                         Thank you for your message! I'll get back to you soon.
                       </p>
                     </motion.div>
@@ -541,9 +534,9 @@ const ModernContact = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="text-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl"
+                      className="text-center p-3 sm:p-4 bg-red-500/10 border border-red-500/20 rounded-xl"
                     >
-                      <p className="text-red-500 font-medium">
+                      <p className="text-red-500 font-medium text-sm sm:text-base">
                         Failed to send message. Please try again or contact me directly.
                       </p>
                     </motion.div>
@@ -555,7 +548,6 @@ const ModernContact = () => {
         </div>
       </div>
     </section>
-    </SectionLoader>
   );
 };
 

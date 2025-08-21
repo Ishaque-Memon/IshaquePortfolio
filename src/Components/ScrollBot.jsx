@@ -63,20 +63,44 @@ const ScrollButton = () => {
   }, [shouldShow]);
 
   const handleMouseEnter = () => {
+    // Only apply hover effects on non-touch devices
+    if (window.matchMedia('(hover: hover)').matches) {
+      gsap.to(buttonRef.current, {
+        scale: 1.05,
+        y: -2,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    // Only apply hover effects on non-touch devices
+    if (window.matchMedia('(hover: hover)').matches) {
+      gsap.to(buttonRef.current, {
+        scale: 1,
+        y: 0,
+        duration: 0.3,
+        ease: "power2.inOut",
+      });
+    }
+  };
+
+  const handleTouchStart = () => {
+    // Touch feedback for mobile devices
     gsap.to(buttonRef.current, {
-      scale: 1.05,
-      y: -2,
-      duration: 0.3,
+      scale: 0.95,
+      duration: 0.1,
       ease: "power2.out",
     });
   };
 
-  const handleMouseLeave = () => {
+  const handleTouchEnd = () => {
+    // Reset after touch
     gsap.to(buttonRef.current, {
       scale: 1,
-      y: 0,
-      duration: 0.3,
-      ease: "power2.inOut",
+      duration: 0.2,
+      ease: "power2.out",
     });
   };
 
@@ -89,13 +113,17 @@ const ScrollButton = () => {
   };
 
   useEffect(() => {
-    gsap.to(orbitRef.current, {
+    const orbitAnimation = gsap.to(orbitRef.current, {
       rotate: 360,
       duration: 10,
       repeat: -1,
       ease: "linear",
       transformOrigin: "center center",
     });
+
+    return () => {
+      orbitAnimation.kill();
+    };
   }, []);
 
   return (
@@ -105,7 +133,9 @@ const ScrollButton = () => {
         onClick={scrollAction}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`fixed bottom-8 right-8 w-16 h-16 rounded-2xl flex justify-center items-center cursor-pointer z-50 transition-all duration-300 backdrop-blur-md border group ${
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 w-12 h-12 sm:w-[3.5rem] sm:h-[3.5rem] md:w-16 md:h-16 rounded-xl sm:rounded-2xl flex justify-center items-center cursor-pointer z-50 transition-all duration-300 backdrop-blur-md border group touch-manipulation ${
           isDarkMode 
             ? 'bg-gradient-to-br from-neutral-800/90 via-neutral-900/90 to-black/90 border-neutral-700/50 hover:border-primary-400/50 shadow-lg shadow-black/25' 
             : 'bg-gradient-to-br from-white/90 via-gray-50/90 to-gray-100/90 border-gray-200/50 hover:border-primary-500/50 shadow-lg shadow-gray-900/10'
@@ -120,7 +150,7 @@ const ScrollButton = () => {
       >
         {/* Animated background glow */}
         <div 
-          className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+          className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
             isDarkMode
               ? 'bg-gradient-to-br from-primary-500/20 to-accent-500/20'
               : 'bg-gradient-to-br from-primary-400/20 to-blue-500/20'
@@ -130,7 +160,7 @@ const ScrollButton = () => {
         {/* Rotating orbital ring */}
         <div
           ref={orbitRef}
-          className={`absolute w-20 h-20 rounded-full border-2 border-dashed pointer-events-none ${
+          className={`absolute w-[3.75rem] h-[3.75rem] sm:w-[4.5rem] sm:h-[4.5rem] md:w-20 md:h-20 rounded-full border-2 border-dashed pointer-events-none ${
             isDarkMode
               ? 'border-primary-400/30'
               : 'border-primary-500/30'
@@ -138,19 +168,19 @@ const ScrollButton = () => {
         />
         
         {/* Inner content with icon */}
-        <div className={`relative z-10 p-3 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+        <div className={`relative z-10 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl transition-all duration-300 group-hover:scale-110 ${
           isDarkMode
             ? 'bg-gradient-to-br from-primary-500/20 to-purple-500/20'
             : 'bg-gradient-to-br from-primary-400/20 to-blue-500/20'
         }`}>
           {isAtBottom ? (
             <svg
-              width="20"
-              height="20"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={`transition-colors duration-300 ${
+              className={`sm:w-[18px] sm:h-[18px] md:w-5 md:h-5 transition-colors duration-300 ${
                 isDarkMode ? 'text-primary-400' : 'text-primary-600'
               }`}
             >
@@ -164,12 +194,12 @@ const ScrollButton = () => {
             </svg>
           ) : (
             <svg
-              width="20"
-              height="20"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={`transition-colors duration-300 ${
+              className={`sm:w-[18px] sm:h-[18px] md:w-5 md:h-5 transition-colors duration-300 ${
                 isDarkMode ? 'text-primary-400' : 'text-primary-600'
               }`}
             >
@@ -185,10 +215,10 @@ const ScrollButton = () => {
         </div>
         
         {/* Corner accent dots */}
-        <div className={`absolute top-2 right-2 w-1 h-1 rounded-full ${
+        <div className={`absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${
           isDarkMode ? 'bg-primary-400/60' : 'bg-primary-500/60'
         }`} />
-        <div className={`absolute bottom-2 left-2 w-1 h-1 rounded-full ${
+        <div className={`absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${
           isDarkMode ? 'bg-accent-400/60' : 'bg-blue-500/60'
         }`} />
       </div>

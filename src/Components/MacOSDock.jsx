@@ -27,7 +27,7 @@ const dimensionsConfig = [
     width: 344,
     height: 882,
     orientation: "vertical",
-    iconSize: 39,
+    iconSize: 42,
     spacing: 8,
     position: { top: 260, right: 20 },
   },
@@ -57,7 +57,7 @@ const dimensionsConfig = [
     width: 414,
     height: 896,
     orientation: "vertical",
-    iconSize: 50,
+    iconSize: 40,
     spacing: 10,
     position: { top: 220, right: 20 },
   },
@@ -77,7 +77,7 @@ const dimensionsConfig = [
     width: 768,
     height: 1024,
     orientation: "vertical",
-    iconSize: 68,
+    iconSize: 58,
     spacing: 14,
     position: { top: 220, right: 24 },
   },
@@ -111,9 +111,9 @@ const dimensionsConfig = [
     minHeight: 600,
     maxHeight: 900,
     orientation: "vertical",
-    iconSize: 50,
+    iconSize: 40,
     spacing: 6,
-    position: { topPercent: 24, rightPercent: 2.5 }
+    position: { top: 240, right: 20}
   },
   {
     name: "Medium phones / small tablets",
@@ -123,12 +123,12 @@ const dimensionsConfig = [
     minHeight: 600,
     maxHeight: 1100,
     orientation: "vertical",
-    iconSize: 55,
+    iconSize: 48,
     spacing: 8,
-    position: { topPercent: 25, rightPercent: 3 }
+    position: { top: 200, right: 22 }
   },
   {
-    name: "vertical Standard tablets",
+    name: "vertical Standard tablets & Large displayes",
     matchType: "range",
     minWidth: 769,
     maxWidth: 1366,

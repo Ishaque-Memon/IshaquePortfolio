@@ -14,7 +14,6 @@ import {
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SectionLoader from "./SectionLoader.jsx";
 
 // Import certificate images
 import Certificate0 from "../assets/Certificates/Certificate0.png?url";
@@ -216,52 +215,46 @@ const ModernCertificates = () => {
   };
 
   return (
-    <SectionLoader 
-      loadingTime={1900}
-      loaderVariant="pulse"
-      loadingText="Loading Certificates..."
-      sectionName="Certificates"
-    >
-      <section
-        id="certificates"
-        ref={sectionRef}
-        className={`py-20 lg:py-32 ${
-          isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
-        } transition-colors duration-300 relative overflow-hidden`}
+    <section
+      id="certificates"
+      ref={sectionRef}
+      className={`py-12 sm:py-16 md:py-20 lg:py-32 ${
+        isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
+      } transition-colors duration-300 relative overflow-hidden`}
       >
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 right-1/4 w-48 sm:w-64 md:w-96 h-48 sm:h-64 md:h-96 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-48 sm:w-64 md:w-96 h-48 sm:h-64 md:h-96 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         
         {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className={`text-4xl lg:text-5xl font-bold mb-6 ${
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 ${
             isDarkMode ? 'text-white' : 'text-neutral-900'
           }`}>
             Professional <span className="gradient-text">Certifications</span>
           </h2>
-          <p className={`text-xl max-w-3xl mx-auto ${
+          <p className={`text-base sm:text-lg md:text-xl max-w-3xl mx-auto ${
             isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
           }`}>
             Continuous learning and professional development through industry-recognized
             certifications and training programs
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full mt-8"></div>
+          <div className="w-16 sm:w-20 md:w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full mt-6 sm:mt-8"></div>
         </motion.div>
 
         {/* Category Filter */}
         <motion.div
-          className="flex flex-wrap justify-center gap-3 mb-12"
+          className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 sm:mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -271,7 +264,7 @@ const ModernCertificates = () => {
             <motion.button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-300 text-sm sm:text-base ${
                 selectedCategory === category
                   ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg'
                   : isDarkMode
@@ -289,7 +282,7 @@ const ModernCertificates = () => {
         {/* Certificates Grid */}
         <motion.div
           ref={certificatesRef}
-          className="grid md:grid-cols-2 xl:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -298,7 +291,7 @@ const ModernCertificates = () => {
           {filteredCertificates.map((certificate) => (
             <motion.div
               key={certificate.id}
-              className={`group cursor-pointer rounded-3xl overflow-hidden border transition-all duration-500 hover:shadow-2xl ${
+              className={`group cursor-pointer rounded-2xl sm:rounded-3xl overflow-hidden border transition-all duration-500 hover:shadow-2xl ${
                 isDarkMode 
                   ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' 
                   : 'bg-white border-neutral-200 hover:border-neutral-300'
@@ -308,7 +301,7 @@ const ModernCertificates = () => {
               onClick={() => openModal(certificate)}
             >
               {/* Certificate Image */}
-              <div className="relative h-48 lg:h-56 overflow-hidden">
+              <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden">
                 <img
                   src={certificate.image}
                   alt={certificate.title}
@@ -319,17 +312,17 @@ const ModernCertificates = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
-                      className="p-4 bg-white/20 backdrop-blur-sm rounded-full text-white"
+                      className="p-3 sm:p-4 bg-white/20 backdrop-blur-sm rounded-full text-white"
                       whileHover={{ scale: 1.1 }}
                     >
-                      <FiEye className="w-6 h-6" />
+                      <FiEye className="w-5 sm:w-6 h-5 sm:h-6" />
                     </motion.div>
                   </div>
                 </div>
 
                 {/* Level Badge */}
-                <div className="absolute top-4 right-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${
                     certificate.level === 'Advanced' 
                       ? 'bg-red-500/20 text-red-400 border border-red-500/30'
                       : certificate.level === 'Professional'
@@ -342,9 +335,9 @@ const ModernCertificates = () => {
               </div>
 
               {/* Certificate Content */}
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 {/* Category */}
-                <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 ${
+                <div className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-medium mb-2 sm:mb-3 ${
                   isDarkMode 
                     ? 'bg-neutral-700 text-neutral-300' 
                     : 'bg-neutral-100 text-neutral-700'
@@ -353,16 +346,16 @@ const ModernCertificates = () => {
                 </div>
 
                 {/* Title & Issuer */}
-                <h3 className={`text-xl font-bold mb-2 ${
+                <h3 className={`text-lg sm:text-xl font-bold mb-2 leading-tight ${
                   isDarkMode ? 'text-white' : 'text-neutral-900'
                 }`}>
                   {certificate.title}
                 </h3>
-                <div className="flex items-center space-x-2 mb-3">
-                  <FiCheckCircle className={`w-4 h-4 ${
+                <div className="flex items-center space-x-2 mb-2 sm:mb-3">
+                  <FiCheckCircle className={`w-3 sm:w-4 h-3 sm:h-4 ${
                     isDarkMode ? 'text-green-400' : 'text-green-600'
                   }`} />
-                  <p className={`font-semibold ${
+                  <p className={`font-semibold text-sm sm:text-base ${
                     isDarkMode ? 'text-primary-400' : 'text-primary-600'
                   }`}>
                     {certificate.issuer}
@@ -370,11 +363,11 @@ const ModernCertificates = () => {
                 </div>
 
                 {/* Date */}
-                <div className="flex items-center space-x-2 mb-4">
-                  <FiCalendar className={`w-4 h-4 ${
+                <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                  <FiCalendar className={`w-3 sm:w-4 h-3 sm:h-4 ${
                     isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
                   }`} />
-                  <span className={`text-sm ${
+                  <span className={`text-xs sm:text-sm ${
                     isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
                   }`}>
                     Completed {certificate.date}
@@ -382,14 +375,14 @@ const ModernCertificates = () => {
                 </div>
 
                 {/* Description */}
-                <p className={`mb-4 text-sm leading-relaxed ${
+                <p className={`mb-3 sm:mb-4 text-xs sm:text-sm leading-relaxed ${
                   isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                 }`}>
                   {certificate.description.slice(0, 100)}...
                 </p>
 
                 {/* Skills */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {certificate.skills.slice(0, 3).map((skill) => (
                     <span
                       key={skill}
@@ -417,13 +410,13 @@ const ModernCertificates = () => {
 
         {/* Stats Section */}
         <motion.div
-          className="mt-20"
+          className="mt-16 sm:mt-20"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {[
               { label: "Certifications Earned", value: "7+", icon: FiAward },
               { label: "Learning Hours", value: "500+", icon: FiCalendar },
@@ -433,7 +426,7 @@ const ModernCertificates = () => {
               return (
                 <motion.div
                   key={index}
-                  className={`text-center p-6 rounded-2xl border ${
+                  className={`text-center p-4 sm:p-6 rounded-xl sm:rounded-2xl border ${
                     isDarkMode 
                       ? 'bg-neutral-800 border-neutral-700' 
                       : 'bg-white border-neutral-200'
@@ -441,19 +434,19 @@ const ModernCertificates = () => {
                   whileHover={{ y: -5 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="flex justify-center mb-4">
-                    <div className="p-3 bg-gradient-to-r from-primary-500/20 to-accent-500/20 rounded-xl">
-                      <IconComponent className={`w-6 h-6 ${
+                  <div className="flex justify-center mb-3 sm:mb-4">
+                    <div className="p-2 sm:p-3 bg-gradient-to-r from-primary-500/20 to-accent-500/20 rounded-lg sm:rounded-xl">
+                      <IconComponent className={`w-5 sm:w-6 h-5 sm:h-6 ${
                         isDarkMode ? 'text-primary-400' : 'text-primary-600'
                       }`} />
                     </div>
                   </div>
-                  <h3 className={`text-3xl font-bold mb-2 ${
+                  <h3 className={`text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 ${
                     isDarkMode ? 'text-white' : 'text-neutral-900'
                   }`}>
                     {stat.value}
                   </h3>
-                  <p className={`${
+                  <p className={`text-sm sm:text-base ${
                     isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                   }`}>
                     {stat.label}
@@ -469,14 +462,14 @@ const ModernCertificates = () => {
       <AnimatePresence>
         {selectedCertificate && (
           <motion.div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeModal}
           >
             <motion.div
-              className={`max-w-4xl w-full rounded-3xl overflow-hidden ${
+              className={`max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-3xl overflow-hidden ${
                 isDarkMode ? 'bg-neutral-800' : 'bg-white'
               }`}
               initial={{ scale: 0.9, opacity: 0 }}
@@ -485,50 +478,52 @@ const ModernCertificates = () => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className={`p-6 border-b ${
+              <div className={`p-4 sm:p-6 border-b ${
                 isDarkMode ? 'border-neutral-700' : 'border-neutral-200'
               }`}>
                 <div className="flex items-center justify-between">
-                  <h3 className={`text-2xl font-bold ${
+                  <h3 className={`text-lg sm:text-xl md:text-2xl font-bold pr-4 ${
                     isDarkMode ? 'text-white' : 'text-neutral-900'
                   }`}>
                     {selectedCertificate.title}
                   </h3>
                   <button
                     onClick={closeModal}
-                    className={`p-2 rounded-full transition-colors ${
+                    className={`p-2 rounded-full transition-colors flex-shrink-0 ${
                       isDarkMode 
                         ? 'hover:bg-neutral-700 text-neutral-400' 
                         : 'hover:bg-neutral-100 text-neutral-600'
                     }`}
                   >
-                    <FiX className="w-6 h-6" />
+                    <FiX className="w-5 sm:w-6 h-5 sm:h-6" />
                   </button>
                 </div>
               </div>
 
               {/* Modal Content */}
-              <div className="p-6">
-                <div className="grid lg:grid-cols-2 gap-8">
+              <div className="p-4 sm:p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                   {/* Certificate Image */}
                   <div>
                     <img
                       src={selectedCertificate.image}
                       alt={selectedCertificate.title}
-                      className="w-full rounded-2xl"
+                      className="w-full rounded-xl sm:rounded-2xl"
                     />
                   </div>
 
                   {/* Certificate Details */}
                   <div>
-                    <div className="flex items-center space-x-2 mb-4">
-                      <FiCheckCircle className="w-5 h-5 text-green-500" />
-                      <span className={`font-semibold ${
-                        isDarkMode ? 'text-primary-400' : 'text-primary-600'
-                      }`}>
-                        {selectedCertificate.issuer}
-                      </span>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    <div className="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <FiCheckCircle className="w-4 sm:w-5 h-4 sm:h-5 text-green-500" />
+                        <span className={`font-semibold text-sm sm:text-base ${
+                          isDarkMode ? 'text-primary-400' : 'text-primary-600'
+                        }`}>
+                          {selectedCertificate.issuer}
+                        </span>
+                      </div>
+                      <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${
                         selectedCertificate.level === 'Advanced' 
                           ? 'bg-red-500/20 text-red-400'
                           : selectedCertificate.level === 'Professional'
@@ -539,23 +534,23 @@ const ModernCertificates = () => {
                       </span>
                     </div>
 
-                    <p className={`mb-6 leading-relaxed ${
+                    <p className={`mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base ${
                       isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                     }`}>
                       {selectedCertificate.description}
                     </p>
 
-                    <div className="mb-6">
-                      <h4 className={`text-sm font-semibold mb-3 ${
+                    <div className="mb-4 sm:mb-6">
+                      <h4 className={`text-sm font-semibold mb-2 sm:mb-3 ${
                         isDarkMode ? 'text-white' : 'text-neutral-900'
                       }`}>
                         Skills Covered:
                       </h4>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
                         {selectedCertificate.skills.map((skill) => (
                           <span
                             key={skill}
-                            className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                            className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium ${
                               isDarkMode 
                                 ? 'bg-neutral-700 text-neutral-300' 
                                 : 'bg-neutral-100 text-neutral-700'
@@ -567,31 +562,31 @@ const ModernCertificates = () => {
                       </div>
                     </div>
 
-                    <div className={`p-4 rounded-2xl border mb-6 ${
+                    <div className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border mb-4 sm:mb-6 ${
                       isDarkMode 
                         ? 'bg-neutral-700 border-neutral-600' 
                         : 'bg-neutral-50 border-neutral-200'
                     }`}>
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
                         <div>
-                          <p className={`text-sm ${
+                          <p className={`text-xs sm:text-sm ${
                             isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
                           }`}>
                             Credential ID
                           </p>
-                          <p className={`font-mono text-sm ${
+                          <p className={`font-mono text-xs sm:text-sm ${
                             isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
                           }`}>
                             {selectedCertificate.credentialId}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className={`text-sm ${
+                        <div className="text-left sm:text-right">
+                          <p className={`text-xs sm:text-sm ${
                             isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
                           }`}>
                             Completed
                           </p>
-                          <p className={`font-semibold ${
+                          <p className={`font-semibold text-sm sm:text-base ${
                             isDarkMode ? 'text-white' : 'text-neutral-900'
                           }`}>
                             {selectedCertificate.date}
@@ -600,12 +595,12 @@ const ModernCertificates = () => {
                       </div>
                     </div>
 
-                    <div className="flex space-x-4">
+                    <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
                       <motion.a
                         href={selectedCertificate.verifyUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`flex-1 flex items-center justify-center space-x-2 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                        className={`flex-1 flex items-center justify-center space-x-2 py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base ${
                           isDarkMode 
                             ? 'bg-neutral-700 text-white hover:bg-neutral-600' 
                             : 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
@@ -613,7 +608,7 @@ const ModernCertificates = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <FiExternalLink className="w-4 h-4" />
+                        <FiExternalLink className="w-3 sm:w-4 h-3 sm:h-4" />
                         <span>Verify</span>
                       </motion.a>
                       <motion.button
@@ -626,11 +621,11 @@ const ModernCertificates = () => {
                           link.click();
                           document.body.removeChild(link);
                         }}
-                        className="flex-1 flex items-center justify-center space-x-2 py-3 px-6 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl font-semibold transition-all duration-300"
+                        className="flex-1 flex items-center justify-center space-x-2 py-2.5 sm:py-3 px-4 sm:px-6 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <FiDownload className="w-4 h-4" />
+                        <FiDownload className="w-3 sm:w-4 h-3 sm:h-4" />
                         <span>Download</span>
                       </motion.button>
                     </div>
@@ -642,7 +637,6 @@ const ModernCertificates = () => {
         )}
       </AnimatePresence>
     </section>
-    </SectionLoader>
   );
 };
 
