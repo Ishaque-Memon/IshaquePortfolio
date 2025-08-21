@@ -221,6 +221,25 @@ const ModernProjects = () => {
     setActivePopupId(null);
   };
 
+  // Broadcast overlay state so global UI (e.g., MacOSDock) can hide while popup is open
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isPopupOpen) {
+        document.body.classList.add('ui-overlay-open');
+      } else {
+        document.body.classList.remove('ui-overlay-open');
+      }
+    }
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('ui:overlay-change', { detail: { open: isPopupOpen } }));
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('ui-overlay-open');
+      }
+    };
+  }, [isPopupOpen]);
+
   const formatTime = (time = 0) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);

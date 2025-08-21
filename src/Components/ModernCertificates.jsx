@@ -162,13 +162,35 @@ const ModernCertificates = () => {
   const openModal = (certificate) => {
     setSelectedCertificate(certificate);
     setCurrentImageIndex(0);
-    document.body.style.overflow = 'hidden';
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('ui-overlay-open');
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ui:overlay-change', { detail: { open: true } }));
+    }
   };
 
   const closeModal = () => {
     setSelectedCertificate(null);
-    document.body.style.overflow = 'unset';
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'unset';
+      document.body.classList.remove('ui-overlay-open');
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ui:overlay-change', { detail: { open: false } }));
+    }
   };
+
+  // Ensure body class/overflow are reset if component unmounts
+  useEffect(() => {
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'unset';
+        document.body.classList.remove('ui-overlay-open');
+      }
+    };
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },

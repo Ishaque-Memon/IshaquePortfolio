@@ -174,108 +174,13 @@ const ModernHeader = () => {
             </nav>
             */}
 
-            {/* Mobile Menu Button - Keep only for mobile */}
-            <motion.button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`lg:hidden absolute right-4 p-2 rounded-lg transition-all duration-300 ${
-                isDarkMode 
-                  ? 'bg-neutral-800 text-white hover:bg-neutral-700' 
-                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <AnimatePresence mode="wait">
-                {isMobileMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <FiX className="w-6 h-6" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <FiMenu className="w-6 h-6" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+            {/* Mobile Menu Button hidden per request */}
+            {/* <motion.button .../> */}
           </div>
         </div>
       </motion.header>
 
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Backdrop */}
-            <div 
-              className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            
-            {/* Menu Panel */}
-            <motion.div
-              className={`absolute top-0 right-0 w-80 h-full ${
-                isDarkMode ? 'bg-neutral-900' : 'bg-white'
-              } shadow-2xl`}
-              variants={mobileMenuVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-            >
-              <div className="p-6 pt-24">
-                <nav className="space-y-4">
-                  {navItems.map((item, index) => (
-                    <Link
-                      key={item.name}
-                      to={item.to}
-                      smooth={true}
-                      duration={800}
-                      offset={-80}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="cursor-pointer block"
-                    >
-                      <motion.div
-                        className={`flex items-center space-x-4 p-4 rounded-xl transition-all duration-300 ${
-                          activeSection === item.to
-                            ? `${isDarkMode ? 'bg-neutral-800 text-white' : 'bg-neutral-100 text-neutral-900'} shadow-lg`
-                            : `${isDarkMode ? 'text-neutral-300 hover:text-white hover:bg-neutral-800' : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'}`
-                        }`}
-                        whileHover={{ x: 10 }}
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ 
-                          opacity: 1, 
-                          x: 0,
-                          transition: { delay: 0.1 * index, duration: 0.3 }
-                        }}
-                      >
-                        <item.icon className="w-5 h-5" />
-                        <span className="font-medium text-lg">{item.name}</span>
-                      </motion.div>
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+  {/* Mobile Menu Overlay hidden per request */}
     </>
   );
 };

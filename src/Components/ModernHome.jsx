@@ -30,25 +30,28 @@ const ModernHome = () => {
       "-=0.8"
     );
 
-    // Floating animation for the image
-    gsap.to(imageRef.current, {
-      y: -20,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: "power2.inOut"
-    });
+        // Floating animation for the image (reduced on small screens)
+        const isMdUp = window.matchMedia('(min-width: 768px)').matches;
+        gsap.to(imageRef.current, {
+          y: isMdUp ? -20 : -10,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: "power2.inOut"
+        });
 
-    // Parallax effect on scroll
+    // Parallax effect on scroll (desktop-only)
+    const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
     const handleScroll = () => {
+      if (!isDesktop) return;
       const scrolled = window.pageYOffset;
-      const rate = scrolled * -0.5;
+      const rate = scrolled * -0.25;
       if (heroRef.current) {
         heroRef.current.style.transform = `translateY(${rate}px)`;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -97,16 +100,16 @@ const ModernHome = () => {
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Gradient Orbs */}
-        <div className="absolute top-1/4 -left-40 w-80 h-80 bg-primary-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float"></div>
-        <div className="absolute top-1/3 -right-40 w-80 h-80 bg-accent-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{animationDelay: '2s'}}></div>
-        <div className="absolute -bottom-32 left-1/3 w-80 h-80 bg-primary-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{animationDelay: '4s'}}></div>
+  <div className="absolute top-1/4 -left-40 w-60 h-60 md:w-80 md:h-80 bg-primary-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 md:opacity-20 animate-float"></div>
+  <div className="absolute top-1/3 -right-40 w-60 h-60 md:w-80 md:h-80 bg-accent-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 md:opacity-20 animate-float" style={{animationDelay: '2s'}}></div>
+  <div className="absolute -bottom-32 left-1/3 w-60 h-60 md:w-80 md:h-80 bg-primary-400 rounded-full mix-blend-multiply filter blur-xl opacity-15 md:opacity-20 animate-float" style={{animationDelay: '4s'}}></div>
         
         {/* Grid Pattern */}
         <div className={`absolute inset-0 bg-grid-pattern opacity-5 ${isDarkMode ? 'text-white' : 'text-black'}`}></div>
       </div>
 
       <div ref={heroRef} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center transform-gpu origin-top scale-[0.7] md:scale-100 mx-auto">
           
           {/* Content */}
           <motion.div
@@ -174,7 +177,7 @@ const ModernHome = () => {
                 className="cursor-pointer"
               >
                 <motion.button
-                  className="group relative px-8 py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -186,7 +189,7 @@ const ModernHome = () => {
               <motion.a
                 href={ResumePDF}
                 download="Ishaque_Memon_Resume.pdf"
-                className="group relative px-8 py-4 border-2 border-primary-500 text-primary-500 rounded-2xl font-semibold text-lg hover:bg-primary-500 hover:text-white transition-all duration-300 flex items-center justify-center space-x-2"
+                className="group relative px-8 py-4 border-2 border-primary-500 text-primary-500 rounded-2xl font-semibold text-lg hover:bg-primary-500 hover:text-white transition-all duration-300 flex items-center justify-center space-x-2 w-full sm:w-auto"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -197,7 +200,7 @@ const ModernHome = () => {
 
             {/* Social Links */}
             <motion.div
-              className="flex justify-center lg:justify-start space-x-6"
+              className="flex justify-center lg:justify-start space-x-5 md:space-x-6 flex-wrap gap-3"
               variants={itemVariants}
             >
               {socialLinks.map((social, index) => (
