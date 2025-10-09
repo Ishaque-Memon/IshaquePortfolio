@@ -371,7 +371,6 @@ const MacOSDock = () => {
       window.addEventListener('orientationchange', handleSafariResize);
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', handleSafariResize);
-        window.visualViewport.addEventListener('scroll', handleSafariResize);
       }
       
       return () => {
@@ -380,7 +379,6 @@ const MacOSDock = () => {
         window.removeEventListener('orientationchange', handleSafariResize);
         if (window.visualViewport) {
           window.visualViewport.removeEventListener('resize', handleSafariResize);
-          window.visualViewport.removeEventListener('scroll', handleSafariResize);
         }
       };
     } else {
@@ -389,7 +387,6 @@ const MacOSDock = () => {
       window.addEventListener('orientationchange', updateScreenConfig);
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', updateScreenConfig);
-        window.visualViewport.addEventListener('scroll', updateScreenConfig);
       }
 
       return () => {
@@ -398,7 +395,6 @@ const MacOSDock = () => {
         window.removeEventListener('orientationchange', updateScreenConfig);
         if (window.visualViewport) {
           window.visualViewport.removeEventListener('resize', updateScreenConfig);
-          window.visualViewport.removeEventListener('scroll', updateScreenConfig);
         }
       };
     }
@@ -819,7 +815,7 @@ const MacOSDock = () => {
         className={`fixed z-40 ${isDarkMode ? 'bg-white/40' : 'bg-black/40'} rounded-full cursor-pointer select-none ${
           isSafari ? 'safari-indicator' : ''
         } ${!isInitialized ? 'opacity-0' : ''}`}
-        style={{
+  style={{
           ...indicatorStyle,
           // Safari-specific fixes
           ...(isSafari && {
@@ -873,7 +869,7 @@ const MacOSDock = () => {
         } ${!isInitialized ? 'opacity-0' : ''} ${
           screenConfig.orientation === "horizontal" ? (isAutoHidden ? 'dock-auto-hide' : 'dock-auto-show') : ''
         }`}
-        style={isSafari ? {
+  style={isSafari ? {
           ...dockStyle,
           transformOrigin: screenConfig.orientation === 'horizontal' ? '50% 100%' : '100% 50%',
           WebkitTransform: dockStyle.transform,
