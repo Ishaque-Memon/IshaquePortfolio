@@ -48,8 +48,8 @@ const ModernProjects = () => {
       featured: true,
       images: [LMS_VIDEO],
       videoUrl: LMS_VIDEO,
-      liveUrl: "https://obe.quest.edu.pk",
-      githubUrl: "https://github.com/Ishaque-Memon/student-centric-lms",
+      // liveUrl: "https://obe.quest.edu.pk",
+      // githubUrl: "https://github.com/Ishaque-Memon/student-centric-lms",
       features: [
         "Student-Centric Design",
         "Course Management",
@@ -69,7 +69,7 @@ const ModernProjects = () => {
       featured: true,
       images: [HOD, Developer1],
       // demo: enable video support here by adding a URL. For demo we use same LMS_VIDEO
-      videoUrl: LMS_VIDEO,
+      // videoUrl: LMS_VIDEO,
       liveUrl: "https://secure-expense-tracker.vercel.app",
       githubUrl: "https://github.com/Ishaque-Memon/secure-expense-tracker",
       features: [
@@ -90,7 +90,7 @@ const ModernProjects = () => {
       status: "Development",
       featured: false,
       images: [Developer2, SpyMode],
-      videoUrl: LMS_VIDEO,
+      // videoUrl: LMS_VIDEO,
       liveUrl: "#",
       githubUrl: "https://github.com/Ishaque-Memon/realtime-chat-application",
       features: [
@@ -341,12 +341,12 @@ const ModernProjects = () => {
                           <span className="text-white text-xs sm:text-sm font-medium">{formatTime(currentTimeMap[1])} / {formatTime(durationMap[1])}</span>
                         </div>
 
-                        <div className="flex space-x-2 sm:space-x-3">
-                          <motion.a href={projects[0].liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors text-xs sm:text-sm" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        {/* <div className="flex space-x-3">
+                          <motion.a href={projects[0].liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors text-sm" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <FiEye className="w-3 h-3" />
                             <span className="hidden sm:inline">Live</span>
                           </motion.a>
-                        </div>
+                        </div> */}
                       </div>
                     </motion.div>
                   </div>

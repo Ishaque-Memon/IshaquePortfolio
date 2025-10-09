@@ -90,8 +90,7 @@ const ModernFYPSection = () => {
         "Achieved secure authentication with protected routes",
         "Deployed production-ready system on Microsoft Azure",
         "Enabled data-driven decision making for educators"
-      ],
-      demoUrl: "https://obe.quest.edu.pk",
+      ],      demoUrl: "https://obe.quest.edu.pk",
       githubUrl: "https://github.com/Ishaque-Memon/student-centric-lms",
       presentationUrl: presentationPDF
     }
@@ -304,7 +303,7 @@ const ModernFYPSection = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+                {/* <div className="flex flex-wrap gap-4">
                   <motion.a
                     href={project.demoUrl}
                     target="_blank"
@@ -346,7 +345,7 @@ const ModernFYPSection = () => {
                     <FiFileText className="w-4 sm:w-5 h-4 sm:h-5" />
                     <span>Presentation</span>
                   </motion.a>
-                </div>
+                </div> */}
               </div>
 
               {/* Project Features/Achievements */}
