@@ -226,6 +226,18 @@ const MacOSDock = () => {
     });
     if (exact) return exact;
 
+    // near-exact matches: handle iOS Safari URL bar height shifts (treat close heights as same device)
+    const nearExact = dimensionsConfig.find(c => {
+      if (c.matchType !== 'exact') return false;
+      const cw = c.width ?? -9999;
+      const ch = c.height ?? -9999;
+      const heightTol = 140; // allow significant variance due to browser chrome
+      const widthMatch = Math.abs(cw - w) <= tol || Math.abs(cw - h) <= tol; // width matches either axis
+      const heightClose = Math.abs(ch - h) <= heightTol || Math.abs(ch - w) <= heightTol;
+      return widthMatch && heightClose;
+    });
+    if (nearExact) return nearExact;
+
     // range matches
     const range = dimensionsConfig.find(c => {
       if (c.matchType !== "range") return false;
@@ -249,8 +261,9 @@ const MacOSDock = () => {
 
   useEffect(() => {
     const updateScreenConfig = () => {
-      const width = Math.round(window.innerWidth);
-      const height = Math.round(window.innerHeight);
+      const vv = typeof window !== 'undefined' ? window.visualViewport : undefined;
+      const width = Math.round((vv?.width ?? window.innerWidth));
+      const height = Math.round((vv?.height ?? window.innerHeight));
       const aspectRatio = width / Math.max(1, height);
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       const deviceConfig = getConfigForDimensions(width, height);
@@ -274,9 +287,15 @@ const MacOSDock = () => {
         if (pos.zIndex) parsedPosition.zIndex = pos.zIndex;
       }
 
-      const baseIconSize = deviceConfig.iconSize ??
+      let baseIconSize = deviceConfig.iconSize ??
         Math.round(Math.max(48, Math.min(72, width * (isTouchDevice ? 0.06 : 0.04))));
-      const spacing = Math.round(deviceConfig.spacing ?? (baseIconSize * 0.12));
+
+      // Clamp icon size on small vertical phones (e.g., iPhone 8) to avoid jumpy oversizing
+      const isSmallVerticalPhone = width <= 414 && height <= 900 && (deviceConfig.orientation === 'vertical' || width < height);
+      if (isSmallVerticalPhone) {
+        baseIconSize = Math.min(baseIconSize, 44); // reduce slightly for better fit
+      }
+  const spacing = Math.round(deviceConfig.spacing ?? (baseIconSize * (isSmallVerticalPhone ? 0.10 : 0.12)));
 
       let orientation = deviceConfig.orientation || (width > height ? "horizontal" : "vertical");
 
@@ -291,7 +310,7 @@ const MacOSDock = () => {
         iconSize: Math.round(baseIconSize),
         spacing,
         position: parsedPosition,
-        indicatorSize: deviceConfig.indicatorSize || { 
+  indicatorSize: deviceConfig.indicatorSize || { 
           width: orientation === "horizontal" ? Math.round(baseIconSize * 0.7) : 4, 
           height: orientation === "horizontal" ? 4 : Math.round(baseIconSize * 0.7) 
         },
@@ -350,21 +369,37 @@ const MacOSDock = () => {
       
       window.addEventListener('resize', handleSafariResize);
       window.addEventListener('orientationchange', handleSafariResize);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handleSafariResize);
+        window.visualViewport.addEventListener('scroll', handleSafariResize);
+      }
       
       return () => {
         safariTimers.forEach(clearTimeout);
         window.removeEventListener('resize', handleSafariResize);
         window.removeEventListener('orientationchange', handleSafariResize);
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', handleSafariResize);
+          window.visualViewport.removeEventListener('scroll', handleSafariResize);
+        }
       };
     } else {
       const t = setTimeout(updateScreenConfig, 40);
       window.addEventListener('resize', updateScreenConfig);
       window.addEventListener('orientationchange', updateScreenConfig);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateScreenConfig);
+        window.visualViewport.addEventListener('scroll', updateScreenConfig);
+      }
 
       return () => {
         clearTimeout(t);
         window.removeEventListener('resize', updateScreenConfig);
         window.removeEventListener('orientationchange', updateScreenConfig);
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', updateScreenConfig);
+          window.visualViewport.removeEventListener('scroll', updateScreenConfig);
+        }
       };
     }
   }, []);
@@ -747,6 +782,26 @@ const MacOSDock = () => {
     } else {
       const pad = Math.round(screenConfig.spacing * 1.2);
       s.padding = `${pad}px ${screenConfig.spacing}px`;
+    }
+    
+    // Ensure vertical dock fits within viewport on small phones (e.g., iPhone 8)
+    if (screenConfig.orientation === 'vertical' && dockDimensions.height) {
+      try {
+        const vh = (typeof window !== 'undefined' && window.visualViewport)
+          ? Math.round(window.visualViewport.height)
+          : (typeof window !== 'undefined' ? Math.round(window.innerHeight) : screenConfig.screenHeight);
+        const margin = 12; // minimal margin from edges
+        // If a fixed top is set, make sure bottom doesn't overflow viewport
+        if (typeof s.top !== 'undefined') {
+          const topPx = typeof s.top === 'string' && s.top.endsWith('px') ? parseFloat(s.top) : Number(s.top) || 0;
+          const maxTop = Math.max(8, vh - dockDimensions.height - margin);
+          if (topPx > maxTop) {
+            s.top = `${maxTop}px`;
+          }
+        }
+      } catch (e) {
+        // no-op: defensive
+      }
     }
     
     console.log('📍 Final dock style being applied:', s);
