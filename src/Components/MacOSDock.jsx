@@ -195,6 +195,7 @@ const MacOSDock = () => {
   const [lastMouseActivity, setLastMouseActivity] = useState(Date.now());
   const autoHideTimerRef = useRef(null);
   const dockRef = useRef(null);
+  const [dockDimensions, setDockDimensions] = useState({ width: 0, height: 0 });
   const [screenConfig, setScreenConfig] = useState({
     isMobile: false,
     isTablet: false,
@@ -368,6 +369,39 @@ const MacOSDock = () => {
     }
   }, []);
 
+  // Measure dock size to compute precise hide offset (for bottom slide like macOS)
+  useEffect(() => {
+    if (!dockRef.current) return;
+    let rafId;
+    const el = dockRef.current;
+
+    const updateSize = () => {
+      // Use rAF to avoid layout thrash during rapid transitions
+      rafId = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        setDockDimensions({ width: Math.round(rect.width), height: Math.round(rect.height) });
+      });
+    };
+
+    updateSize();
+
+    // Prefer ResizeObserver for accuracy during content/scale changes
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(updateSize);
+      ro.observe(el);
+    } else {
+      // Fallback: listen to window resize
+      window.addEventListener('resize', updateSize);
+    }
+
+    return () => {
+      if (ro) ro.disconnect();
+      else window.removeEventListener('resize', updateSize);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
   // Main loader peek logic
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -471,8 +505,9 @@ const MacOSDock = () => {
 
       // Show dock when mouse approaches bottom edge (landscape mode)
       const distanceFromBottom = window.innerHeight - e.clientY;
-      if (distanceFromBottom <= EDGE_DETECTION_ZONE && isAutoHidden) {
+      if (distanceFromBottom <= EDGE_DETECTION_ZONE && (isAutoHidden || !isVisible)) {
         setIsAutoHidden(false);
+        if (!isOverlayOpen) setIsVisible(true);
         resetAutoHideTimer();
       }
     };
@@ -785,11 +820,12 @@ const MacOSDock = () => {
         }`}
         style={isSafari ? {
           ...dockStyle,
+          transformOrigin: screenConfig.orientation === 'horizontal' ? '50% 100%' : '100% 50%',
           WebkitTransform: dockStyle.transform,
           WebkitBackfaceVisibility: 'hidden',
           WebkitPerspective: '1000px',
           willChange: 'transform, opacity'
-        } : dockStyle}
+        } : { ...dockStyle, transformOrigin: screenConfig.orientation === 'horizontal' ? '50% 100%' : '100% 50%' }}
         onMouseEnter={!screenConfig.isMobile ? handleDockMouseEnter : undefined}
         onMouseLeave={!screenConfig.isMobile ? (() => {
           handleDockMouseLeave();
@@ -800,34 +836,35 @@ const MacOSDock = () => {
         onMouseMove={!screenConfig.isMobile ? ((e) => mouseY.set(e.nativeEvent.clientY)) : undefined}
         onTouchStart={screenConfig.isMobile ? (() => setIsHovered(true)) : undefined}
         ref={dockRef}
-        initial={{ opacity: 0, scale: 0.8, x: 100 }}
+        initial={{ opacity: 0, scale: 0.98, y: screenConfig.orientation === 'horizontal' ? 80 : 0 }}
         animate={{
           opacity: (isVisible && isMainLoaderComplete && !isOverlayOpen && isInitialized) ? 1 : 0,
-          scale: (isVisible && isMainLoaderComplete && !isOverlayOpen && isInitialized) ? 1 : 0.8,
-          x: (() => {
-            if (!isVisible || !isMainLoaderComplete || isOverlayOpen || !isInitialized) return 100;
-            
-            // Auto-hide animation for landscape mode
-            if (screenConfig.orientation === "horizontal" && isAutoHidden) {
-              return screenConfig.position?.centered ? 0 : 80; // Slide down for horizontal dock
-            }
-            
-            return 0;
-          })(),
+          scale: (isVisible && isMainLoaderComplete && !isOverlayOpen && isInitialized) ? 1 : 0.98,
+          x: 0,
           y: (() => {
-            if (!isVisible || !isMainLoaderComplete || isOverlayOpen || !isInitialized) return 0;
-            
-            // Auto-hide animation for landscape mode (slide down)
-            if (screenConfig.orientation === "horizontal" && isAutoHidden) {
-              return 60; // Slide down by 60px
+            const hideOffset = Math.min(Math.max(dockDimensions.height + 32, 72), 280); // clamp for safety
+            // If not ready or overlay, keep dock hidden below
+            if (!isMainLoaderComplete || isOverlayOpen || !isInitialized) {
+              return screenConfig.orientation === 'horizontal' ? hideOffset : 0;
             }
-            
-            return 0;
+
+            if (screenConfig.orientation === 'horizontal') {
+              // Auto-hide: slide fully below viewport; visible: y=0
+              if (!isVisible || isAutoHidden) return hideOffset;
+              return 0;
+            }
+            return 0; // vertical orientation unchanged
           })()
         }}
-        transition={{
+        transition={screenConfig.orientation === 'horizontal' ? {
+          type: 'spring',
+          stiffness: 520,
+          damping: 36,
+          mass: 0.85,
+          delay: (isMainLoaderComplete && isInitialized) ? 0.05 : 0
+        } : {
           duration: isSafari ? 0.6 : 0.5,
-          ease: screenConfig.orientation === "horizontal" && (isAutoHidden || !isAutoHidden) ? "easeInOut" : "easeOut",
+          ease: 'easeOut',
           delay: (isMainLoaderComplete && isInitialized) ? 0.2 : 0
         }}
       >
