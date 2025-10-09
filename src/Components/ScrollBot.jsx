@@ -135,7 +135,7 @@ const ScrollButton = () => {
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 w-12 h-12 sm:w-[3.5rem] sm:h-[3.5rem] md:w-16 md:h-16 rounded-xl sm:rounded-2xl flex justify-center items-center cursor-pointer z-50 transition-all duration-300 backdrop-blur-md border group touch-manipulation ${
+  className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 md:bottom-8 md:left-8 w-12 h-12 sm:w-[3.5rem] sm:h-[3.5rem] md:w-16 md:h-16 rounded-xl sm:rounded-2xl flex justify-center items-center cursor-pointer z-50 transition-all duration-300 backdrop-blur-md border group touch-manipulation ${
           isDarkMode 
             ? 'bg-gradient-to-br from-neutral-800/90 via-neutral-900/90 to-black/90 border-neutral-700/50 hover:border-primary-400/50 shadow-lg shadow-black/25' 
             : 'bg-gradient-to-br from-white/90 via-gray-50/90 to-gray-100/90 border-gray-200/50 hover:border-primary-500/50 shadow-lg shadow-gray-900/10'
@@ -214,11 +214,11 @@ const ScrollButton = () => {
           )}
         </div>
         
-        {/* Corner accent dots */}
-        <div className={`absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${
+  {/* Corner accent dots */}
+  <div className={`absolute top-1.5 left-1.5 sm:top-2 sm:left-2 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${
           isDarkMode ? 'bg-primary-400/60' : 'bg-primary-500/60'
         }`} />
-        <div className={`absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${
+  <div className={`absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${
           isDarkMode ? 'bg-accent-400/60' : 'bg-blue-500/60'
         }`} />
       </div>
