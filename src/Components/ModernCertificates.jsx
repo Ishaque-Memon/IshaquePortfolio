@@ -13,7 +13,6 @@ import {
 } from "react-icons/fi";
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Import certificate images
 import Certificate0 from "../assets/Certificates/Certificate0.png?url";
@@ -24,7 +23,7 @@ import Certificate4 from "../assets/Certificates/Certificate4.png?url";
 import Certificate5 from "../assets/Certificates/Certificate5.png?url";
 import Certificate6 from "../assets/Certificates/Certificate6.png?url";
 
-gsap.registerPlugin(ScrollTrigger);
+// We avoid ScrollTrigger here to prevent overlapping with Framer Motion's whileInView
 
 const ModernCertificates = () => {
   const { isDarkMode } = useTheme();
@@ -32,30 +31,9 @@ const ModernCertificates = () => {
   const certificatesRef = useRef(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const isModalOpen = !!selectedCertificate;
 
-  useEffect(() => {
-    const certificateCards = certificatesRef.current?.children;
-    
-    if (certificateCards) {
-      gsap.fromTo(
-        certificateCards,
-        { y: 80, opacity: 0, rotateY: 15 },
-        {
-          y: 0,
-          opacity: 1,
-          rotateY: 0,
-          duration: 1,
-          stagger: 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: certificatesRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
-  }, []);
+  // Framer Motion handles item reveal; remove GSAP-based reveal to avoid double animate
 
   const certificates = [
     {
@@ -221,6 +199,7 @@ const ModernCertificates = () => {
       className={`py-12 sm:py-16 md:py-20 lg:py-32 ${
         isDarkMode ? 'bg-neutral-900' : 'bg-neutral-50'
       } transition-colors duration-300 relative overflow-hidden`}
+      style={{ contentVisibility: isModalOpen ? 'visible' : 'auto', containIntrinsicSize: '1px 1200px' }}
       >
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -306,6 +285,8 @@ const ModernCertificates = () => {
                   src={certificate.image}
                   alt={certificate.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
                 />
                 
                 {/* Overlay */}
@@ -459,23 +440,25 @@ const ModernCertificates = () => {
       </div>
 
       {/* Certificate Modal */}
-      <AnimatePresence>
+  <AnimatePresence>
         {selectedCertificate && (
           <motion.div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4"
+    className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeModal}
+            style={{ willChange: 'opacity' }}
           >
             <motion.div
-              className={`max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-3xl overflow-hidden ${
+      className={`transform-gpu max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-3xl overflow-hidden ${
                 isDarkMode ? 'bg-neutral-800' : 'bg-white'
               }`}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0, y: 0 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 0 }}
               onClick={(e) => e.stopPropagation()}
+              style={{ willChange: 'transform, opacity' }}
             >
               {/* Modal Header */}
               <div className={`p-4 sm:p-6 border-b ${
@@ -508,7 +491,10 @@ const ModernCertificates = () => {
                     <img
                       src={selectedCertificate.image}
                       alt={selectedCertificate.title}
-                      className="w-full rounded-xl sm:rounded-2xl"
+                      className="w-full max-h-[70vh] object-contain rounded-xl sm:rounded-2xl"
+                      loading="eager"
+                      decoding="sync"
+                      fetchpriority="high"
                     />
                   </div>
 

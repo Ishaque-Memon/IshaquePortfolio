@@ -16,40 +16,15 @@ import {
   FiFileText
 } from "react-icons/fi";
 import { useTheme } from "../contexts/ThemeContext.jsx";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+// Removed GSAP ScrollTrigger to avoid overlapping with Framer Motion
 import presentationPDF from "../assets/Presentation/FYP(1) OBE 21SW49,43,28.pdf";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ModernFYPSection = () => {
   const { isDarkMode } = useTheme();
   const sectionRef = useRef(null);
   const fypsRef = useRef(null);
 
-  useEffect(() => {
-    const fypCards = fypsRef.current?.children;
-    
-    if (fypCards) {
-      gsap.fromTo(
-        fypCards,
-        { y: 100, opacity: 0, rotateX: 20 },
-        {
-          y: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 1.2,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: fypsRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
-  }, []);
+  // Framer Motion handles reveals; no GSAP card animation here
 
   const fypProjects = [
     {

@@ -2,15 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiEye, FiGithub, FiStar, FiPlay, FiPause, FiVolume2, FiVolumeX, FiMaximize2, FiX, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTheme } from "../contexts/ThemeContext.jsx";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LMS_VIDEO from "../assets/PROJECT-TUT_VIDEOS/FYP_LMS_PROJECT/LMS_VIDEO.mov?url"; // Demo video
-import HOD from "../assets/ImageGallery/4.png?url";
-import Developer1 from "../assets/ImageGallery/5.jpeg?url";
-import Developer2 from "../assets/ImageGallery/6.jpeg?url";
-import SpyMode from "../assets/ImageGallery/7.png?url";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ModernProjects = () => {
   const { isDarkMode } = useTheme();
@@ -19,11 +11,15 @@ const ModernProjects = () => {
 
   // Refs & state for multiple videos
   const videoRefs = useRef({}); // will hold DOM <video> elements by project id
+  const videoSourceSet = useRef({}); // to ensure we only set sources once when in-view
   const popupVideoRef = useRef(null);
 
   const [playingId, setPlayingId] = useState(null); // which main video is playing
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [activePopupId, setActivePopupId] = useState(null);
+  const [popupSource, setPopupSource] = useState("");
+  const [popupTime, setPopupTime] = useState(0);
+  const [popupMuted, setPopupMuted] = useState(false);
 
   const [currentTimeMap, setCurrentTimeMap] = useState({});
   const [durationMap, setDurationMap] = useState({});
@@ -67,7 +63,7 @@ const ModernProjects = () => {
       category: "Full Stack",
       status: "Live",
       featured: true,
-      images: [HOD, Developer1],
+      images: [null],
       // demo: enable video support here by adding a URL. For demo we use same LMS_VIDEO
       // videoUrl: LMS_VIDEO,
       liveUrl: "https://secure-expense-tracker.vercel.app",
@@ -89,7 +85,7 @@ const ModernProjects = () => {
       category: "Real-Time",
       status: "Development",
       featured: false,
-      images: [Developer2, SpyMode],
+      images: [null],
       // videoUrl: LMS_VIDEO,
       liveUrl: "#",
       githubUrl: "https://github.com/Ishaque-Memon/realtime-chat-application",
@@ -103,27 +99,48 @@ const ModernProjects = () => {
     }
   ];
 
+  // Note: We rely on Framer Motion's whileInView animations on cards.
+
+  // Lazy-load videos when their wrapper enters viewport
   useEffect(() => {
-    const projectCards = projectsRef.current?.children;
-    if (projectCards) {
-      gsap.fromTo(
-        projectCards,
-        { y: 100, opacity: 0, rotateX: 15 },
-        {
-          y: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 1,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: projectsRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
+    if (!projectsRef.current) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const target = entry.target;
+        const vidId = Number(target.getAttribute('data-proj-id'));
+        if (!vidId) return;
+        if (entry.isIntersecting && !videoSourceSet.current[vidId]) {
+          const el = videoRefs.current[vidId];
+          if (el) {
+            // Set sources dynamically only once
+            while (el.firstChild) el.removeChild(el.firstChild);
+            const p = projects.find(p => p.id === vidId);
+            if (p?.videoUrl) {
+              const s1 = document.createElement('source');
+              s1.src = p.videoUrl;
+              s1.type = 'video/mp4';
+              el.appendChild(s1);
+              // Safari/QuickTime fallback
+              const s2 = document.createElement('source');
+              s2.src = p.videoUrl;
+              s2.type = 'video/quicktime';
+              el.appendChild(s2);
+              videoSourceSet.current[vidId] = true;
+              // Load metadata only now
+              el.load();
+            }
           }
+        } else if (!entry.isIntersecting) {
+          // Pause when out of view to save CPU/GPU
+          const el = videoRefs.current[vidId];
+          try { el && el.pause && el.pause(); } catch {}
         }
-      );
-    }
+      });
+    }, { rootMargin: '200px 0px' });
+
+    const wrappers = document.querySelectorAll('[data-proj-id]');
+    wrappers.forEach((w) => io.observe(w));
+    return () => io.disconnect();
   }, []);
 
   // Helpers to safely read DOM video element
@@ -186,22 +203,15 @@ const ModernProjects = () => {
   const openPopup = (id) => {
     const el = getVideoEl(id);
     if (!el) return;
-    // pause main video
-    el.pause();
+    try { el.pause(); } catch {}
+    const src = el.currentSrc || el.querySelector('source')?.src || el.src || "";
+    const t = el.currentTime || 0;
+    const m = !!el.muted;
+    setPopupSource(src);
+    setPopupTime(t);
+    setPopupMuted(m);
     setActivePopupId(id);
     setIsPopupOpen(true);
-
-    // small timeout to ensure popupVideoRef is mounted
-    setTimeout(() => {
-      if (popupVideoRef.current) {
-        popupVideoRef.current.src = el.currentSrc || el.querySelector('source')?.src || el.src;
-        popupVideoRef.current.currentTime = el.currentTime || 0;
-        popupVideoRef.current.muted = el.muted || false;
-        if (playingId === id && !popupVideoRef.current.paused) {
-          popupVideoRef.current.play();
-        }
-      }
-    }, 80);
   };
 
   const closePopup = () => {
@@ -218,6 +228,8 @@ const ModernProjects = () => {
     }
     setIsPopupOpen(false);
     setActivePopupId(null);
+  setPopupSource("");
+  setPopupTime(0);
   };
 
   // Broadcast overlay state so global UI (e.g., MacOSDock) can hide while popup is open
@@ -275,10 +287,11 @@ const ModernProjects = () => {
   };
 
   return (
-    <section
+  <section
       id="projects"
         ref={sectionRef}
-        className={`py-12 sm:py-16 md:py-20 lg:py-32 ${isDarkMode ? 'bg-neutral-900' : 'bg-white'} transition-colors duration-300`}
+    className={`py-12 sm:py-16 md:py-20 lg:py-32 ${isDarkMode ? 'bg-neutral-900' : 'bg-white'} transition-colors duration-300`}
+    style={{ contentVisibility: isPopupOpen ? 'visible' : 'auto', containIntrinsicSize: '1px 1200px' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div className="text-center mb-12 sm:mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
@@ -297,22 +310,21 @@ const ModernProjects = () => {
               <div className="relative overflow-hidden rounded-t-2xl sm:rounded-t-3xl bg-black" onMouseEnter={() => setShowControlsMap((p) => ({ ...p, [1]: true }))} onMouseLeave={() => setShowControlsMap((p) => ({ ...p, [1]: false }))}>
                 {projects[0].videoUrl ? (
                   <div className="relative">
-                    {/* dynamic aspect ratio wrapper */}
-                    <div className="w-full relative" style={{ paddingTop: `${aspectMap[1] ?? 56.25}%` }}>
+          {/* dynamic aspect ratio wrapper */}
+          <div className="w-full relative" style={{ paddingTop: `${aspectMap[1] ?? 56.25}%` }} data-proj-id="1">
                       <video
                         ref={(el) => (videoRefs.current[1] = el)}
                         className="absolute inset-0 w-full h-full object-contain"
-                        loop
-                        playsInline
-                        preload="auto"
+            loop
+            playsInline
+            preload="metadata"
                         onTimeUpdate={() => handleTimeUpdate(1)}
                         onLoadedMetadata={(e) => handleLoadedMetadata(1, e)}
                         onPlay={() => setPlayingId(1)}
                         onPause={() => setPlayingId((p) => (p === 1 ? null : p))}
                       >
-                        <source src={projects[0].videoUrl} type="video/quicktime" />
-                        <source src={projects[0].videoUrl} type="video/mp4" />
-                        Your browser does not support the video tag.
+            {/* sources are injected lazily when in-view */}
+            Your browser does not support the video tag.
                       </video>
                     </div>
 
@@ -351,7 +363,7 @@ const ModernProjects = () => {
                     </motion.div>
                   </div>
                 ) : (
-                  <img src={projects[0].images[0]} alt={projects[0].title} className="w-full h-48 sm:h-64 lg:h-96 object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <img src={projects[0].images[0]} alt={projects[0].title} className="w-full h-48 sm:h-64 lg:h-96 object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" decoding="async" />
                 )}
 
                 <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
@@ -393,20 +405,20 @@ const ModernProjects = () => {
             <motion.div className={`col-span-1 sm:col-span-1 lg:col-span-2 group relative rounded-2xl sm:rounded-3xl overflow-hidden border transition-all duration-500 hover:shadow-2xl ${isDarkMode ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' : 'bg-white border-neutral-200 hover:border-neutral-300'}`} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} whileHover={{ y: -10 }}>
               <div className="relative" onMouseEnter={() => setShowControlsMap((p) => ({ ...p, [2]: true }))} onMouseLeave={() => setShowControlsMap((p) => ({ ...p, [2]: false }))}>
                 {projects[1].videoUrl ? (
-                  <div style={{ paddingTop: `${aspectMap[2] ?? 56.25}%` }} className="w-full relative">
+          <div style={{ paddingTop: `${aspectMap[2] ?? 56.25}%` }} className="w-full relative" data-proj-id="2">
                     <video
                       ref={(el) => (videoRefs.current[2] = el)}
                       className="absolute inset-0 w-full h-full object-cover"
-                      loop
-                      playsInline
-                      preload="auto"
+            loop
+            playsInline
+            preload="metadata"
                       onTimeUpdate={() => handleTimeUpdate(2)}
                       onLoadedMetadata={(e) => handleLoadedMetadata(2, e)}
                       onPlay={() => setPlayingId(2)}
                       onPause={() => setPlayingId((p) => (p === 2 ? null : p))}
                     >
-                      <source src={projects[1].videoUrl} type="video/mp4" />
-                      Your browser does not support the video tag.
+            {/* sources are injected lazily when in-view */}
+            Your browser does not support the video tag.
                     </video>
 
                     {/* Overlay controls */}
@@ -430,7 +442,7 @@ const ModernProjects = () => {
                     </div>
                   </div>
                 ) : (
-                  <img src={projects[1].images[0]} alt={projects[1].title} className="w-full h-40 sm:h-48 lg:h-64 object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <img src={projects[1].images[0]} alt={projects[1].title} className="w-full h-40 sm:h-48 lg:h-64 object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" decoding="async" />
                 )}
               </div>
 
@@ -452,20 +464,20 @@ const ModernProjects = () => {
             <motion.div className={`col-span-1 sm:col-span-1 lg:col-span-2 group relative rounded-2xl sm:rounded-3xl overflow-hidden border transition-all duration-500 hover:shadow-2xl ${isDarkMode ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' : 'bg-white border-neutral-200 hover:border-neutral-300'}`} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} viewport={{ once: true }} whileHover={{ y: -10 }}>
               <div className="relative" onMouseEnter={() => setShowControlsMap((p) => ({ ...p, [3]: true }))} onMouseLeave={() => setShowControlsMap((p) => ({ ...p, [3]: false }))}>
                 {projects[2].videoUrl ? (
-                  <div style={{ paddingTop: `${aspectMap[3] ?? 56.25}%` }} className="w-full relative">
+          <div style={{ paddingTop: `${aspectMap[3] ?? 56.25}%` }} className="w-full relative" data-proj-id="3">
                     <video
                       ref={(el) => (videoRefs.current[3] = el)}
                       className="absolute inset-0 w-full h-full object-cover"
-                      loop
-                      playsInline
-                      preload="auto"
+            loop
+            playsInline
+            preload="metadata"
                       onTimeUpdate={() => handleTimeUpdate(3)}
                       onLoadedMetadata={(e) => handleLoadedMetadata(3, e)}
                       onPlay={() => setPlayingId(3)}
                       onPause={() => setPlayingId((p) => (p === 3 ? null : p))}
                     >
-                      <source src={projects[2].videoUrl} type="video/mp4" />
-                      Your browser does not support the video tag.
+            {/* sources are injected lazily when in-view */}
+            Your browser does not support the video tag.
                     </video>
 
                     <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent ${showControlsMap[3] ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}> 
@@ -488,7 +500,7 @@ const ModernProjects = () => {
                     </div>
                   </div>
                 ) : (
-                  <img src={projects[2].images[0]} alt={projects[2].title} className="w-full h-40 sm:h-48 lg:h-64 object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <img src={projects[2].images[0]} alt={projects[2].title} className="w-full h-40 sm:h-48 lg:h-64 object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" decoding="async" />
                 )}
               </div>
 
@@ -517,16 +529,33 @@ const ModernProjects = () => {
         {/* Popup modal for any active video */}
         <AnimatePresence>
           {isPopupOpen && activePopupId && (
-            <motion.div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+            <motion.div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} style={{ willChange: 'opacity' }}>
               <motion.div className="absolute inset-0 bg-black/80 backdrop-blur-md" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closePopup} />
 
-              <motion.div className={`relative w-full max-w-6xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ${isDarkMode ? 'bg-neutral-900/90 border-neutral-700' : 'bg-white/90 border-neutral-200'} border backdrop-blur-xl`} initial={{ scale: 0.8, opacity: 0, y: 100 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.8, opacity: 0, y: 100 }} transition={{ duration: 0.4, ease: "easeOut" }}>
+              <motion.div className={`transform-gpu relative w-full max-w-6xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ${isDarkMode ? 'bg-neutral-900/90 border-neutral-700' : 'bg-white/90 border-neutral-200'} border backdrop-blur-xl`} initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.96, opacity: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }} style={{ willChange: 'transform, opacity' }}>
                 <motion.button onClick={closePopup} className="absolute top-3 sm:top-4 right-3 sm:right-4 z-10 p-1.5 sm:p-2 bg-black/20 backdrop-blur-sm rounded-full text-white hover:bg-black/40 transition-colors" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                   <FiX className="w-5 sm:w-6 h-5 sm:h-6" />
                 </motion.button>
 
                 <div className="relative bg-black">
-                  <video ref={popupVideoRef} className="w-full max-h-[70vh] sm:max-h-[80vh] object-contain" controls />
+                  <video
+                    key={activePopupId}
+                    ref={popupVideoRef}
+                    className="w-full max-h-[70vh] sm:max-h-[80vh] object-contain"
+                    src={popupSource}
+                    preload="metadata"
+                    playsInline
+                    muted={popupMuted}
+                    controls
+                    onLoadedMetadata={() => {
+                      try {
+                        if (popupVideoRef.current) {
+                          if (popupTime) popupVideoRef.current.currentTime = popupTime;
+                          if (playingId === activePopupId) popupVideoRef.current.play();
+                        }
+                      } catch {}
+                    }}
+                  />
 
                   <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 text-white text-sm text-right pr-4 sm:pr-6">
                     <h3 className="text-white font-bold text-base sm:text-lg">{projects.find(p => p.id === activePopupId)?.title}</h3>

@@ -121,12 +121,13 @@ const ModernAbout = () => {
   ];
 
   return (
-    <section
+  <section
         id="about"
         ref={sectionRef}
         className={`py-12 sm:py-16 md:py-20 lg:py-32 transition-colors duration-300 ${
           isDarkMode ? "bg-neutral-900" : "bg-white"
-        }`}
+    }`}
+    style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 900px' }}
       >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -172,6 +173,7 @@ const ModernAbout = () => {
                   alt="Muhammad Ishaque"
                   className="w-full h-64 sm:h-80 md:h-96 object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
 
                 {/* Overlay gradient */}

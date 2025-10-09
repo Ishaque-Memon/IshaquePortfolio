@@ -12,10 +12,7 @@ import {
 } from "react-icons/fi";
 import { FaLinkedin } from "react-icons/fa";
 import { useTheme } from "../contexts/ThemeContext.jsx";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+// Removed GSAP ScrollTrigger to avoid overlapping with Framer Motion
 
 const ModernCounterSection = () => {
   const { isDarkMode } = useTheme();
@@ -127,29 +124,7 @@ const ModernCounterSection = () => {
     return [count, ref];
   };
 
-  useEffect(() => {
-    const counterCards = countersRef.current?.children;
-    
-    if (counterCards) {
-      gsap.fromTo(
-        counterCards,
-        { y: 60, opacity: 0, scale: 0.8 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: countersRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
-  }, []);
+  // Framer Motion handles reveal; no GSAP card animation here
 
   const containerVariants = {
     hidden: { opacity: 0 },

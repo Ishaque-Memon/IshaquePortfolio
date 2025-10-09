@@ -89,6 +89,7 @@ const ModernHome = () => {
       className={`relative min-h-screen flex items-center justify-center overflow-hidden ${
           isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
         }`}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 900px' }}
       >
       {/* Animated Background */}
       <div className="absolute inset-0">
@@ -241,6 +242,8 @@ const ModernHome = () => {
                     src={MyPicture}
                     alt="Muhammad Ishaque"
                     className="w-full h-full rounded-full object-cover shadow-2xl"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>

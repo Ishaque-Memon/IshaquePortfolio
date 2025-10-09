@@ -10,39 +10,14 @@ import {
   SiMysql, SiFirebase, SiGit, SiDocker, SiGithub, SiFigma
 } from "react-icons/si";
 import { useTheme } from "../contexts/ThemeContext.jsx";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+// Removed GSAP ScrollTrigger to avoid overlapping with Framer Motion
 
 const ModernSkills = () => {
   const { isDarkMode } = useTheme();
   const sectionRef = useRef(null);
   const skillsRef = useRef(null);
 
-  useEffect(() => {
-    const skillCards = skillsRef.current?.children;
-    
-    if (skillCards) {
-      gsap.fromTo(
-        skillCards,
-        { y: 80, opacity: 0, scale: 0.8 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: skillsRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
-  }, []);
+  // Framer Motion handles grid/card reveals; keep a single animation system
 
   const skillCategories = [
     {

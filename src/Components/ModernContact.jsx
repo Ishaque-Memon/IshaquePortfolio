@@ -16,11 +16,8 @@ import {
   FiX
 } from "react-icons/fi";
 import { useTheme } from "../contexts/ThemeContext.jsx";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+// Removed GSAP ScrollTrigger to avoid overlapping with Framer Motion whileInView animations
 import emailjs from "emailjs-com";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ModernContact = () => {
   const { isDarkMode } = useTheme();
@@ -34,28 +31,7 @@ const ModernContact = () => {
   });
   const [formStatus, setFormStatus] = useState('idle'); // idle, sending, success, error
 
-  useEffect(() => {
-    const formElements = formRef.current?.querySelectorAll('.form-element');
-    
-    if (formElements) {
-      gsap.fromTo(
-        formElements,
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: formRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
-  }, []);
+  // Framer Motion handles reveals; no GSAP ScrollTrigger here to prevent duplicate animations
 
   const handleInputChange = (e) => {
     setFormData({
