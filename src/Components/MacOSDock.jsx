@@ -196,6 +196,8 @@ const MacOSDock = () => {
   const autoHideTimerRef = useRef(null);
   const dockRef = useRef(null);
   const [dockDimensions, setDockDimensions] = useState({ width: 0, height: 0 });
+  const isMouseDownRef = useRef(false);
+  const [canInteract, setCanInteract] = useState(false);
   const [screenConfig, setScreenConfig] = useState({
     isMobile: false,
     isTablet: false,
@@ -507,8 +509,9 @@ const MacOSDock = () => {
       return;
     }
 
-    const AUTO_HIDE_DELAY = 3000; // 3 seconds of inactivity
-    const EDGE_DETECTION_ZONE = 100; // pixels from bottom edge to trigger show
+  const AUTO_HIDE_DELAY = 3000; // 3 seconds of inactivity
+  // Require cursor at very bottom to reveal (macOS-like): small zone for desktop, a bit larger for touchpads
+  const EDGE_DETECTION_ZONE = screenConfig.isMobile ? 24 : 6;
 
     const resetAutoHideTimer = () => {
       if (autoHideTimerRef.current) {
@@ -536,7 +539,7 @@ const MacOSDock = () => {
 
       // Show dock when mouse approaches bottom edge (landscape mode)
       const distanceFromBottom = window.innerHeight - e.clientY;
-      if (distanceFromBottom <= EDGE_DETECTION_ZONE && (isAutoHidden || !isVisible)) {
+      if (!isMouseDownRef.current && distanceFromBottom <= EDGE_DETECTION_ZONE && (isAutoHidden || !isVisible)) {
         setIsAutoHidden(false);
         if (!isOverlayOpen) setIsVisible(true);
         resetAutoHideTimer();
@@ -564,6 +567,10 @@ const MacOSDock = () => {
 
     // Add event listeners
     document.addEventListener('mousemove', handleMouseMove, { passive: true });
+  const handleDown = () => { isMouseDownRef.current = true; };
+  const handleUp = () => { isMouseDownRef.current = false; };
+  document.addEventListener('mousedown', handleDown, { passive: true });
+  document.addEventListener('mouseup', handleUp, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('scroll', handleScroll, { passive: true });
@@ -573,11 +580,30 @@ const MacOSDock = () => {
         clearTimeout(autoHideTimerRef.current);
       }
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousedown', handleDown);
+      document.removeEventListener('mouseup', handleUp);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('keydown', handleKeyPress);
       document.removeEventListener('scroll', handleScroll);
     };
   }, [screenConfig.orientation, isMainLoaderComplete, isOverlayOpen, isHovered, lastMouseActivity]);
+
+  // Delay pointer-events briefly after showing to avoid click-through misfires
+  useEffect(() => {
+    if (screenConfig.orientation !== 'horizontal') {
+      setCanInteract(true);
+      return;
+    }
+    let t;
+    const visibleAndActive = isVisible && !isAutoHidden && isMainLoaderComplete && !isOverlayOpen && isInitialized;
+    if (visibleAndActive) {
+      setCanInteract(false);
+      t = setTimeout(() => setCanInteract(true), 180);
+    } else {
+      setCanInteract(false);
+    }
+    return () => t && clearTimeout(t);
+  }, [isVisible, isAutoHidden, isMainLoaderComplete, isOverlayOpen, isInitialized, screenConfig.orientation]);
 
   // Handle dock hover states for auto-hide
   const handleDockMouseEnter = () => {
@@ -875,8 +901,9 @@ const MacOSDock = () => {
           WebkitTransform: dockStyle.transform,
           WebkitBackfaceVisibility: 'hidden',
           WebkitPerspective: '1000px',
-          willChange: 'transform, opacity'
-        } : { ...dockStyle, transformOrigin: screenConfig.orientation === 'horizontal' ? '50% 100%' : '100% 50%' }}
+          willChange: 'transform, opacity',
+          pointerEvents: screenConfig.orientation === 'horizontal' ? (canInteract ? 'auto' : 'none') : 'auto'
+        } : { ...dockStyle, transformOrigin: screenConfig.orientation === 'horizontal' ? '50% 100%' : '100% 50%', pointerEvents: screenConfig.orientation === 'horizontal' ? (canInteract ? 'auto' : 'none') : 'auto' }}
         onMouseEnter={!screenConfig.isMobile ? handleDockMouseEnter : undefined}
         onMouseLeave={!screenConfig.isMobile ? (() => {
           handleDockMouseLeave();
