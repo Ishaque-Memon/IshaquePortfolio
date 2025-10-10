@@ -16,9 +16,9 @@ import {
   FiMessageCircle,
   FiHeart,
 } from "react-icons/fi";
-import { useTheme } from "../contexts/ThemeContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 
-const ModernFooterSection = () => {
+const Footer = () => {
   const { isDarkMode } = useTheme();
 
   const scrollToSection = (sectionId) => {
@@ -270,22 +270,11 @@ const ModernFooterSection = () => {
             }`}>
               <span>&copy; {new Date().getFullYear()}</span>
               <span>Made with</span>
-              {/* <FiHeart className="w-4 h-4 text-red-500 animate-pulse" /> */}
               <span>by</span>
               <span className={`font-semibold ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Muhammad Ishaque</span>
             </div>
-
-            {/* Tech Stack */}
-            {/* <div className="flex items-center space-x-4 text-neutral-400 text-sm">
-              <span>Built with:</span>
-              <div className="flex items-center space-x-2">
-                <span className="px-2 py-1 bg-neutral-800 rounded text-xs">React</span>
-                <span className="px-2 py-1 bg-neutral-800 rounded text-xs">Tailwind</span>
-                <span className="px-2 py-1 bg-neutral-800 rounded text-xs">Framer Motion</span>
-              </div>
-            </div> */}
           </div>
         </motion.div>
       </div>
@@ -293,4 +282,4 @@ const ModernFooterSection = () => {
   );
 };
 
-export default ModernFooterSection;
+export default Footer;

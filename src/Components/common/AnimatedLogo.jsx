@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { useTheme } from "../contexts/ThemeContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 
 const AnimatedLogo = ({ onFinish }) => {
     const { isDarkMode } = useTheme();
@@ -66,7 +66,6 @@ timeline
   .to(iRef.current, { y: 0, scale: 1, duration: 0.6, ease: "bounce.out", force3D: true });
 
       // Typing Effect for Quote (optimized: pre-create spans and stagger opacity/transform)
-      // const quoteText = "Talk is Cheap, Show me Code";
       const quoteText = "Be patient, good things take time...";
       const target = textRef.current;
       // clear and create spans once
@@ -203,5 +202,3 @@ timeline
   };
   
   export default AnimatedLogo;
-  
-  

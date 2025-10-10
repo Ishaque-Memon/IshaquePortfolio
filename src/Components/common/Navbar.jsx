@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMenu, FiX, FiHome, FiUser, FiCode, FiBriefcase, FiMail, FiSun, FiMoon } from "react-icons/fi";
 import { Link } from "react-scroll";
-import { useTheme } from "../contexts/ThemeContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 import AnimatedLogo from "./AnimatedLogo.jsx";
 import gsap from "gsap";
 
-const ModernHeader = () => {
+const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -194,15 +194,6 @@ const ModernHeader = () => {
                     Full Stack Developer
                   </p>
                 </motion.div>
-                {/* Commented out old subtitle */}
-                {/* <div className="hidden sm:block">
-                  <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                    Muhammad Ishaque
-                  </h1>
-                  <p className={`text-base ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                    Full Stack Developer
-                  </p>
-                </div> */}
               </div>
             </Link>
 
@@ -223,61 +214,11 @@ const ModernHeader = () => {
                 }}
               />
             </div>
-
-            {/* Desktop Navigation - Hidden since we're using dock */}
-            {/* 
-            <nav className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item, index) => (
-                <Link
-                  key={item.name}
-                  to={item.to}
-                  smooth={true}
-                  duration={1000}
-                  offset={-80}
-                  spy={true}
-                  onSetActive={() => setActiveSection(item.to)}
-                  className="cursor-pointer"
-                >
-                  <motion.div
-                    className={`relative px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-300 ${
-                      activeSection === item.to
-                        ? `${isDarkMode ? 'bg-neutral-800 text-white' : 'bg-neutral-100 text-neutral-900'} shadow-lg`
-                        : `${isDarkMode ? 'text-neutral-300 hover:text-white hover:bg-neutral-800' : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'}`
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: 0,
-                      transition: { delay: 0.05 * index, duration: 0.4 }
-                    }}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    <span className="font-medium">{item.name}</span>
-                    
-                    {activeSection === item.to && (
-                      <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"
-                        layoutId="activeTab"
-                        initial={false}
-                      />
-                    )}
-                  </motion.div>
-                </Link>
-              ))}
-            </nav>
-            */}
-
-            {/* Mobile Menu Button hidden per request */}
-            {/* <motion.button .../> */}
           </div>
         </div>
       </motion.header>
-
-  {/* Mobile Menu Overlay hidden per request */}
     </>
   );
 };
 
-export default ModernHeader;
+export default Navbar;

@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useTheme } from "../contexts/ThemeContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 
-const ModernLoader = ({ 
+const Loader = ({ 
   size = "default", 
   text = "Loading...", 
   variant = "dots",
@@ -258,4 +258,4 @@ const ModernLoader = ({
   );
 };
 
-export default ModernLoader;
+export default Loader;
