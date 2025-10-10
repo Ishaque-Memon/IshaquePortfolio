@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiMenu, FiX, FiHome, FiUser, FiCode, FiBriefcase, FiMail, FiSun, FiMoon } from "react-icons/fi";
+import { FiMenu, FiX, FiHome, FiUser, FiCode, FiBriefcase, FiMail, FiSun, FiMoon, FiLogIn } from "react-icons/fi";
 import { Link } from "react-scroll";
+import { Link as RouterLink } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
+import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import AnimatedLogo from "./AnimatedLogo.jsx";
 import gsap from "gsap";
 
@@ -11,6 +13,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const { isDarkMode, toggleTheme } = useTheme();
+  const { user } = useAuthContext();
 
   const navItems = [
     { name: "Home", to: "home", icon: FiHome },
@@ -197,23 +200,44 @@ const Navbar = () => {
               </div>
             </Link>
 
-            {/* Right side placeholder for balance */}
-            <div className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center">
-              <motion.div
-                className={`w-2 h-2 rounded-full ${
-                  isDarkMode ? 'bg-blue-400' : 'bg-blue-600'
-                } opacity-60`}
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.6, 1, 0.6]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-            </div>
+            {/* Login/Admin Button - Right side */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
+            >
+              {user ? (
+                <RouterLink to="/admin">
+                  <motion.button
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                      isDarkMode 
+                        ? 'bg-primary-600 hover:bg-primary-700 text-white' 
+                        : 'bg-primary-500 hover:bg-primary-600 text-white'
+                    } shadow-lg backdrop-blur-sm flex items-center gap-2`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FiUser className="w-4 h-4" />
+                    <span className="hidden sm:inline">Admin</span>
+                  </motion.button>
+                </RouterLink>
+              ) : (
+                <RouterLink to="/login">
+                  <motion.button
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                      isDarkMode 
+                        ? 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700' 
+                        : 'bg-white hover:bg-neutral-50 text-neutral-900 border border-neutral-200'
+                    } shadow-lg backdrop-blur-sm flex items-center gap-2`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FiLogIn className="w-4 h-4" />
+                    <span className="hidden sm:inline">Login</span>
+                  </motion.button>
+                </RouterLink>
+              )}
+            </motion.div>
           </div>
         </div>
       </motion.header>

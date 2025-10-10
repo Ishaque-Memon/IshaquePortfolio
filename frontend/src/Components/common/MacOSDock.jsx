@@ -13,7 +13,7 @@ import {
   FiSun,
   FiMoon
 } from "react-icons/fi";
-import { useTheme } from "../contexts/ThemeContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 
 /**
  * HOW TO CONTROL DOCK SIZES AND POSITIONS:

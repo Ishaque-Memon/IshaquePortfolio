@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiMail, FiLock, FiEye, FiEyeOff, FiLogIn } from 'react-icons/fi';
-import useAuth from '../hooks/useAuth';
+import { useAuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import * as authApi from '../api/authApi';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login } = useAuthContext();
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
 
@@ -22,19 +23,23 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await axiosInstance.post('/auth/login', { email, password });
-      // const { token, expiresIn } = response.data;
+      // Call backend API
+      const response = await authApi.login(email, password);
       
-      // Mock login for now
-      if (email === 'admin@example.com' && password === 'password') {
-        const mockToken = 'mock_jwt_token_' + Date.now();
-        login(mockToken);
-        navigate('/admin');
-      } else {
-        setError('Invalid email or password');
-      }
+      // Extract token and user data from response
+      // Backend sends: { success: true, data: { admin: {...}, token: '...', expiresIn: '7d' } }
+      const { token, admin } = response.data;
+      
+      // Calculate token expiry (7 days from now - matching backend)
+      const expiresIn = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+      
+      // Login with AuthContext
+      login(token, admin, expiresIn);
+      
+      // Navigate to admin dashboard
+      navigate('/admin');
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -103,7 +108,7 @@ const Login = () => {
                     ? 'bg-neutral-800 border-neutral-700 text-white focus:border-primary-500' 
                     : 'bg-white border-neutral-300 text-neutral-900 focus:border-primary-500'
                 } focus:outline-none focus:ring-2 focus:ring-primary-500/20`}
-                placeholder="admin@example.com"
+                placeholder="admin@portfolio.com"
               />
             </div>
           </div>

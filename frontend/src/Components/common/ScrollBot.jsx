@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { useTheme } from "../contexts/ThemeContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 
 const ScrollButton = () => {
   const { isDarkMode } = useTheme();

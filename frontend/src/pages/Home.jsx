@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext.jsx';
 import Navbar from '../components/common/Navbar';
 import AnimatedLogo from '../components/common/AnimatedLogo';
-import HomeSection from '../components/sections/HomeSection';
-import AboutSection from '../components/sections/AboutSection';
-import SkillsSection from '../components/sections/SkillsSection';
-import CounterSection from '../components/sections/CounterSection';
-import EducationSection from '../components/sections/EducationSection';
-import CertificatesSection from '../components/sections/CertificatesSection';
-import FYPSection from '../components/sections/FYPSection';
-import ProjectsSection from '../components/sections/ProjectsSection';
-import ContactSection from '../components/sections/ContactSection';
+import HomeSectionNew from '../components/sections/HomeSectionNew';
+import AboutSectionNew from '../components/sections/AboutSectionNew';
+import SkillsSectionNew from '../components/sections/SkillsSectionNew';
+import CounterSectionNew from '../components/sections/CounterSectionNew';
+import EducationSectionNew from '../components/sections/EducationSectionNew';
+import CertificatesSectionNew from '../components/sections/CertificatesSectionNew';
+import FYPSectionNew from '../components/sections/FYPSectionNew';
+import ProjectsSectionNew from '../components/sections/ProjectsSectionNew';
+import ContactSectionNew from '../components/sections/ContactSectionNew';
 import Footer from '../components/common/Footer';
 import ScrollBot from '../components/common/ScrollBot';
 import MacOSDock from '../components/common/MacOSDock';
+import { Toaster } from '@/components/ui/sonner';
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,37 +40,38 @@ const Home = () => {
         }`}>
           <Navbar />
           <div className="carousel-item">
-            <HomeSection />
+            <HomeSectionNew />
           </div>
           <div className="carousel-item">
-            <AboutSection />
+            <AboutSectionNew />
           </div>
           <div className="carousel-item">
-            <SkillsSection />
+            <SkillsSectionNew />
           </div>
           <div className="carousel-item">
-            <CounterSection />
+            <CounterSectionNew />
           </div>
           <div className="carousel-item">
-            <EducationSection />
+            <EducationSectionNew />
           </div>
           <div className="carousel-item">
-            <CertificatesSection />
+            <CertificatesSectionNew />
           </div>
           <div className="carousel-item">
-            <FYPSection />
+            <FYPSectionNew />
           </div>
           <div className="carousel-item">
-            <ProjectsSection />
+            <ProjectsSectionNew />
           </div>
           <div className="carousel-item">
-            <ContactSection />
+            <ContactSectionNew />
           </div>
           <div className="carousel-item">
             <Footer />
           </div>
           <ScrollBot />
           <MacOSDock />
+          <Toaster />
         </div>
       )}
     </>
