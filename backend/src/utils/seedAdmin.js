@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Admin from '../models/Admin.js';
 import connectDB from '../config/db.js';
+import ROLES from '../constant/roles.js';
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ const createDefaultAdmin = async () => {
       name: 'Admin',
       email: 'admin@portfolio.com',
       password: 'admin123',
-      role: 'super-admin',
+      role: ROLES.ADMIN,
       isActive: true
     });
 

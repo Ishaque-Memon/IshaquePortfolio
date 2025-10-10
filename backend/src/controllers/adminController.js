@@ -1,6 +1,7 @@
 import Admin from '../models/Admin.js';
 import generateToken from '../utils/generateToken.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
+import ROLES from '../constant/roles.js';
 
 // @desc    Login admin
 // @route   POST /api/admin/login
@@ -174,7 +175,7 @@ export const createAdmin = async (req, res, next) => {
       name,
       email,
       password,
-      role: role || 'admin'
+      role: role || ROLES.ADMIN
     });
 
     return sendSuccess(res, 'Admin created successfully', {

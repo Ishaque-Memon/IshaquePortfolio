@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import ROLES from '../constant/roles.js';
 
 const adminSchema = new mongoose.Schema(
   {
@@ -24,8 +25,8 @@ const adminSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'super-admin'],
-      default: 'admin'
+      enum: [ROLES.ADMIN],
+      default: ROLES.ADMIN
     },
     isActive: {
       type: Boolean,

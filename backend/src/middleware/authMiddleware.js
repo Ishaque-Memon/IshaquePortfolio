@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { sendError } from '../utils/responseHandler.js';
+import ROLES from '../constant/roles.js';
 
 // Protect routes - verify JWT token
 export const protect = async (req, res, next) => {
@@ -22,7 +23,8 @@ export const protect = async (req, res, next) => {
       // Add user info to request
       req.user = {
         id: decoded.id,
-        email: decoded.email
+        email: decoded.email,
+        role: decoded.role || ROLES.ADMIN
       };
 
       next();
@@ -39,11 +41,18 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// Optional: Admin role check (if you want role-based access)
-export const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    return sendError(res, 'Not authorized as admin', 403);
+// Admin role check - since there's only one role, just verify authenticated
+export const requireAdmin = (req, res, next) => {
+  if (!req.user) {
+    return sendError(res, 'Authentication required', 401);
   }
+  
+  if (req.user.role !== ROLES.ADMIN) {
+    return sendError(res, 'Admin access required', 403);
+  }
+  
+  next();
 };
+
+// Legacy admin check (for backward compatibility)
+export const admin = requireAdmin;

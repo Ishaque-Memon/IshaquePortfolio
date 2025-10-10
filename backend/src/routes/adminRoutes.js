@@ -15,12 +15,12 @@ const router = express.Router();
 // Public routes
 router.post('/login', loginAdmin);
 
-// Protected routes (Admin)
+// Protected routes (Admin only)
 router.get('/profile', protect, getAdminProfile);
 router.put('/profile', protect, updateAdminProfile);
 router.put('/change-password', protect, changePassword);
 
-// Super Admin routes (you can add admin role check middleware later)
+// Admin management (Admin only - all admins have same permissions)
 router.post('/create', protect, createAdmin);
 router.get('/all', protect, getAllAdmins);
 router.delete('/:id', protect, deleteAdmin);
