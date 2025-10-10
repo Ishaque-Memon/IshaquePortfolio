@@ -16,7 +16,7 @@ const iconMap = {
   FiCode, FiAward, FiCpu, FiCheckCircle
 };
 
-const AboutSectionNew = () => {
+const AboutSection = () => {
   const { isDarkMode } = useTheme();
 
   const containerVariants = {
@@ -234,4 +234,4 @@ const AboutSectionNew = () => {
   );
 };
 
-export default AboutSectionNew;
+export default AboutSection;

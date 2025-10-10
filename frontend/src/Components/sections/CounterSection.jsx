@@ -30,7 +30,7 @@ const iconMap = {
   FiHeart
 };
 
-const CounterSectionNew = () => {
+const CounterSection = () => {
   const { isDarkMode } = useTheme();
   const sectionRef = useRef(null);
 
@@ -275,4 +275,4 @@ const CounterSectionNew = () => {
   );
 };
 
-export default CounterSectionNew;
+export default CounterSection;

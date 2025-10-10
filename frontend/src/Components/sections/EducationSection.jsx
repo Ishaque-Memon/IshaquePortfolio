@@ -13,7 +13,7 @@ import {
   FiCheckCircle 
 } from "react-icons/fi";
 
-const EducationSectionNew = () => {
+const EducationSection = () => {
   const { isDarkMode } = useTheme();
 
   const timelineVariants = {
@@ -268,4 +268,4 @@ const EducationSectionNew = () => {
   );
 };
 
-export default EducationSectionNew;
+export default EducationSection;

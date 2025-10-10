@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { FiAward, FiExternalLink, FiCalendar, FiCheckCircle } from "react-icons/fi";
 
-const CertificatesSectionNew = () => {
+const CertificatesSection = () => {
   const { isDarkMode } = useTheme();
   const [selectedCert, setSelectedCert] = useState(null);
   const [imageError, setImageError] = useState({});
@@ -292,4 +292,4 @@ const CertificatesSectionNew = () => {
   );
 };
 
-export default CertificatesSectionNew;
+export default CertificatesSection;

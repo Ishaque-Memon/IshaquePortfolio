@@ -20,7 +20,7 @@ import {
 } from "react-icons/fi";
 import { toast } from "@/components/ui/sonner";
 
-const ContactSectionNew = () => {
+const ContactSection = () => {
   const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     name: "",
@@ -380,4 +380,4 @@ const ContactSectionNew = () => {
   );
 };
 
-export default ContactSectionNew;
+export default ContactSection;

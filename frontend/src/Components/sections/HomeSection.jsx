@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
 
-const HomeSectionNew = () => {
+const HomeSection = () => {
   const { isDarkMode } = useTheme();
 
   return (
@@ -188,4 +188,4 @@ const HomeSectionNew = () => {
   );
 };
 
-export default HomeSectionNew;
+export default HomeSection;

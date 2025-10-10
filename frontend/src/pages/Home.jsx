@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext.jsx';
 import Navbar from '../components/common/Navbar';
 import AnimatedLogo from '../components/common/AnimatedLogo';
-import HomeSectionNew from '../components/sections/HomeSectionNew';
-import AboutSectionNew from '../components/sections/AboutSectionNew';
-import SkillsSectionNew from '../components/sections/SkillsSectionNew';
-import CounterSectionNew from '../components/sections/CounterSectionNew';
-import EducationSectionNew from '../components/sections/EducationSectionNew';
-import CertificatesSectionNew from '../components/sections/CertificatesSectionNew';
-import FYPSectionNew from '../components/sections/FYPSectionNew';
-import ProjectsSectionNew from '../components/sections/ProjectsSectionNew';
-import ContactSectionNew from '../components/sections/ContactSectionNew';
+import HomeSection from '../components/sections/HomeSection';
+import AboutSection from '../components/sections/AboutSection';
+import SkillsSection from '../components/sections/SkillsSection';
+import CounterSection from '../components/sections/CounterSection';
+import EducationSection from '../components/sections/EducationSection';
+import CertificatesSection from '../components/sections/CertificatesSection';
+import FYPSection from '../components/sections/FYPSection';
+import ProjectsSection from '../components/sections/ProjectsSection';
+import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/common/Footer';
 import ScrollBot from '../components/common/ScrollBot';
 import MacOSDock from '../components/common/MacOSDock';
@@ -40,31 +40,31 @@ const Home = () => {
         }`}>
           <Navbar />
           <div className="carousel-item">
-            <HomeSectionNew />
+            <HomeSection />
           </div>
           <div className="carousel-item">
-            <AboutSectionNew />
+            <AboutSection />
           </div>
           <div className="carousel-item">
-            <SkillsSectionNew />
+            <SkillsSection />
           </div>
           <div className="carousel-item">
-            <CounterSectionNew />
+            <CounterSection />
           </div>
           <div className="carousel-item">
-            <EducationSectionNew />
+            <EducationSection />
           </div>
           <div className="carousel-item">
-            <CertificatesSectionNew />
+            <CertificatesSection />
           </div>
           <div className="carousel-item">
-            <FYPSectionNew />
+            <FYPSection />
           </div>
           <div className="carousel-item">
-            <ProjectsSectionNew />
+            <ProjectsSection />
           </div>
           <div className="carousel-item">
-            <ContactSectionNew />
+            <ContactSection />
           </div>
           <div className="carousel-item">
             <Footer />

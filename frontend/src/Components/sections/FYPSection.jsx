@@ -30,7 +30,7 @@ import {
   FiAward
 } from "react-icons/fi";
 
-const FYPSectionNew = () => {
+const FYPSection = () => {
   const { isDarkMode } = useTheme();
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
@@ -354,4 +354,4 @@ const FYPSectionNew = () => {
   );
 };
 
-export default FYPSectionNew;
+export default FYPSection;
