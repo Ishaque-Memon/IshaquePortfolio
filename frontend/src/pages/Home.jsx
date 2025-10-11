@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logVisit } from '../api/portfolioApi';
 import { useTheme } from '../contexts/ThemeContext.jsx';
 import Navbar from '../components/common/Navbar';
 import AnimatedLogo from '../components/common/AnimatedLogo';
@@ -20,11 +21,17 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { isDarkMode } = useTheme();
 
+
+  // Log visit on first load (per session)
   useEffect(() => {
     if (isLoading) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
+      if (!window.__visitLogged) {
+        logVisit();
+        window.__visitLogged = true;
+      }
     }
   }, [isLoading]);
 

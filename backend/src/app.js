@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 // Import routes
+
 import projectRoutes from './routes/projectRoutes.js';
 import skillRoutes from './routes/skillRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
@@ -13,6 +14,7 @@ import aboutRoutes from './routes/aboutRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import educationRoutes from './routes/educationRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 const app = express();
 
@@ -65,6 +67,7 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
+
 app.use('/api/projects', projectRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/certificates', certificateRoutes);
@@ -72,6 +75,7 @@ app.use('/api/about', aboutRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/education', educationRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {

@@ -1,4 +1,4 @@
-import axiosInstance from './axiosConfig';
+import { axiosInstance } from './portfolioApi';
 
 /**
  * Authentication API calls

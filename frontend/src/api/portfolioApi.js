@@ -1,4 +1,43 @@
-import axiosInstance from './axiosConfig';
+// portfolioApi.js
+import axios from 'axios';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+      }
+      console.error('API Error:', error.response.data);
+    } else if (error.request) {
+      console.error('Network Error:', error.request);
+    } else {
+      console.error('Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
 /**
  * Portfolio API - All portfolio-related API calls
@@ -180,6 +219,19 @@ export const uploadFile = async (file, folder = 'general') => {
   return response.data;
 };
 
+
+// ==================== ANALYTICS ====================
+export const fetchAnalyticsSummary = async () => {
+  const res = await axiosInstance.get('/analytics/summary');
+  return res.data;
+};
+
+export const logVisit = async () => {
+  try {
+    await axiosInstance.post('/analytics/visit');
+  } catch {}
+};
+
 export default {
   // Personal Info
   getPersonalInfo,
@@ -229,3 +281,5 @@ export default {
   // File Upload
   uploadFile
 };
+
+export { axiosInstance };

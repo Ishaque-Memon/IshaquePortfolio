@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useProjects, useSkills, useCertificates, useContactMessages, usePersonalInfo } from "../../hooks/usePortfolio";
+import { useEffect, useState } from "react";
+import { fetchAnalyticsSummary } from "../../api/portfolioApi";
 import { motion } from "framer-motion";
 import { 
   FiBriefcase, FiCode, FiAward, FiMessageSquare,
@@ -9,12 +11,9 @@ import {
 } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
 const Dashboard = () => {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
-  
   // Get real-time data
   const { projects, loading: projectsLoading } = useProjects();
   const { skills, loading: skillsLoading } = useSkills();
@@ -22,49 +21,34 @@ const Dashboard = () => {
   const { messages, loading: messagesLoading } = useContactMessages();
   const { personalInfo } = usePersonalInfo();
 
-  // Calculate stats
+  // Visits state
+  const [visits, setVisits] = useState({ totalVisits: 0, uniqueVisitors: 0 });
+
+  useEffect(() => {
+    const fetchVisits = async () => {
+      try {
+        const data = await fetchAnalyticsSummary();
+        setVisits({
+          totalVisits: data.totalVisits || 0,
+          uniqueVisitors: data.uniqueVisitors || 0
+        });
+      } catch {}
+    };
+    fetchVisits();
+  }, []);
+
+  // Calculate stats (overview only)
   const unreadMessages = messages.filter(m => !m.isRead).length;
   const featuredProjects = projects.filter(p => p.featured).length;
   const completedProjects = projects.filter(p => p.status === 'completed').length;
-
+  const expertSkills = skills.filter(s => s.level === 'Expert' || s.level === 'Advanced').length;
+  const certsThisYear = certificates.filter(c => new Date(c.issueDate).getFullYear() === new Date().getFullYear()).length;
   const stats = [
-    { 
-      title: "Total Projects", 
-      value: projects.length.toString(), 
-      change: `${featuredProjects} featured`, 
-      icon: FiBriefcase,
-      color: "from-blue-500 to-cyan-500",
-      trend: "up",
-      loading: projectsLoading
-    },
-    { 
-      title: "Skills", 
-      value: skills.length.toString(), 
-      change: `${skills.filter(s => s.level === 'Expert' || s.level === 'Advanced').length} advanced+`, 
-      icon: FiCode,
-      color: "from-purple-500 to-pink-500",
-      trend: "up",
-      loading: skillsLoading
-    },
-    { 
-      title: "Certificates", 
-      value: certificates.length.toString(), 
-      change: `${certificates.filter(c => new Date(c.issueDate).getFullYear() === new Date().getFullYear()).length} this year`, 
-      icon: FiAward,
-      color: "from-yellow-500 to-orange-500",
-      trend: "stable",
-      loading: certificatesLoading
-    },
-    { 
-      title: "Messages", 
-      value: messages.length.toString(), 
-      change: `${unreadMessages} unread`, 
-      icon: FiMessageSquare,
-      color: "from-pink-500 to-rose-500",
-      trend: unreadMessages > 0 ? "up" : "stable",
-      loading: messagesLoading,
-      highlight: unreadMessages > 0
-    }
+    { title: "Visits", value: visits.totalVisits.toString(), change: `${visits.uniqueVisitors} unique`, icon: FiEye, color: "from-cyan-500 to-blue-500", loading: false },
+    { title: "Total Projects", value: projects.length.toString(), change: `${featuredProjects} featured`, icon: FiBriefcase, color: "from-blue-500 to-cyan-500", loading: projectsLoading },
+    { title: "Skills", value: skills.length.toString(), change: `${expertSkills} advanced+`, icon: FiCode, color: "from-purple-500 to-pink-500", loading: skillsLoading },
+    { title: "Certificates", value: certificates.length.toString(), change: `${certsThisYear} this year`, icon: FiAward, color: "from-yellow-500 to-orange-500", loading: certificatesLoading },
+    { title: "Messages", value: messages.length.toString(), change: `${unreadMessages} unread`, icon: FiMessageSquare, color: "from-pink-500 to-rose-500", loading: messagesLoading, highlight: unreadMessages > 0 }
   ];
 
   // Recent activity - combine all recent items
@@ -125,9 +109,10 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className={`${
-                isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'
-              } ${stat.highlight ? 'ring-2 ring-red-500' : ''} hover:shadow-xl transition-all`}>
+              <Card className={`$
+                {isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}
+                ${stat.highlight ? 'ring-2 ring-red-500' : ''} hover:shadow-xl transition-all`}
+              >
                 <CardContent className="p-6">
                   {stat.loading ? (
                     <div className="animate-pulse">
@@ -138,13 +123,8 @@ const Dashboard = () => {
                   ) : (
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-sm text-neutral-500 mb-1">{stat.title}</p>
-                        <h3 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>
-                          {stat.value}
-                        </h3>
-                        <p className={`text-sm ${stat.highlight ? 'text-red-500 font-medium' : 'text-neutral-500'}`}>
-                          {stat.change}
-                        </p>
+                        <h3 className={`text-2xl font-bold ${stat.highlight ? 'text-red-500' : isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{stat.value}</h3>
+                        <p className={`text-sm ${stat.highlight ? 'text-red-500 font-medium' : 'text-neutral-500'}`}>{stat.change}</p>
                       </div>
                       <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color}`}>
                         <Icon className="w-6 h-6 text-white" />
@@ -226,73 +206,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Portfolio Overview & Completion */}
-      <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
-        <CardHeader>
-          <CardTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-            Portfolio Overview
-          </CardTitle>
-          <CardDescription>Your portfolio at a glance</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10">
-              <FiStar className="w-8 h-8 mx-auto mb-2 text-blue-500" />
-              <h4 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{featuredProjects}</h4>
-              <p className="text-sm text-neutral-500">Featured Projects</p>
-            </div>
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-green-500/10 to-emerald-500/10">
-              <FiTrendingUp className="w-8 h-8 mx-auto mb-2 text-green-500" />
-              <h4 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{completedProjects}</h4>
-              <p className="text-sm text-neutral-500">Completed</p>
-            </div>
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10">
-              <FiCode className="w-8 h-8 mx-auto mb-2 text-purple-500" />
-              <h4 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{skills.filter(s => s.level === 'Expert' || s.level === 'Advanced').length}</h4>
-              <p className="text-sm text-neutral-500">Expert Skills</p>
-            </div>
-            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-orange-500/10 to-red-500/10">
-              <FiClock className="w-8 h-8 mx-auto mb-2 text-orange-500" />
-              <h4 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{certificates.filter(c => new Date(c.issueDate).getFullYear() === new Date().getFullYear()).length}</h4>
-              <p className="text-sm text-neutral-500">Certs This Year</p>
-            </div>
-          </div>
-          {/* Portfolio Completion */}
-          <div className="mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-800">
-            <div className="flex items-center justify-between mb-3">
-              <span className={`text-sm font-medium ${isDarkMode ? 'text-neutral-300' : 'text-neutral-600'}`}>Portfolio Completion</span>
-              <span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{Math.round(((projects.length > 0 ? 25 : 0) + (skills.length >= 5 ? 25 : 0) + (certificates.length > 0 ? 25 : 0) + (personalInfo ? 25 : 0)))}%</span>
-            </div>
-            <div className="w-full bg-neutral-200 dark:bg-neutral-800 rounded-full h-3">
-              <motion.div
-                className="h-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.round(((projects.length > 0 ? 25 : 0) + (skills.length >= 5 ? 25 : 0) + (certificates.length > 0 ? 25 : 0) + (personalInfo ? 25 : 0)))}%` }}
-                transition={{ duration: 1, delay: 0.5 }}
-              />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${projects.length > 0 ? 'bg-green-500' : 'bg-neutral-400'}`} />
-                <span className="text-xs text-neutral-500">Projects</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${skills.length >= 5 ? 'bg-green-500' : 'bg-neutral-400'}`} />
-                <span className="text-xs text-neutral-500">Skills (5+)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${certificates.length > 0 ? 'bg-green-500' : 'bg-neutral-400'}`} />
-                <span className="text-xs text-neutral-500">Certificates</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${personalInfo ? 'bg-green-500' : 'bg-neutral-400'}`} />
-                <span className="text-xs text-neutral-500">Personal Info</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
