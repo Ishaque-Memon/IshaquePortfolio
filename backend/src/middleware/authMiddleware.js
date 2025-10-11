@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { sendError } from '../utils/responseHandler.js';
-import ROLES from '../constant/roles.js';
+import ROLES from '../constants/roles.js';
 
 // Protect routes - verify JWT token
 export const protect = async (req, res, next) => {

@@ -239,7 +239,7 @@ const Skills = () => {
               <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map(cat => (
                   <SelectItem key={cat.value} value={cat.value}>
@@ -384,7 +384,7 @@ const Skills = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
+              <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>  
                   {categories.map(cat => (
                     <SelectItem key={cat.value} value={cat.value}>
                       {cat.label}
@@ -404,7 +404,7 @@ const Skills = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select level" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                   {levels.map(level => (
                     <SelectItem key={level} value={level}>
                       {level}
@@ -482,7 +482,7 @@ const Skills = () => {
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                   {categories.map(cat => (
                     <SelectItem key={cat.value} value={cat.value}>
                       {cat.label}
@@ -501,7 +501,7 @@ const Skills = () => {
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                   {levels.map(level => (
                     <SelectItem key={level} value={level}>
                       {level}

@@ -1,7 +1,7 @@
 import Admin from '../models/Admin.js';
 import generateToken from '../utils/generateToken.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
-import ROLES from '../constant/roles.js';
+import ROLES from '../constants/roles.js';
 
 // @desc    Login admin
 // @route   POST /api/admin/login

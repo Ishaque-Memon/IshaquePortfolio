@@ -1,6 +1,7 @@
 import Project from '../models/Project.js';
 import { sendSuccess, sendError, sendPaginatedResponse } from '../utils/responseHandler.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/uploadHelper.js';
+import { normalizeProjectImages } from '../utils/cloudinaryUrl.js';
 
 // @desc    Get all projects
 // @route   GET /api/projects
@@ -17,14 +18,17 @@ export const getAllProjects = async (req, res, next) => {
 
     const skip = (page - 1) * limit;
 
-    const projects = await Project.find(filter)
+  const projects = await Project.find(filter)
       .sort({ featured: -1, order: 1, createdAt: -1 })
       .limit(parseInt(limit))
       .skip(skip);
 
-    const total = await Project.countDocuments(filter);
+  const total = await Project.countDocuments(filter);
 
-    return sendPaginatedResponse(res, projects, parseInt(page), parseInt(limit), total);
+  // Normalize image URLs
+  const normalized = projects.map((p) => normalizeProjectImages(p));
+
+  return sendPaginatedResponse(res, normalized, parseInt(page), parseInt(limit), total);
   } catch (error) {
     next(error);
   }
@@ -41,7 +45,7 @@ export const getProjectById = async (req, res, next) => {
       return sendError(res, 'Project not found', 404);
     }
 
-    return sendSuccess(res, 'Project retrieved successfully', project);
+  return sendSuccess(res, 'Project retrieved successfully', normalizeProjectImages(project));
   } catch (error) {
     next(error);
   }
@@ -89,7 +93,7 @@ export const createProject = async (req, res, next) => {
     }
 
     const project = await Project.create(projectData);
-    return sendSuccess(res, 'Project created successfully', project, 201);
+  return sendSuccess(res, 'Project created successfully', normalizeProjectImages(project), 201);
   } catch (error) {
     console.error('Error creating project:', error);
     next(error);
@@ -157,7 +161,7 @@ export const updateProject = async (req, res, next) => {
     }
 
     await project.save();
-    return sendSuccess(res, 'Project updated successfully', project);
+  return sendSuccess(res, 'Project updated successfully', normalizeProjectImages(project));
   } catch (error) {
     console.error('Error updating project:', error);
     next(error);

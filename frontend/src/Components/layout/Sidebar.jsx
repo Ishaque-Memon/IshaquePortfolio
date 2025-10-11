@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useProjects, useSkills, useCertificates, useContactMessages } from "../../hooks/usePortfolio";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FiHome, FiUser, FiCode, FiBriefcase, FiAward, 
@@ -17,6 +18,15 @@ const Sidebar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Get real-time data
+  const { projects } = useProjects();
+  const { skills } = useSkills();
+  const { certificates } = useCertificates();
+  const { messages } = useContactMessages();
+
+  // Calculate unread messages
+  const unreadMessages = messages.filter(m => !m.isRead).length;
 
   const menuItems = [
     { 
@@ -36,21 +46,21 @@ const Sidebar = () => {
       icon: FiCode, 
       path: "/admin/skills",
       color: "text-green-500",
-      badge: "15" 
+      badge: skills.length > 0 ? skills.length.toString() : null
     },
     { 
       name: "Projects", 
       icon: FiBriefcase, 
       path: "/admin/projects",
       color: "text-orange-500",
-      badge: "8" 
+      badge: projects.length > 0 ? projects.length.toString() : null
     },
     { 
       name: "Certificates", 
       icon: FiAward, 
       path: "/admin/certificates",
       color: "text-yellow-500",
-      badge: "7" 
+      badge: certificates.length > 0 ? certificates.length.toString() : null
     },
     { 
       name: "Education", 
@@ -63,8 +73,8 @@ const Sidebar = () => {
       icon: FiMessageSquare, 
       path: "/admin/messages",
       color: "text-pink-500",
-      badge: "12",
-      badgeColor: "bg-red-500" 
+      badge: messages.length > 0 ? messages.length.toString() : null,
+      badgeColor: unreadMessages > 0 ? "bg-red-500" : "bg-neutral-700"
     },
     { 
       name: "Analytics", 

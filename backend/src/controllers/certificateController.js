@@ -1,6 +1,21 @@
 import Certificate from '../models/Certificate.js';
 import { sendSuccess, sendError, sendPaginatedResponse } from '../utils/responseHandler.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/uploadHelper.js';
+import { buildCloudinaryUrl } from '../utils/cloudinaryUrl.js';
+
+const normalizeCertificateImage = (cert) => {
+  if (!cert) return cert;
+  const c = cert.toObject ? cert.toObject() : { ...cert };
+  
+  if (c.image && c.image.publicId) {
+    const isAbsoluteUrl = /^https?:\/\//i.test(c.image.url);
+    if (!isAbsoluteUrl) {
+      c.image.url = buildCloudinaryUrl(c.image.publicId);
+    }
+  }
+  
+  return c;
+};
 
 // @desc    Get all certificates
 // @route   GET /api/certificates
@@ -17,7 +32,10 @@ export const getAllCertificates = async (req, res, next) => {
 
     const total = await Certificate.countDocuments();
 
-    return sendPaginatedResponse(res, certificates, parseInt(page), parseInt(limit), total);
+    // Normalize image URLs
+    const normalized = certificates.map((c) => normalizeCertificateImage(c));
+
+    return sendPaginatedResponse(res, normalized, parseInt(page), parseInt(limit), total);
   } catch (error) {
     next(error);
   }
@@ -34,7 +52,7 @@ export const getCertificateById = async (req, res, next) => {
       return sendError(res, 'Certificate not found', 404);
     }
 
-    return sendSuccess(res, 'Certificate retrieved successfully', certificate);
+    return sendSuccess(res, 'Certificate retrieved successfully', normalizeCertificateImage(certificate));
   } catch (error) {
     next(error);
   }
@@ -70,7 +88,7 @@ export const createCertificate = async (req, res, next) => {
       }
     });
 
-    return sendSuccess(res, 'Certificate created successfully', certificate, 201);
+    return sendSuccess(res, 'Certificate created successfully', normalizeCertificateImage(certificate), 201);
   } catch (error) {
     next(error);
   }
@@ -115,7 +133,7 @@ export const updateCertificate = async (req, res, next) => {
 
     await certificate.save();
 
-    return sendSuccess(res, 'Certificate updated successfully', certificate);
+    return sendSuccess(res, 'Certificate updated successfully', normalizeCertificateImage(certificate));
   } catch (error) {
     next(error);
   }

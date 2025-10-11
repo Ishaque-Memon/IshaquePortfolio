@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Admin from '../models/Admin.js';
 import connectDB from '../config/db.js';
-import ROLES from '../constant/roles.js';
+import ROLES from '../constants/roles.js';
 
 dotenv.config();
 
