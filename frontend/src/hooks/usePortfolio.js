@@ -302,3 +302,70 @@ export const useContactMessages = () => {
     deleteMessage
   };
 };
+
+/**
+ * Custom hook for managing education entries
+ */
+export const useEducation = () => {
+  const [education, setEducation] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchEducation = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await portfolioApi.getAllEducation();
+      setEducation(response || []);
+    } catch (err) {
+      console.error('Error fetching education:', err);
+      setError(err.response?.data?.message || 'Failed to fetch education');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEducation();
+  }, []);
+
+  const createEducation = async (educationData) => {
+    try {
+      const response = await portfolioApi.createEducation(educationData);
+      await fetchEducation(); // Refresh list
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const updateEducation = async (id, educationData) => {
+    try {
+      const response = await portfolioApi.updateEducation(id, educationData);
+      await fetchEducation(); // Refresh list
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const deleteEducation = async (id) => {
+    try {
+      const response = await portfolioApi.deleteEducation(id);
+      await fetchEducation(); // Refresh list
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  return {
+    education,
+    loading,
+    error,
+    refetch: fetchEducation,
+    createEducation,
+    updateEducation,
+    deleteEducation
+  };
+};

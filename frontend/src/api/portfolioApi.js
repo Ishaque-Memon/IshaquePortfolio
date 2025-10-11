@@ -6,23 +6,23 @@ import axiosInstance from './axiosConfig';
 
 // ==================== PERSONAL INFO ====================
 export const getPersonalInfo = async () => {
-  const response = await axiosInstance.get('/about/info');
+  const response = await axiosInstance.get('/about');
   return response.data;
 };
 
 export const updatePersonalInfo = async (data) => {
-  const response = await axiosInstance.put('/about/info', data);
+  const response = await axiosInstance.post('/about', data);
   return response.data;
 };
 
 // ==================== STATS ====================
 export const getStats = async () => {
-  const response = await axiosInstance.get('/about/stats');
+  const response = await axiosInstance.get('/about');
   return response.data;
 };
 
 export const updateStats = async (stats) => {
-  const response = await axiosInstance.put('/about/stats', stats);
+  const response = await axiosInstance.patch('/about/statistics', stats);
   return response.data;
 };
 
@@ -116,22 +116,53 @@ export const updateContactInfo = async (data) => {
 };
 
 export const submitContactForm = async (formData) => {
-  const response = await axiosInstance.post('/contact/submit', formData);
+  const response = await axiosInstance.post('/contact', formData);
   return response.data;
 };
 
 export const getAllMessages = async () => {
-  const response = await axiosInstance.get('/contact/messages');
+  const response = await axiosInstance.get('/contact');
   return response.data;
 };
 
 export const markMessageAsRead = async (id) => {
-  const response = await axiosInstance.patch(`/contact/messages/${id}/read`);
+  const response = await axiosInstance.patch(`/contact/${id}/status`, { isRead: true });
   return response.data;
 };
 
 export const deleteMessage = async (id) => {
-  const response = await axiosInstance.delete(`/contact/messages/${id}`);
+  const response = await axiosInstance.delete(`/contact/${id}`);
+  return response.data;
+};
+
+// ==================== EDUCATION ====================
+export const getEducationOptions = async () => {
+  const response = await axiosInstance.get('/education/options/metadata');
+  return response.data;
+};
+
+export const getAllEducation = async () => {
+  const response = await axiosInstance.get('/education');
+  return response.data;
+};
+
+export const getEducationById = async (id) => {
+  const response = await axiosInstance.get(`/education/${id}`);
+  return response.data;
+};
+
+export const createEducation = async (educationData) => {
+  const response = await axiosInstance.post('/education', educationData);
+  return response.data;
+};
+
+export const updateEducation = async (id, educationData) => {
+  const response = await axiosInstance.put(`/education/${id}`, educationData);
+  return response.data;
+};
+
+export const deleteEducation = async (id) => {
+  const response = await axiosInstance.delete(`/education/${id}`);
   return response.data;
 };
 
@@ -186,6 +217,14 @@ export default {
   getAllMessages,
   markMessageAsRead,
   deleteMessage,
+  
+  // Education
+  getEducationOptions,
+  getAllEducation,
+  getEducationById,
+  createEducation,
+  updateEducation,
+  deleteEducation,
   
   // File Upload
   uploadFile

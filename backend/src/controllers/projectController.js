@@ -52,34 +52,46 @@ export const getProjectById = async (req, res, next) => {
 // @access  Private (Admin)
 export const createProject = async (req, res, next) => {
   try {
-    const { title, description, technologies, category, demoUrl, githubUrl, featured, order, status } = req.body;
+    const { title, description, shortDescription, technologies, category, liveUrl, githubUrl, featured, order, status } = req.body;
 
-    // Check if image is uploaded
-    if (!req.file) {
-      return sendError(res, 'Project image is required', 400);
-    }
-
-    // Upload image to Cloudinary
-    const imageResult = await uploadToCloudinary(req.file.buffer, 'portfolio/projects');
-
-    const project = await Project.create({
+    const projectData = {
       title,
       description,
+      shortDescription,
       technologies: technologies ? JSON.parse(technologies) : [],
       category,
-      image: {
-        url: imageResult.url,
-        publicId: imageResult.publicId
-      },
-      demoUrl,
+      liveUrl,
       githubUrl,
-      featured: featured === 'true',
+      featured: featured === 'true' || featured === true,
       order: parseInt(order) || 0,
-      status
-    });
+      status: status || 'completed',
+      images: []
+    };
 
+    // Handle multiple images upload to Cloudinary
+    if (req.files && req.files.length > 0) {
+      try {
+        for (const file of req.files) {
+          const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
+          projectData.images.push({
+            url: imageResult.url,
+            publicId: imageResult.publicId
+          });
+        }
+        
+        // Set first image as thumbnail
+        if (projectData.images.length > 0) {
+          projectData.thumbnailImage = projectData.images[0];
+        }
+      } catch (cloudinaryError) {
+        console.error('Cloudinary upload failed:', cloudinaryError.message);
+      }
+    }
+
+    const project = await Project.create(projectData);
     return sendSuccess(res, 'Project created successfully', project, 201);
   } catch (error) {
+    console.error('Error creating project:', error);
     next(error);
   }
 };
@@ -95,38 +107,59 @@ export const updateProject = async (req, res, next) => {
       return sendError(res, 'Project not found', 404);
     }
 
-    const { title, description, technologies, category, demoUrl, githubUrl, featured, order, status } = req.body;
+    const { title, description, shortDescription, technologies, category, liveUrl, githubUrl, featured, order, status } = req.body;
 
-    // Update fields
+    // Update text fields
     if (title) project.title = title;
     if (description) project.description = description;
+    if (shortDescription !== undefined) project.shortDescription = shortDescription;
     if (technologies) project.technologies = JSON.parse(technologies);
     if (category) project.category = category;
-    if (demoUrl !== undefined) project.demoUrl = demoUrl;
+    if (liveUrl !== undefined) project.liveUrl = liveUrl;
     if (githubUrl !== undefined) project.githubUrl = githubUrl;
-    if (featured !== undefined) project.featured = featured === 'true';
+    if (featured !== undefined) project.featured = featured === 'true' || featured === true;
     if (order !== undefined) project.order = parseInt(order);
     if (status) project.status = status;
 
-    // Update image if new one is uploaded
-    if (req.file) {
-      // Delete old image from Cloudinary
-      if (project.image.publicId) {
-        await deleteFromCloudinary(project.image.publicId);
-      }
+    // Update images if new ones are uploaded
+    if (req.files && req.files.length > 0) {
+      try {
+        // Delete old images from Cloudinary
+        if (project.images && project.images.length > 0) {
+          for (const img of project.images) {
+            if (img.publicId) {
+              try {
+                await deleteFromCloudinary(img.publicId);
+              } catch (err) {
+                console.error('Failed to delete image from Cloudinary:', img.publicId);
+              }
+            }
+          }
+        }
 
-      // Upload new image
-      const imageResult = await uploadToCloudinary(req.file.buffer, 'portfolio/projects');
-      project.image = {
-        url: imageResult.url,
-        publicId: imageResult.publicId
-      };
+        // Upload new images
+        project.images = [];
+        for (const file of req.files) {
+          const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
+          project.images.push({
+            url: imageResult.url,
+            publicId: imageResult.publicId
+          });
+        }
+
+        // Update thumbnail
+        if (project.images.length > 0) {
+          project.thumbnailImage = project.images[0];
+        }
+      } catch (cloudinaryError) {
+        console.error('Cloudinary upload failed:', cloudinaryError.message);
+      }
     }
 
     await project.save();
-
     return sendSuccess(res, 'Project updated successfully', project);
   } catch (error) {
+    console.error('Error updating project:', error);
     next(error);
   }
 };
@@ -142,15 +175,23 @@ export const deleteProject = async (req, res, next) => {
       return sendError(res, 'Project not found', 404);
     }
 
-    // Delete image from Cloudinary
-    if (project.image.publicId) {
-      await deleteFromCloudinary(project.image.publicId);
+    // Delete all images from Cloudinary
+    if (project.images && project.images.length > 0) {
+      for (const img of project.images) {
+        if (img.publicId) {
+          try {
+            await deleteFromCloudinary(img.publicId);
+          } catch (err) {
+            console.error('Failed to delete image from Cloudinary:', img.publicId);
+          }
+        }
+      }
     }
 
     await project.deleteOne();
-
     return sendSuccess(res, 'Project deleted successfully');
   } catch (error) {
+    console.error('Error deleting project:', error);
     next(error);
   }
 };

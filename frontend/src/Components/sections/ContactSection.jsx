@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { contactInfo, personalInfo } from "@/data/portfolioData";
+import portfolioApi from "@/api/portfolioApi";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,15 +44,8 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual API call to backend
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // API call to backend
+      await portfolioApi.submitContactForm(formData);
 
       toast.success("Message sent successfully! I'll get back to you soon.");
       
@@ -64,7 +58,7 @@ const ContactSection = () => {
       });
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message. Please try again.");
+      toast.error(error.message || "Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

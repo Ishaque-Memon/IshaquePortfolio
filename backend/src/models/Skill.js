@@ -11,8 +11,8 @@ const skillSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, 'Skill category is required'],
-      enum: ['Frontend', 'Backend', 'Database', 'DevOps', 'Tools', 'Other'],
-      default: 'Other'
+      enum: ['frontend', 'backend', 'framework', 'tools', 'cloud', 'other'],
+      default: 'other'
     },
     proficiency: {
       type: Number,
@@ -23,6 +23,11 @@ const skillSchema = new mongoose.Schema(
     icon: {
       type: String,
       trim: true
+    },
+    level: {
+      type: String,
+      enum: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
+      default: 'Intermediate'
     },
     order: {
       type: Number,

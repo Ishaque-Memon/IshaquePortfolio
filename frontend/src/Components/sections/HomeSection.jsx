@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-scroll";
 import { useTheme } from "@/contexts/ThemeContext";
 import { personalInfo } from "@/data/portfolioData";
+import { usePersonalInfo } from "@/hooks/usePortfolio";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,17 @@ import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
 
 const HomeSection = () => {
   const { isDarkMode } = useTheme();
+  
+  // API Integration
+  const { personalInfo: apiPersonalInfo, loading, error } = usePersonalInfo();
+  const [infoToDisplay, setInfoToDisplay] = useState(personalInfo);
+
+  // Update info when API data arrives
+  useEffect(() => {
+    if (apiPersonalInfo) {
+      setInfoToDisplay(apiPersonalInfo);
+    }
+  }, [apiPersonalInfo]);
 
   return (
     <section
@@ -40,7 +52,7 @@ const HomeSection = () => {
               className="mb-6"
             >
               <Badge variant="outline" className="px-4 py-2 text-sm">
-                ✨ {personalInfo.availability || "Available for opportunities"}
+                ✨ {infoToDisplay.availability || "Available for opportunities"}
               </Badge>
             </motion.div>
 
@@ -53,18 +65,18 @@ const HomeSection = () => {
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
                 Hi, I'm{" "}
                 <span className="gradient-text">
-                  {personalInfo.name}
+                  {infoToDisplay.name}
                 </span>
               </h1>
               <h2 className={`text-2xl md:text-3xl font-semibold mb-6 ${
                 isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
               }`}>
-                {personalInfo.title}
+                {infoToDisplay.title}
               </h2>
               <p className={`text-lg md:text-xl mb-8 max-w-2xl ${
                 isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
               }`}>
-                {personalInfo.bio}
+                {infoToDisplay.bio}
               </p>
             </motion.div>
 
@@ -81,7 +93,7 @@ const HomeSection = () => {
                 </Button>
               </Link>
               <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href={personalInfo.resumePdf} download>
+                <a href={infoToDisplay.resumePdf} download>
                   <FiDownload /> Download Resume
                 </a>
               </Button>
@@ -94,10 +106,10 @@ const HomeSection = () => {
               transition={{ delay: 0.5 }}
               className="flex gap-4"
             >
-              {personalInfo.socialLinks?.github && (
+              {infoToDisplay.socialLinks?.github && (
                 <Button variant="ghost" size="icon" asChild>
                   <a
-                    href={personalInfo.socialLinks.github}
+                    href={infoToDisplay.socialLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="GitHub"
@@ -106,10 +118,10 @@ const HomeSection = () => {
                   </a>
                 </Button>
               )}
-              {personalInfo.socialLinks?.linkedin && (
+              {infoToDisplay.socialLinks?.linkedin && (
                 <Button variant="ghost" size="icon" asChild>
                   <a
-                    href={personalInfo.socialLinks.linkedin}
+                    href={infoToDisplay.socialLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="LinkedIn"
@@ -118,10 +130,10 @@ const HomeSection = () => {
                   </a>
                 </Button>
               )}
-              {personalInfo.socialLinks?.email && (
+              {infoToDisplay.socialLinks?.email && (
                 <Button variant="ghost" size="icon" asChild>
                   <a
-                    href={personalInfo.socialLinks.email}
+                    href={infoToDisplay.socialLinks.email}
                     aria-label="Email"
                   >
                     <FiMail className="w-5 h-5" />
@@ -147,11 +159,11 @@ const HomeSection = () => {
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <img
-                    src={personalInfo.profileImage}
-                    alt={personalInfo.name}
+                    src={infoToDisplay.profileImage}
+                    alt={infoToDisplay.name}
                     className="w-full h-auto max-w-md rounded-lg"
                     onError={(e) => {
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(personalInfo.name)}&size=400&background=6366f1&color=fff`;
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay.name)}&size=400&background=6366f1&color=fff`;
                     }}
                   />
                 </div>

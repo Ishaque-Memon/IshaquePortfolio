@@ -16,8 +16,8 @@ router.get('/', getAllProjects);
 router.get('/:id', getProjectById);
 
 // Protected routes (Admin only)
-router.post('/', protect, upload.single('image'), createProject);
-router.put('/:id', protect, upload.single('image'), updateProject);
+router.post('/', protect, upload.array('images', 5), createProject); // Max 5 images
+router.put('/:id', protect, upload.array('images', 5), updateProject);
 router.delete('/:id', protect, deleteProject);
 
 export default router;

@@ -39,9 +39,10 @@ export const createOrUpdateAbout = async (req, res, next) => {
       email,
       phone,
       resumeUrl,
-      location: location ? JSON.parse(location) : undefined,
-      socialLinks: socialLinks ? JSON.parse(socialLinks) : undefined,
-      statistics: statistics ? JSON.parse(statistics) : undefined,
+      // No need to parse - already objects from JSON body
+      location: location || undefined,
+      socialLinks: socialLinks || undefined,
+      statistics: statistics || undefined,
       isActive: true
     };
 
@@ -66,10 +67,7 @@ export const createOrUpdateAbout = async (req, res, next) => {
       await about.save();
       return sendSuccess(res, 'About information updated successfully', about);
     } else {
-      // Create new
-      if (!req.file) {
-        return sendError(res, 'Profile image is required', 400);
-      }
+      // Create new (profile image not required for now)
       about = await About.create(updateData);
       return sendSuccess(res, 'About information created successfully', about, 201);
     }

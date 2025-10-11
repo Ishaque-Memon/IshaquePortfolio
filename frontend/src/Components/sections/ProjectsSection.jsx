@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { projectsData } from "@/data/portfolioData";
+import { useProjects } from "@/hooks/usePortfolio";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,14 +20,25 @@ const ProjectsSection = () => {
   const { isDarkMode } = useTheme();
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  
+  // API Integration
+  const { projects: apiProjects, loading, error } = useProjects();
+  const [projectsToDisplay, setProjectsToDisplay] = useState(projectsData);
+
+  // Update projects when API data arrives
+  useEffect(() => {
+    if (apiProjects && apiProjects.length > 0) {
+      setProjectsToDisplay(apiProjects);
+    }
+  }, [apiProjects]);
 
   // Get unique categories
-  const categories = ["all", ...new Set(projectsData.map(p => p.category))];
+  const categories = ["all", ...new Set(projectsToDisplay.map(p => p.category))];
 
   // Filter projects by category
   const filteredProjects = selectedCategory === "all" 
-    ? projectsData 
-    : projectsData.filter(p => p.category === selectedCategory);
+    ? projectsToDisplay 
+    : projectsToDisplay.filter(p => p.category === selectedCategory);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -68,6 +80,29 @@ const ProjectsSection = () => {
           </p>
         </motion.div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            <p className={`ml-4 text-lg ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+              Loading projects...
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-10">
+            <p className="text-red-500 mb-2">⚠️ {error}</p>
+            <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+              Using static data as fallback
+            </p>
+          </div>
+        )}
+
+        {/* Projects Content */}
+        {!loading && (
+        <>
         {/* Category Tabs */}
         <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory} className="mb-8">
           <TabsList className={`grid w-full max-w-md mx-auto grid-cols-${Math.min(categories.length, 4)}`}>
@@ -107,7 +142,7 @@ const ProjectsSection = () => {
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       onError={(e) => {
-                        e.target.src = `https://via.placeholder.com/400x300/334155/fff?text=${encodeURIComponent(project.title)}`;
+                        e.target.src = `https://placehold.co/400x300/334155/fff?text=${encodeURIComponent(project.title)}`;
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -284,6 +319,8 @@ const ProjectsSection = () => {
             )}
           </DialogContent>
         </Dialog>
+        </>
+        )}
       </div>
     </section>
   );

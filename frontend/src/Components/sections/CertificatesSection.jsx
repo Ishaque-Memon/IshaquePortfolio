@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { certificatesData } from "@/data/portfolioData";
+import { useCertificates } from "@/hooks/usePortfolio";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,17 @@ const CertificatesSection = () => {
   const { isDarkMode } = useTheme();
   const [selectedCert, setSelectedCert] = useState(null);
   const [imageError, setImageError] = useState({});
+
+  // API Integration
+  const { certificates: apiCertificates, loading, error } = useCertificates();
+  const [certificatesToDisplay, setCertificatesToDisplay] = useState(certificatesData);
+
+  // Update certificates when API data arrives
+  useEffect(() => {
+    if (apiCertificates && apiCertificates.length > 0) {
+      setCertificatesToDisplay(apiCertificates);
+    }
+  }, [apiCertificates]);
 
   const handleImageError = (certId) => {
     setImageError(prev => ({ ...prev, [certId]: true }));
@@ -66,6 +78,29 @@ const CertificatesSection = () => {
           </p>
         </motion.div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            <p className={`ml-4 text-lg ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+              Loading certificates...
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-10">
+            <p className="text-red-500 mb-2">⚠️ {error}</p>
+            <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+              Using static data as fallback
+            </p>
+          </div>
+        )}
+
+        {/* Certificates Content */}
+        {!loading && (
+        <>
         {/* Certificates Grid */}
         <motion.div
           variants={containerVariants}
@@ -74,7 +109,7 @@ const CertificatesSection = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {certificatesData.map((cert, idx) => (
+          {certificatesToDisplay.map((cert, idx) => (
             <motion.div key={idx} variants={cardVariants}>
               <Card className={`group h-full flex flex-col ${
                 isDarkMode 
@@ -287,6 +322,8 @@ const CertificatesSection = () => {
             </Dialog>
           )}
         </AnimatePresence>
+        </>
+        )}
       </div>
     </section>
   );

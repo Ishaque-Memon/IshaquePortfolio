@@ -12,6 +12,7 @@ import certificateRoutes from './routes/certificateRoutes.js';
 import aboutRoutes from './routes/aboutRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import educationRoutes from './routes/educationRoutes.js';
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use('/api/certificates', certificateRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/education', educationRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {

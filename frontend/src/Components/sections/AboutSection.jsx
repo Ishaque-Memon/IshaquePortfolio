@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { personalInfo, stats } from "@/data/portfolioData";
+import { usePersonalInfo } from "@/hooks/usePortfolio";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +19,22 @@ const iconMap = {
 
 const AboutSection = () => {
   const { isDarkMode } = useTheme();
+  
+  // API Integration
+  const { personalInfo: apiPersonalInfo, loading, error } = usePersonalInfo();
+  const [infoToDisplay, setInfoToDisplay] = useState(personalInfo);
+  const [statsToDisplay, setStatsToDisplay] = useState(stats);
+
+  // Update info when API data arrives
+  useEffect(() => {
+    if (apiPersonalInfo) {
+      setInfoToDisplay(apiPersonalInfo);
+      // If API provides stats, update them too
+      if (apiPersonalInfo.stats) {
+        setStatsToDisplay(apiPersonalInfo.stats);
+      }
+    }
+  }, [apiPersonalInfo]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -77,11 +94,11 @@ const AboutSection = () => {
                 <div className="flex flex-col items-center text-center space-y-4">
                   <Avatar className="w-32 h-32 ring-4 ring-primary-500/20">
                     <AvatarImage 
-                      src={personalInfo.profileImageAlt || personalInfo.profileImage} 
-                      alt={personalInfo.name}
+                      src={infoToDisplay.profileImageAlt || infoToDisplay.profileImage} 
+                      alt={infoToDisplay.name}
                     />
                     <AvatarFallback className="text-3xl">
-                      {personalInfo.name.split(' ').map(n => n[0]).join('')}
+                      {infoToDisplay.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
 
@@ -89,38 +106,38 @@ const AboutSection = () => {
                     <h3 className={`text-2xl font-bold ${
                       isDarkMode ? 'text-white' : 'text-neutral-900'
                     }`}>
-                      {personalInfo.name}
+                      {infoToDisplay.name}
                     </h3>
                     <p className="text-primary-500 font-medium mt-1">
-                      {personalInfo.title}
+                      {infoToDisplay.title}
                     </p>
                   </div>
 
                   <div className={`space-y-2 text-sm ${
                     isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
                   }`}>
-                    {personalInfo.location && (
+                    {infoToDisplay.location && (
                       <div className="flex items-center gap-2 justify-center">
                         <FiMapPin className="w-4 h-4" />
-                        <span>{personalInfo.location}</span>
+                        <span>{infoToDisplay.location}</span>
                       </div>
                     )}
-                    {personalInfo.email && (
+                    {infoToDisplay.email && (
                       <div className="flex items-center gap-2 justify-center">
                         <FiMail className="w-4 h-4" />
-                        <span>{personalInfo.email}</span>
+                        <span>{infoToDisplay.email}</span>
                       </div>
                     )}
-                    {personalInfo.phone && (
+                    {infoToDisplay.phone && (
                       <div className="flex items-center gap-2 justify-center">
                         <FiPhone className="w-4 h-4" />
-                        <span>{personalInfo.phone}</span>
+                        <span>{infoToDisplay.phone}</span>
                       </div>
                     )}
                   </div>
 
                   <Badge variant="outline" className="mt-4">
-                    {personalInfo.tagline || "Building Digital Experiences"}
+                    {infoToDisplay.tagline || "Building Digital Experiences"}
                   </Badge>
                 </div>
               </CardContent>
@@ -150,7 +167,7 @@ const AboutSection = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className={isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}>
-                      {personalInfo.bio}
+                      {infoToDisplay.bio}
                     </p>
                     <p className={isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}>
                       I specialize in building modern web applications using cutting-edge technologies. 
@@ -199,7 +216,7 @@ const AboutSection = () => {
           viewport={{ once: true }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
-          {stats.map((stat, idx) => {
+          {statsToDisplay.map((stat, idx) => {
             const Icon = iconMap[stat.icon] || FiCode;
             
             return (

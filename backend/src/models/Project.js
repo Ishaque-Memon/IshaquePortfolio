@@ -11,23 +11,35 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Project description is required']
     },
+    shortDescription: {
+      type: String,
+      trim: true,
+      maxlength: 200
+    },
     technologies: [{
       type: String,
       trim: true
     }],
     category: {
       type: String,
-      enum: ['Web Development', 'Mobile App', 'Desktop App', 'AI/ML', 'Other'],
-      default: 'Web Development'
+      enum: ['web', 'mobile', 'desktop', 'fullstack', 'frontend', 'backend', 'ai-ml', 'other'],
+      default: 'web'
     },
-    image: {
+    images: [{
       url: {
         type: String,
-        required: [true, 'Project image is required']
+        required: true
       },
-      publicId: String  // Cloudinary public ID for deletion
+      publicId: {
+        type: String,
+        required: true
+      }
+    }],
+    thumbnailImage: {
+      url: String,
+      publicId: String
     },
-    demoUrl: {
+    liveUrl: {
       type: String,
       trim: true
     },
@@ -45,8 +57,14 @@ const projectSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['completed', 'in-progress', 'planned'],
+      enum: ['completed', 'in-progress', 'archived'],
       default: 'completed'
+    },
+    startDate: {
+      type: String
+    },
+    endDate: {
+      type: String
     }
   },
   {

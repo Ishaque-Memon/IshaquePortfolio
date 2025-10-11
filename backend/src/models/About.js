@@ -20,7 +20,7 @@ const aboutSchema = new mongoose.Schema(
     profileImage: {
       url: {
         type: String,
-        required: [true, 'Profile image is required']
+        required: false
       },
       publicId: String
     },

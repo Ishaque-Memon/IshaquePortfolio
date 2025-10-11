@@ -321,16 +321,16 @@ const MacOSDock = () => {
         deviceName: deviceConfig.name || 'Unknown Device'
       };
 
-      console.log('🚀 MacOSDock Config Update:', {
-        device: final.deviceName,
-        dimensions: `${width}x${height}`,
-        orientation,
-        iconSize: final.iconSize,
-        spacing: final.spacing,
-        position: parsedPosition,
-        indicatorSize: final.indicatorSize,
-        matchedConfig: deviceConfig.matchType || 'fallback'
-      });
+      // console.log('🚀 MacOSDock Config Update:', {
+      //   device: final.deviceName,
+      //   dimensions: `${width}x${height}`,
+      //   orientation,
+      //   iconSize: final.iconSize,
+      //   spacing: final.spacing,
+      //   position: parsedPosition,
+      //   indicatorSize: final.indicatorSize,
+      //   matchedConfig: deviceConfig.matchType || 'fallback'
+      // });
 
       setScreenConfig(final);
       setIsMobile(final.isMobile);
@@ -562,8 +562,20 @@ const MacOSDock = () => {
       resetAutoHideTimer();
     };
 
-    // Initial timer setup
-    resetAutoHideTimer();
+    // Initial timer setup - only on mount
+    const initialTimerSetup = () => {
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+      }
+      
+      autoHideTimerRef.current = setTimeout(() => {
+        if (!isHovered && !isOverlayOpen) {
+          setIsAutoHidden(true);
+        }
+      }, AUTO_HIDE_DELAY);
+    };
+    
+    initialTimerSetup();
 
     // Add event listeners
     document.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -586,7 +598,7 @@ const MacOSDock = () => {
       document.removeEventListener('keydown', handleKeyPress);
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [screenConfig.orientation, isMainLoaderComplete, isOverlayOpen, isHovered, lastMouseActivity]);
+  }, [screenConfig.orientation, isMainLoaderComplete, isOverlayOpen, isHovered]);
 
   // Delay pointer-events briefly after showing to avoid click-through misfires
   useEffect(() => {
@@ -826,7 +838,7 @@ const MacOSDock = () => {
       }
     }
     
-    console.log('📍 Final dock style being applied:', s);
+    // console.log('📍 Final dock style being applied:', s);
     
     return s;
   })();
