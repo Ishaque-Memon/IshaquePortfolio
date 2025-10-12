@@ -212,7 +212,9 @@ const ProjectsSection = () => {
         {/* Project Details Modal */}
         <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
           <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto ${
-            isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'
+            isDarkMode 
+              ? 'bg-neutral-900 border border-neutral-800 text-white' 
+              : 'bg-white border border-neutral-200 text-neutral-900'
           }`}>
             {selectedProject && (
               <>

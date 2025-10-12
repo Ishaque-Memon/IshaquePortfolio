@@ -432,7 +432,11 @@ const Certificates = () => {
 
       {/* Add Certificate Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className={`${isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'} max-w-2xl max-h-[90vh] overflow-y-auto`}>
+        <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }`}>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Add New Certificate
@@ -613,7 +617,11 @@ const Certificates = () => {
 
       {/* Edit Certificate Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className={`${isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'} max-w-2xl max-h-[90vh] overflow-y-auto`}>
+        <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }`}>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Edit Certificate
@@ -771,7 +779,11 @@ const Certificates = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'}>
+        <AlertDialogContent className={
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }>
           <AlertDialogHeader>
             <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Delete Certificate

@@ -240,9 +240,9 @@ const Skills = () => {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="all" className={isDarkMode ? 'text-white' : 'text-neutral-900'}>All Categories</SelectItem>
                 {categories.map(cat => (
-                  <SelectItem key={cat.value} value={cat.value}>
+                  <SelectItem key={cat.value} value={cat.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                     {cat.label}
                   </SelectItem>
                 ))}
@@ -353,7 +353,11 @@ const Skills = () => {
 
       {/* Add Skill Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'}>
+        <DialogContent className={
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Add New Skill
@@ -384,9 +388,9 @@ const Skills = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-              <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>  
+              <SelectContent className={isDarkMode ? 'bg-neutral-800 border border-neutral-700 text-white' : 'bg-white border border-neutral-200 text-neutral-900'}>
                   {categories.map(cat => (
-                    <SelectItem key={cat.value} value={cat.value}>
+                    <SelectItem key={cat.value} value={cat.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                       {cat.label}
                     </SelectItem>
                   ))}
@@ -406,7 +410,7 @@ const Skills = () => {
                 </SelectTrigger>
                 <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                   {levels.map(level => (
-                    <SelectItem key={level} value={level}>
+                    <SelectItem key={level} value={level} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                       {level}
                     </SelectItem>
                   ))}
@@ -453,7 +457,11 @@ const Skills = () => {
 
       {/* Edit Skill Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'}>
+        <DialogContent className={
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Edit Skill
@@ -484,7 +492,7 @@ const Skills = () => {
                 </SelectTrigger>
                 <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                   {categories.map(cat => (
-                    <SelectItem key={cat.value} value={cat.value}>
+                    <SelectItem key={cat.value} value={cat.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                       {cat.label}
                     </SelectItem>
                   ))}
@@ -503,7 +511,7 @@ const Skills = () => {
                 </SelectTrigger>
                 <SelectContent className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-neutral-200'}>
                   {levels.map(level => (
-                    <SelectItem key={level} value={level}>
+                    <SelectItem key={level} value={level} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                       {level}
                     </SelectItem>
                   ))}
@@ -549,7 +557,11 @@ const Skills = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'}>
+        <AlertDialogContent className={
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }>
           <AlertDialogHeader>
             <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Delete Skill

@@ -444,7 +444,11 @@ const Education = () => {
 
       {/* Add Education Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className={`${isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'} max-w-3xl max-h-[90vh] overflow-y-auto`}>
+        <DialogContent className={`max-w-3xl max-h-[90vh] overflow-y-auto ${
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }`}>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Add Education
@@ -463,7 +467,7 @@ const Education = () => {
                 </SelectTrigger>
                 <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                   {educationOptions.levels.map((level) => (
-                    <SelectItem key={level.value} value={level.value}>
+                    <SelectItem key={level.value} value={level.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                       {level.label}
                     </SelectItem>
                   ))}
@@ -481,7 +485,7 @@ const Education = () => {
                   </SelectTrigger>
                   <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                     {getDegreeOptions(formData.level).map((degree) => (
-                      <SelectItem key={degree} value={degree}>
+                      <SelectItem key={degree} value={degree} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                         {degree}
                       </SelectItem>
                     ))}
@@ -500,7 +504,7 @@ const Education = () => {
                   </SelectTrigger>
                   <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                     {getSpecializationOptions(formData.level).map((spec) => (
-                      <SelectItem key={spec} value={spec}>
+                      <SelectItem key={spec} value={spec} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                         {spec}
                       </SelectItem>
                     ))}
@@ -523,7 +527,7 @@ const Education = () => {
                   </SelectTrigger>
                   <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                     {getFilteredBoards(formData.level).map((board) => (
-                      <SelectItem key={board.value} value={board.value}>
+                      <SelectItem key={board.value} value={board.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                         {board.label}
                       </SelectItem>
                     ))}
@@ -650,7 +654,11 @@ const Education = () => {
 
       {/* Edit Education Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className={`${isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'} max-w-3xl max-h-[90vh] overflow-y-auto`}>
+        <DialogContent className={`max-w-3xl max-h-[90vh] overflow-y-auto ${
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }`}>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Edit Education
@@ -667,9 +675,9 @@ const Education = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select education level" />
                 </SelectTrigger>
-                <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+                <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border border-neutral-700 text-white' : 'bg-white border border-neutral-200 text-neutral-900'}`}>
                   {educationOptions.levels.map((level) => (
-                    <SelectItem key={level.value} value={level.value}>
+                    <SelectItem key={level.value} value={level.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                       {level.label}
                     </SelectItem>
                   ))}
@@ -686,7 +694,7 @@ const Education = () => {
                   </SelectTrigger>
                   <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                     {getDegreeOptions(formData.level).map((degree) => (
-                      <SelectItem key={degree} value={degree}>
+                      <SelectItem key={degree} value={degree} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                         {degree}
                       </SelectItem>
                     ))}
@@ -704,7 +712,7 @@ const Education = () => {
                   </SelectTrigger>
                   <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                     {getSpecializationOptions(formData.level).map((spec) => (
-                      <SelectItem key={spec} value={spec}>
+                      <SelectItem key={spec} value={spec} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                         {spec}
                       </SelectItem>
                     ))}
@@ -726,7 +734,7 @@ const Education = () => {
                   </SelectTrigger>
                   <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
                     {getFilteredBoards(formData.level).map((board) => (
-                      <SelectItem key={board.value} value={board.value}>
+                      <SelectItem key={board.value} value={board.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                         {board.label}
                       </SelectItem>
                     ))}
@@ -846,7 +854,11 @@ const Education = () => {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className={`${isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'}`}>
+        <DialogContent className={
+          isDarkMode
+            ? 'bg-neutral-900 border border-neutral-800 text-white'
+            : 'bg-white border border-neutral-200 text-neutral-900'
+        }>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Delete Education Entry

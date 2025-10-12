@@ -325,7 +325,9 @@ const FYPSection = () => {
         {/* Video Dialog */}
         <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
           <DialogContent className={`max-w-5xl ${
-            isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white'
+            isDarkMode 
+              ? 'bg-neutral-900 border border-neutral-800 text-white' 
+              : 'bg-white border border-neutral-200 text-neutral-900'
           }`}>
             <DialogHeader>
               <DialogTitle>{fypData.title} - Demo</DialogTitle>

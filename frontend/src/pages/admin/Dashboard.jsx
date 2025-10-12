@@ -87,12 +87,12 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-8">
+  <div className={isDarkMode ? "space-y-8 bg-neutral-950 text-white min-h-screen" : "space-y-8 bg-neutral-100 text-neutral-900 min-h-screen"}>
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`p-6 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white`}
+        className="p-6 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white"
       >
         <h2 className="text-3xl font-bold mb-2">Welcome to Your Admin Dashboard</h2>
         <p className="text-white/80">Manage your portfolio content, view analytics, and track messages</p>
@@ -109,8 +109,7 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className={`$
-                {isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}
+              <Card className={`${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-neutral-50 border-neutral-200'}
                 ${stat.highlight ? 'ring-2 ring-red-500' : ''} hover:shadow-xl transition-all`}
               >
                 <CardContent className="p-6">
@@ -124,7 +123,7 @@ const Dashboard = () => {
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className={`text-2xl font-bold ${stat.highlight ? 'text-red-500' : isDarkMode ? 'text-white' : 'text-neutral-900'}`}>{stat.value}</h3>
-                        <p className={`text-sm ${stat.highlight ? 'text-red-500 font-medium' : 'text-neutral-500'}`}>{stat.change}</p>
+                        <p className={`text-sm ${stat.highlight ? 'text-red-500 font-medium' : isDarkMode ? 'text-neutral-400' : 'text-neutral-500'}`}>{stat.change}</p>
                       </div>
                       <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color}`}>
                         <Icon className="w-6 h-6 text-white" />
@@ -140,12 +139,12 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quick Actions */}
-        <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
+        <Card className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-neutral-50 border-neutral-200'}>
           <CardHeader>
             <CardTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Quick Actions
             </CardTitle>
-            <CardDescription>Commonly used actions</CardDescription>
+            <CardDescription className={isDarkMode ? 'text-neutral-400' : ''}>Commonly used actions</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {quickActions.map((action, idx) => {
@@ -154,18 +153,15 @@ const Dashboard = () => {
                 <button
                   key={idx}
                   onClick={() => navigate(action.path)}
-                  className={`w-full flex items-center gap-4 p-4 rounded-lg transition-colors ${
-                    isDarkMode 
-                      ? 'hover:bg-neutral-800 text-white' 
-                      : 'hover:bg-neutral-50 text-neutral-900'
-                  } text-left`}
+                  className={`w-full flex items-center gap-4 p-4 rounded-lg transition-colors text-left font-medium
+                    ${isDarkMode ? 'hover:bg-neutral-700 text-white' : 'hover:bg-neutral-100 text-neutral-900'}`}
                 >
                   <div className="p-2 rounded-lg bg-primary-500/10">
                     <Icon className="w-5 h-5 text-primary-500" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">{action.title}</p>
-                    <p className="text-sm text-neutral-500">{action.description}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-500'}`}>{action.description}</p>
                   </div>
                 </button>
               );
@@ -174,16 +170,16 @@ const Dashboard = () => {
         </Card>
 
         {/* Recent Activity */}
-        <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
+        <Card className={isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-neutral-50 border-neutral-200'}>
           <CardHeader>
             <CardTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
               Recent Activity
             </CardTitle>
-            <CardDescription>Latest updates and changes</CardDescription>
+            <CardDescription className={isDarkMode ? 'text-neutral-400' : ''}>Latest updates and changes</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {recentActivity.length === 0 ? (
-              <p className="text-center text-neutral-500 py-8">No recent activity</p>
+              <p className={`text-center py-8 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-500'}`}>No recent activity</p>
             ) : (
               recentActivity.map((activity, idx) => (
                 <div key={idx} className="flex items-start gap-3">
@@ -194,7 +190,7 @@ const Dashboard = () => {
                     <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>
                       {activity.action}
                     </p>
-                    <p className="text-sm text-neutral-500">{activity.item}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-500'}`}>{activity.item}</p>
                     <p className="text-xs text-neutral-400 mt-1">{activity.time}</p>
                   </div>
                   <Badge variant="outline" className="text-xs">
