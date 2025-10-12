@@ -5,158 +5,223 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useProjects, useSkills, useCertificates, useContactMessages } from "../../hooks/usePortfolio";
-// No need for framer-motion or AnimatePresence for sidebar open/close
 import { 
   FiHome, FiUser, FiCode, FiBriefcase, FiAward, 
   FiBookOpen, FiMessageSquare, FiBarChart, FiLogOut,
   FiMenu, FiX, FiChevronLeft, FiChevronRight, FiSun, FiMoon
 } from "react-icons/fi";
+import { VscLayoutSidebarLeft, VscLayoutSidebarRight } from "react-icons/vsc";
 import { Badge } from "@/components/ui/badge";
 
 const Sidebar = () => {
   const sidebarOpen = useSelector((state) => state.layout.sidebarOpen);
   const dispatch = useDispatch();
-  const { isDarkMode, toggleTheme } = useTheme();
-  const { user, logout } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
-  // Get real-time data
+  const { isDarkMode, toggleTheme } = useTheme();
+  const { user, logout } = useAuthContext();
+
   const { projects } = useProjects();
   const { skills } = useSkills();
   const { certificates } = useCertificates();
   const { messages } = useContactMessages();
-  // Calculate unread messages
-  const unreadMessages = messages && Array.isArray(messages) ? messages.filter(m => !m.isRead).length : 0;
-  const menuItems = [
-    { name: "Dashboard", icon: FiHome, path: "/admin/dashboard", color: "text-blue-500" },
-    { name: "Personal Info", icon: FiUser, path: "/admin/personal-info", color: "text-purple-500" },
-    { name: "Skills", icon: FiCode, path: "/admin/skills", color: "text-green-500", badge: skills && skills.length > 0 ? skills.length.toString() : null },
-    { name: "Projects", icon: FiBriefcase, path: "/admin/projects", color: "text-orange-500", badge: projects && projects.length > 0 ? projects.length.toString() : null },
-    { name: "Certificates", icon: FiAward, path: "/admin/certificates", color: "text-yellow-500", badge: certificates && certificates.length > 0 ? certificates.length.toString() : null },
-    { name: "Education", icon: FiBookOpen, path: "/admin/education", color: "text-indigo-500" },
-    { name: "Messages", icon: FiMessageSquare, path: "/admin/messages", color: "text-pink-500", badge: messages && messages.length > 0 ? messages.length.toString() : null, badgeColor: unreadMessages > 0 ? "bg-red-500" : "bg-neutral-700" },
-    { name: "Analytics", icon: FiBarChart, path: "/admin/analytics", color: "text-cyan-500" }
+
+  const unreadCount = messages && Array.isArray(messages) 
+    ? messages.filter(msg => !msg.isRead).length 
+    : 0;
+
+  const navigationItems = [
+    { 
+      label: "Dashboard", 
+      icon: FiHome, 
+      route: "/admin/dashboard", 
+      iconColor: "text-blue-500" 
+    },
+    { 
+      label: "Personal Info", 
+      icon: FiUser, 
+      route: "/admin/personal-info", 
+      iconColor: "text-purple-500" 
+    },
+    { 
+      label: "Skills", 
+      icon: FiCode, 
+      route: "/admin/skills", 
+      iconColor: "text-green-500",
+      count: skills && skills.length > 0 ? skills.length : null
+    },
+    { 
+      label: "Projects", 
+      icon: FiBriefcase, 
+      route: "/admin/projects", 
+      iconColor: "text-orange-500",
+      count: projects && projects.length > 0 ? projects.length : null
+    },
+    { 
+      label: "Certificates", 
+      icon: FiAward, 
+      route: "/admin/certificates", 
+      iconColor: "text-yellow-500",
+      count: certificates && certificates.length > 0 ? certificates.length : null
+    },
+    { 
+      label: "Education", 
+      icon: FiBookOpen, 
+      route: "/admin/education", 
+      iconColor: "text-indigo-500" 
+    },
+    { 
+      label: "Messages", 
+      icon: FiMessageSquare, 
+      route: "/admin/messages", 
+      iconColor: "text-pink-500",
+      count: messages && messages.length > 0 ? messages.length : null
+    },
+    { 
+      label: "Analytics", 
+      icon: FiBarChart, 
+      route: "/admin/analytics", 
+      iconColor: "text-cyan-500" 
+    }
   ];
-  const handleNavigation = (path) => {
-    navigate(path);
+
+  const handleNavigate = (route) => {
+    navigate(route);
     if (window.innerWidth < 1024 && sidebarOpen) {
       dispatch(toggleSidebar());
     }
   };
-  const handleLogout = () => {
+
+  const handleLogoutClick = () => {
     logout();
     navigate("/login");
   };
-  const isActive = (path) => location.pathname === path;
+
+  const isActiveRoute = (route) => location.pathname === route;
+
   return (
     <aside
-  className={`h-full flex flex-col shadow-xl rounded-r-2xl transition-all duration-300 ${isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'} border-r w-[80px] lg:w-[${sidebarOpen ? '280px' : '80px'}]`}
-      style={{ minWidth: 80 }}
+      className="h-full flex flex-col"
     >
       <div className="flex flex-col h-full">
-        {/* Logo */}
-        <div className="h-20 flex items-center justify-center border-b border-neutral-800 px-2">
-          <div className={sidebarOpen ? 'hidden lg:flex items-center gap-3' : 'flex items-center justify-center w-full'}>
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-md">
-              <span className="text-white font-extrabold text-2xl tracking-wider">A</span>
-            </div>
-            {sidebarOpen && (
-              <div className="hidden lg:block ml-2">
-                <h2 className={`font-extrabold text-xl leading-tight ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>Admin</h2>
-                <p className="text-xs text-neutral-400 font-medium">Panel</p>
+        {/* Header Section */}
+        <div className={`flex items-center h-20 px-3 border-b ${isDarkMode ? 'border-neutral-800' : 'border-neutral-200'}`}>
+          {sidebarOpen ? (
+            <>
+              <button
+                onClick={() => dispatch(toggleSidebar())}
+                className={`hidden lg:flex items-center justify-center w-10 h-10 mx-1 rounded-full transition-colors duration-200
+                  ${isDarkMode ? 'text-neutral-400 hover:bg-neutral-800 hover:text-white' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'}`}
+                type="button"
+                aria-label="Collapse sidebar"
+              >
+                <VscLayoutSidebarLeft size={20} />
+              </button>
+              <div className="flex items-center gap-3 flex-1">
+                <div className="hidden lg:block">
+                  <h2 className={`font-extrabold text-lg leading-tight ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>
+                    Admin Panel
+                  </h2>
+                </div>
               </div>
-            )}
-          </div>
+              
+            </>
+          ) : (
+            <div className="w-full flex justify-center">
+              <button
+                onClick={() => dispatch(toggleSidebar())}
+                className={`hidden lg:flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200
+                  ${isDarkMode ? 'text-neutral-400 hover:bg-neutral-800 hover:text-white' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'}`}
+                type="button"
+                aria-label="Expand sidebar"
+              >
+                <VscLayoutSidebarRight size={20} />
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-6 px-2">
-          <div className="space-y-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
+        {/* Navigation Menu */}
+        <nav className="flex-1 overflow-y-auto py-4 px-2">
+          <ul className="space-y-1">
+            {navigationItems.map((item) => {
+              const ItemIcon = item.icon;
+              const isActive = isActiveRoute(item.route);
+              
               return (
-                <button
-                  key={item.path}
-                  onClick={() => handleNavigation(item.path)}
-                  className={`group w-full flex items-center gap-3 px-3 py-3 rounded-xl font-semibold transition-all duration-200
-                    ${active
-                      ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg'
-                      : isDarkMode
-                        ? 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
-                        : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'}
-                    ${sidebarOpen ? '' : 'justify-center'}`}
-                  style={{ minHeight: 48 }}
-                >
-                  <span className={`flex items-center justify-center ${active ? 'text-white' : item.color} group-hover:scale-110 transition-transform`}>
-                    <Icon size={22} />
-                  </span>
-                  {/* Only show text and badge if expanded on desktop */}
-                  {sidebarOpen && (
-                    <>
-                      <span className="flex-1 text-left text-base font-medium hidden lg:inline">
-                        {item.name}
-                      </span>
-                      {item.badge && (
-                        <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${(item.badgeColor || 'bg-neutral-700') + ' text-white'} shadow-sm hidden lg:inline`}>
-                          {item.badge}
+                <li key={item.route}>
+                  <button
+                    onClick={() => handleNavigate(item.route)}
+                    className={`group flex items-center w-full gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200
+                      ${isActive
+                        ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-md'
+                        : isDarkMode
+                          ? 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
+                          : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'}
+                      ${sidebarOpen ? '' : 'justify-center'}
+                    `}
+                    style={{ minHeight: 44 }}
+                  >
+                    <span className={`flex items-center justify-center ${isActive ? 'text-white' : item.iconColor} group-hover:scale-110 transition-transform`}>
+                      <ItemIcon size={22} />
+                    </span>
+                    
+                    {sidebarOpen && (
+                      <>
+                        <span className="flex-1 text-left text-base font-medium hidden lg:inline">
+                          {item.label}
                         </span>
-                      )}
-                    </>
-                  )}
-                </button>
+                        {item.count && (
+                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-neutral-700 text-white shadow-sm hidden lg:inline">
+                            {item.count}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </button>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </nav>
 
-        {/* Bottom Actions */}
-        <div className="border-t border-neutral-800 px-4 py-5 space-y-3">
-          {/* Theme Toggle */}
+        {/* Footer Section */}
+        <div className={`mt-auto px-2 py-4 border-t ${isDarkMode ? 'border-neutral-800' : 'border-neutral-200'} flex flex-col gap-2`}>
+          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all duration-200
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-all duration-200 w-full
               ${isDarkMode
                 ? 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
                 : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'}
               ${sidebarOpen ? '' : 'justify-center'}`}
+            aria-label="Toggle theme"
           >
             <span className="flex items-center justify-center">
               {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
             </span>
             {sidebarOpen && <span className="text-base hidden lg:inline">Toggle Theme</span>}
           </button>
-
-          {/* Logout */}
+          
+          {/* Logout Button */}
           <button
-            onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all duration-200
+            onClick={handleLogoutClick}
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-all duration-200 w-full
               ${isDarkMode
                 ? 'text-red-400 hover:bg-red-500/10'
                 : 'text-red-600 hover:bg-red-50'}
               ${sidebarOpen ? '' : 'justify-center'}`}
+            aria-label="Logout"
           >
             <span className="flex items-center justify-center">
               <FiLogOut size={20} />
             </span>
             {sidebarOpen && <span className="text-base hidden lg:inline">Logout</span>}
           </button>
-
-          {/* Collapse Toggle (Desktop Only) */}
-          <button
-            onClick={() => dispatch(toggleSidebar())}
-            className={`hidden lg:flex w-full items-center justify-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all duration-200
-              ${isDarkMode
-                ? 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
-                : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'}`}
-            type="button"
-          >
-            {!sidebarOpen ? <FiChevronRight size={20} /> : <FiChevronLeft size={20} />}
-          </button>
         </div>
       </div>
     </aside>
-	);
-}
+  );
+};
 
 export default Sidebar;

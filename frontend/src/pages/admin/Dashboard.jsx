@@ -51,7 +51,10 @@ const Dashboard = () => {
     { title: "Messages", value: messages.length.toString(), change: `${unreadMessages} unread`, icon: FiMessageSquare, color: "from-pink-500 to-rose-500", loading: messagesLoading, highlight: unreadMessages > 0 }
   ];
 
-  // Recent activity - combine all recent items
+
+  // Recent activity logic:
+  // - Only show unread messages as 'Message received'
+  // - If a message is read, show 'Message read' (with read time if available)
   const recentActivity = [
     ...projects.slice(0, 2).map(p => ({
       action: "Project added",
@@ -71,12 +74,15 @@ const Dashboard = () => {
       time: new Date(s.updatedAt || s.createdAt).toLocaleDateString(),
       type: "skill"
     })),
-    ...messages.slice(0, 2).map(m => ({
-      action: "Message received",
-      item: m.subject || `From ${m.name}`,
-      time: new Date(m.createdAt).toLocaleDateString(),
+    // Only show messages that have been read by admin
+    ...messages.filter(m => m.isRead).slice(0, 4).map(m => ({
+      action: "Message read",
+      item: m.subject
+        ? `${m.subject} (from ${m.name || 'Unknown'})`
+        : `From ${m.name || 'Unknown'}`,
+      time: new Date(m.updatedAt || m.readAt || m.createdAt).toLocaleDateString(),
       type: "message"
-    }))
+    })),
   ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 6);
 
   const quickActions = [
