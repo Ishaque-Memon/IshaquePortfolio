@@ -1,0 +1,27 @@
+{
+  "name": "ishaqueportfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ishaque-Memon/IshaquePortfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ishaque-Memon/IshaquePortfolio/issues"
+  },
+  "homepage": "https://github.com/Ishaque-Memon/IshaquePortfolio#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
