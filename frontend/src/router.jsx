@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
-import AdminLayout from './pages/admin/index';
+import AdminLayoutWrapper from './pages/admin/index'; // Import your wrapper
 import Dashboard from './pages/admin/Dashboard';
 import Skills from './pages/admin/Skills';
 import PersonalInfo from './pages/admin/PersonalInfo';
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     path: '/admin',
     element: (
       <ProtectedRoute>
-        <AdminLayout />
+        <AdminLayoutWrapper />
       </ProtectedRoute>
     ),
     children: [
@@ -72,8 +72,12 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '*',
+    path: '/pagenotfound',
     element: <NotFound />,
+  },
+  {
+    path: '*',
+    element: <Navigate to="/pagenotfound" replace />,
   },
 ]);
 

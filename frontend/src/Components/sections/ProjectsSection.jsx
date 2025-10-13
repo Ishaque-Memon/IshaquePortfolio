@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
-import { projectsData } from "@/data/portfolioData";
+import { getAllProjects } from "@/api/portfolioApi";
 import { useProjects } from "@/hooks/usePortfolio";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,23 +22,31 @@ const ProjectsSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   
   // API Integration
-  const { projects: apiProjects, loading, error } = useProjects();
-  const [projectsToDisplay, setProjectsToDisplay] = useState(projectsData);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Update projects when API data arrives
   useEffect(() => {
-    if (apiProjects && apiProjects.length > 0) {
-      setProjectsToDisplay(apiProjects);
-    }
-  }, [apiProjects]);
+    const fetchProjects = async () => {
+      try {
+        const data = await getAllProjects();
+        setProjects(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError("Failed to load projects.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Get unique categories
-  const categories = ["all", ...new Set(projectsToDisplay.map(p => p.category))];
+    fetchProjects();
+  }, []);
+
+  const categories = ["all", ...new Set(projects.map(p => p.category))];
 
   // Filter projects by category
   const filteredProjects = selectedCategory === "all" 
-    ? projectsToDisplay 
-    : projectsToDisplay.filter(p => p.category === selectedCategory);
+    ? projects 
+    : projects.filter(p => p.category === selectedCategory);
 
   const containerVariants = {
     hidden: { opacity: 0 },

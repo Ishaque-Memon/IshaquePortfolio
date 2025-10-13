@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
-import { personalInfo, stats } from "@/data/portfolioData";
-import { usePersonalInfo } from "@/hooks/usePortfolio";
+import { getPersonalInfo } from "@/api/portfolioApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,22 +18,34 @@ const iconMap = {
 
 const AboutSection = () => {
   const { isDarkMode } = useTheme();
-  
-  // API Integration
-  const { personalInfo: apiPersonalInfo, loading, error } = usePersonalInfo();
-  const [infoToDisplay, setInfoToDisplay] = useState(personalInfo);
-  const [statsToDisplay, setStatsToDisplay] = useState(stats);
+  const [infoToDisplay, setInfoToDisplay] = useState(null);
+  const [statsToDisplay, setStatsToDisplay] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Update info when API data arrives
   useEffect(() => {
-    if (apiPersonalInfo) {
-      setInfoToDisplay(apiPersonalInfo);
-      // If API provides stats, update them too
-      if (apiPersonalInfo.stats) {
-        setStatsToDisplay(apiPersonalInfo.stats);
+    const fetchPersonalInfo = async () => {
+      try {
+        const data = await getPersonalInfo();
+        setInfoToDisplay(data);
+        setStatsToDisplay(data.stats || []);
+      } catch (err) {
+        setError("Failed to load personal information.");
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [apiPersonalInfo]);
+    };
+
+    fetchPersonalInfo();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -98,7 +109,7 @@ const AboutSection = () => {
                       alt={infoToDisplay.name}
                     />
                     <AvatarFallback className="text-3xl">
-                      {infoToDisplay.name.split(' ').map(n => n[0]).join('')}
+                      {infoToDisplay?.name?.split(' ').map(n => n[0]).join('') || ''}
                     </AvatarFallback>
                   </Avatar>
 

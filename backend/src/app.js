@@ -6,7 +6,6 @@ import rateLimit from 'express-rate-limit';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 // Import routes
-
 import projectRoutes from './routes/projectRoutes.js';
 import skillRoutes from './routes/skillRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
@@ -36,23 +35,28 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// Rate limiting - Environment based
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: isDevelopment ? 1000 : 100, // High limit for dev, strict for prod
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skip: () => isDevelopment // Skip entirely in development if you want
 });
 
 // Apply rate limiting to API routes
 app.use('/api/', limiter);
 
-// Stricter rate limiting for auth routes
+// Auth rate limiting
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: 'Too many login attempts, please try again later.'
+  max: isDevelopment ? 50 : 5, // More lenient in dev
+  message: 'Too many login attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
 });
 
 app.use('/api/admin/login', authLimiter);
@@ -62,12 +66,12 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Server is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
 // API Routes
-
 app.use('/api/projects', projectRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/certificates', certificateRoutes);
@@ -83,13 +87,16 @@ app.get('/', (req, res) => {
     success: true,
     message: 'Welcome to Portfolio API',
     version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
     endpoints: {
       projects: '/api/projects',
       skills: '/api/skills',
       certificates: '/api/certificates',
       about: '/api/about',
       contact: '/api/contact',
-      admin: '/api/admin'
+      admin: '/api/admin',
+      education: '/api/education',
+      analytics: '/api/analytics'
     }
   });
 });

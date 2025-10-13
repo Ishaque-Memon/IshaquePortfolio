@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
-import { skillsData } from "@/data/portfolioData";
-import { useSkills } from "@/hooks/usePortfolio";
+import { getAllSkills } from "@/api/portfolioApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -24,18 +23,24 @@ const iconMap = {
 
 const SkillsSection = () => {
   const { isDarkMode } = useTheme();
-  const { skills: apiSkills, loading, error } = useSkills();
-  
-  // Use API data if available, otherwise fallback to static data
-  const [skillsToDisplay, setSkillsToDisplay] = useState(skillsData);
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (apiSkills && apiSkills.length > 0) {
-      // Transform API data to match component structure
-      const transformedSkills = transformApiSkills(apiSkills);
-      setSkillsToDisplay(transformedSkills);
-    }
-  }, [apiSkills]);
+    const fetchSkills = async () => {
+      try {
+        const data = await getAllSkills();
+        setSkills(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError("Failed to load skills.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   // Helper function to transform API skills to component format
   const transformApiSkills = (apiData) => {
@@ -160,7 +165,7 @@ const SkillsSection = () => {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {skillsToDisplay.categories.map((category, idx) => {
+          {transformApiSkills(skills).categories.map((category, idx) => {
             const CategoryIcon = iconMap[category.icon] || FiCpu;
             
             return (
