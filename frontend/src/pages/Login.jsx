@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiLogIn } from 'react-icons/fi';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import * as authApi from '../api/authApi';
@@ -9,7 +18,6 @@ import * as authApi from '../api/authApi';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
@@ -23,20 +31,12 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Call backend API
       const response = await authApi.login(email, password);
-      
-      // Extract token and user data from response
-      // Backend sends: { success: true, data: { admin: {...}, token: '...', expiresIn: '7d' } }
       const { token, admin } = response.data;
       
-      // Calculate token expiry (7 days from now - matching backend)
-      const expiresIn = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+      const expiresIn = 7 * 24 * 60 * 60 * 1000;
       
-      // Login with AuthContext
       login(token, admin, expiresIn);
-      
-      // Navigate to admin dashboard
       navigate('/admin');
     } catch (err) {
       console.error('Login error:', err);
@@ -56,131 +56,83 @@ const Login = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`relative w-full max-w-md p-8 rounded-2xl shadow-2xl ${
-          isDarkMode ? 'bg-neutral-900' : 'bg-white'
-        }`}
-      >
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">
+      <Card className={`relative w-full max-w-md ${isDarkMode ? 'border-neutral-800' : ''}`}>
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl">
             <span className="gradient-text">Admin</span> Login
-          </h1>
-          <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+          </CardTitle>
+          <CardDescription>
             Sign in to manage your portfolio
-          </p>
-        </div>
+          </CardDescription>
+        </CardHeader>
 
-        {/* Error Message */}
         {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-sm"
-          >
+          <div className="px-6 py-3 mx-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-sm">
             {error}
-          </motion.div>
+          </div>
         )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Field */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
-            }`}>
-              Email Address
-            </label>
-            <div className="relative">
-              <FiMail className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
-                isDarkMode ? 'text-neutral-400' : 'text-neutral-500'
-              }`} />
-              <input
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-6">
+            {/* Email Field */}
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-all duration-300 ${
-                  isDarkMode 
-                    ? 'bg-neutral-800 border-neutral-700 text-white focus:border-primary-500' 
-                    : 'bg-white border-neutral-300 text-neutral-900 focus:border-primary-500'
-                } focus:outline-none focus:ring-2 focus:ring-primary-500/20`}
                 placeholder="admin@portfolio.com"
               />
             </div>
-          </div>
 
-          {/* Password Field */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
-            }`}>
-              Password
-            </label>
-            <div className="relative">
-              <FiLock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
-                isDarkMode ? 'text-neutral-400' : 'text-neutral-500'
-              }`} />
-              <input
-                type={showPassword ? 'text' : 'password'}
+            {/* Password Field */}
+            <div className="grid gap-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <button
+                  type="button"
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-sm underline-offset-4 hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <Input
+                id="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className={`w-full pl-10 pr-12 py-3 rounded-lg border transition-all duration-300 ${
-                  isDarkMode 
-                    ? 'bg-neutral-800 border-neutral-700 text-white focus:border-primary-500' 
-                    : 'bg-white border-neutral-300 text-neutral-900 focus:border-primary-500'
-                } focus:outline-none focus:ring-2 focus:ring-primary-500/20`}
                 placeholder="Enter your password"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
-                  isDarkMode ? 'text-neutral-400 hover:text-neutral-300' : 'text-neutral-500 hover:text-neutral-700'
-                }`}
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
-              </button>
             </div>
-          </div>
+          </CardContent>
 
-          {/* Submit Button */}
-          <motion.button
-            type="submit"
-            disabled={isLoading}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full py-3 rounded-lg bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-          >
-            {isLoading ? (
-              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <>
-                <FiLogIn />
-                <span>Sign In</span>
-              </>
-            )}
-          </motion.button>
+          <CardFooter className="flex flex-col gap-3">
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-primary-500 to-accent-500"
+            >
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                'Sign In'
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate('/')}
+              className="w-full"
+            >
+              ← Back to Home
+            </Button>
+          </CardFooter>
         </form>
-
-        {/* Back to Home */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => navigate('/')}
-            className={`text-sm transition-colors duration-300 ${
-              isDarkMode 
-                ? 'text-neutral-400 hover:text-primary-400' 
-                : 'text-neutral-600 hover:text-primary-600'
-            }`}
-          >
-            ← Back to Home
-          </button>
-        </div>
-      </motion.div>
+      </Card>
     </div>
   );
 };
