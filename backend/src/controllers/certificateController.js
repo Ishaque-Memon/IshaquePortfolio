@@ -1,6 +1,7 @@
 import Certificate from '../models/Certificate.js';
 import { sendSuccess, sendError, sendPaginatedResponse } from '../utils/responseHandler.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/uploadHelper.js';
+import { emitSocketEvent } from '../utils/socketEmitter.js';
 import { buildCloudinaryUrl } from '../utils/cloudinaryUrl.js';
 
 const normalizeCertificateImage = (cert) => {
@@ -17,9 +18,7 @@ const normalizeCertificateImage = (cert) => {
   return c;
 };
 
-// @desc    Get all certificates
-// @route   GET /api/certificates
-// @access  Public
+// GET all certificates
 export const getAllCertificates = async (req, res, next) => {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -31,8 +30,6 @@ export const getAllCertificates = async (req, res, next) => {
       .skip(skip);
 
     const total = await Certificate.countDocuments();
-
-    // Normalize image URLs
     const normalized = certificates.map((c) => normalizeCertificateImage(c));
 
     return sendPaginatedResponse(res, normalized, parseInt(page), parseInt(limit), total);
@@ -41,37 +38,24 @@ export const getAllCertificates = async (req, res, next) => {
   }
 };
 
-// @desc    Get single certificate by ID
-// @route   GET /api/certificates/:id
-// @access  Public
+// GET single certificate
 export const getCertificateById = async (req, res, next) => {
   try {
     const certificate = await Certificate.findById(req.params.id);
-
-    if (!certificate) {
-      return sendError(res, 'Certificate not found', 404);
-    }
-
+    if (!certificate) return sendError(res, 'Certificate not found', 404);
     return sendSuccess(res, 'Certificate retrieved successfully', normalizeCertificateImage(certificate));
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Create new certificate
-// @route   POST /api/certificates
-// @access  Private (Admin)
+// CREATE certificate
 export const createCertificate = async (req, res, next) => {
   try {
     const { title, issuer, issueDate, expiryDate, credentialId, credentialUrl, skills, description, order } = req.body;
+    if (!req.file) return sendError(res, 'Certificate image is required', 400);
 
-    if (!req.file) {
-      return sendError(res, 'Certificate image is required', 400);
-    }
-
-    // Upload image to Cloudinary
     const imageResult = await uploadToCloudinary(req.file.buffer, 'portfolio/certificates');
-
     const certificate = await Certificate.create({
       title,
       issuer,
@@ -88,26 +72,22 @@ export const createCertificate = async (req, res, next) => {
       }
     });
 
+    // 🔴 Emit socket event globally
+    emitSocketEvent('certificate_created', normalizeCertificateImage(certificate));
+
     return sendSuccess(res, 'Certificate created successfully', normalizeCertificateImage(certificate), 201);
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Update certificate
-// @route   PUT /api/certificates/:id
-// @access  Private (Admin)
+// UPDATE certificate
 export const updateCertificate = async (req, res, next) => {
   try {
     const certificate = await Certificate.findById(req.params.id);
-
-    if (!certificate) {
-      return sendError(res, 'Certificate not found', 404);
-    }
+    if (!certificate) return sendError(res, 'Certificate not found', 404);
 
     const { title, issuer, issueDate, expiryDate, credentialId, credentialUrl, skills, description, order } = req.body;
-
-    // Update fields
     if (title) certificate.title = title;
     if (issuer) certificate.issuer = issuer;
     if (issueDate) certificate.issueDate = issueDate;
@@ -118,20 +98,16 @@ export const updateCertificate = async (req, res, next) => {
     if (description !== undefined) certificate.description = description;
     if (order !== undefined) certificate.order = parseInt(order);
 
-    // Update image if new one is uploaded
     if (req.file) {
-      if (certificate.image.publicId) {
-        await deleteFromCloudinary(certificate.image.publicId);
-      }
-
+      if (certificate.image.publicId) await deleteFromCloudinary(certificate.image.publicId);
       const imageResult = await uploadToCloudinary(req.file.buffer, 'portfolio/certificates');
-      certificate.image = {
-        url: imageResult.url,
-        publicId: imageResult.publicId
-      };
+      certificate.image = { url: imageResult.url, publicId: imageResult.publicId };
     }
 
     await certificate.save();
+
+    // 🟢 Emit socket event globally
+    emitSocketEvent('certificate_updated', normalizeCertificateImage(certificate));
 
     return sendSuccess(res, 'Certificate updated successfully', normalizeCertificateImage(certificate));
   } catch (error) {
@@ -139,22 +115,17 @@ export const updateCertificate = async (req, res, next) => {
   }
 };
 
-// @desc    Delete certificate
-// @route   DELETE /api/certificates/:id
-// @access  Private (Admin)
+// DELETE certificate
 export const deleteCertificate = async (req, res, next) => {
   try {
     const certificate = await Certificate.findById(req.params.id);
+    if (!certificate) return sendError(res, 'Certificate not found', 404);
 
-    if (!certificate) {
-      return sendError(res, 'Certificate not found', 404);
-    }
-
-    if (certificate.image.publicId) {
-      await deleteFromCloudinary(certificate.image.publicId);
-    }
-
+    if (certificate.image.publicId) await deleteFromCloudinary(certificate.image.publicId);
     await certificate.deleteOne();
+
+    // 🟡 Emit socket event globally
+    emitSocketEvent('certificate_deleted', { id: req.params.id });
 
     return sendSuccess(res, 'Certificate deleted successfully');
   } catch (error) {

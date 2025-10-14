@@ -10,61 +10,56 @@ import {
   getFieldLabel,
   getSpecializationLabel
 } from '../constants/educationOptions.js';
+import { emitSocketEvent } from '../utils/socketEmitter.js';
+import { sendSuccess, sendError } from '../utils/responseHandler.js';
 
-// Get education metadata/options
-export const getEducationOptions = async (req, res) => {
+// @desc    Get education metadata/options
+// @route   GET /api/education/options
+// @access  Public
+export const getEducationOptions = async (req, res, next) => {
   try {
-    res.json({
+    return sendSuccess(res, 'Education options fetched successfully', {
       levels: EDUCATION_LEVELS,
       boardsUniversities: BOARDS_UNIVERSITIES,
       degreeOptions: DEGREE_OPTIONS,
-      specializationOptions: SPECIALIZATION_OPTIONS,
-      helpers: {
-        getInstitutionFieldType,
-        getFilteredBoards,
-        shouldShowSpecialization,
-        getFieldLabel,
-        getSpecializationLabel
-      }
+      specializationOptions: SPECIALIZATION_OPTIONS
     });
   } catch (err) {
-    console.error('Error fetching education options:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
 
-// Get all education entries
-export const getAllEducation = async (req, res) => {
+// @desc    Get all education entries
+// @route   GET /api/education
+// @access  Public or Private (Admin)
+export const getAllEducation = async (req, res, next) => {
   try {
     const education = await Education.find().sort({ startDate: -1 });
-    res.json(education);
+    return sendSuccess(res, 'Education data retrieved successfully', education);
   } catch (err) {
-    console.error('Error fetching education:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
 
-// Get single education entry
-export const getEducationById = async (req, res) => {
+// @desc    Get single education entry
+// @route   GET /api/education/:id
+// @access  Public
+export const getEducationById = async (req, res, next) => {
   try {
     const education = await Education.findById(req.params.id);
-    
-    if (!education) {
-      return res.status(404).json({ message: 'Education entry not found' });
-    }
-    
-    res.json(education);
+    if (!education) return sendError(res, 'Education entry not found', 404);
+
+    return sendSuccess(res, 'Education entry retrieved successfully', education);
   } catch (err) {
-    console.error('Error fetching education:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
 
-// Create new education entry
-export const createEducation = async (req, res) => {
+// @desc    Create new education entry
+// @route   POST /api/education
+// @access  Private (Admin)
+export const createEducation = async (req, res, next) => {
   try {
-    console.log('📥 Received Education Data:', req.body);
-    
     const {
       level,
       degree,
@@ -90,7 +85,7 @@ export const createEducation = async (req, res) => {
       isPresent: isPresent || false
     };
 
-    // Add optional fields only if they have values
+    // Optional fields
     if (specialization) educationData.specialization = specialization;
     if (board) educationData.board = board;
     if (university) educationData.university = university;
@@ -103,27 +98,25 @@ export const createEducation = async (req, res) => {
     if (description) educationData.description = description;
     if (!isPresent && endDate) educationData.endDate = endDate;
 
-    console.log('💾 Saving to DB:', educationData);
+    const education = await Education.create(educationData);
 
-    const education = new Education(educationData);
-    const savedEducation = await education.save();
-    
-    console.log('✅ Saved Successfully:', savedEducation);
-    res.status(201).json(savedEducation);
+    // 🔴 Emit socket event (new education created)
+    emitSocketEvent('education_created', education);
+
+    return sendSuccess(res, 'Education entry created successfully', education, 201);
   } catch (err) {
-    console.error('Error creating education:', err);
-    if (err.name === 'ValidationError') {
-      return res.status(400).json({ message: err.message });
-    }
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
 
-// Update education entry
-export const updateEducation = async (req, res) => {
+// @desc    Update education entry
+// @route   PUT /api/education/:id
+// @access  Private (Admin)
+export const updateEducation = async (req, res, next) => {
   try {
-    console.log('📥 Update Request Data:', req.body);
-    
+    const education = await Education.findById(req.params.id);
+    if (!education) return sendError(res, 'Education entry not found', 404);
+
     const {
       level,
       degree,
@@ -142,20 +135,13 @@ export const updateEducation = async (req, res) => {
       description
     } = req.body;
 
-    const education = await Education.findById(req.params.id);
-    
-    if (!education) {
-      return res.status(404).json({ message: 'Education entry not found' });
-    }
-
-    // Update required fields
+    // Update fields
     education.level = level;
     education.degree = degree;
     education.startDate = startDate;
     education.isPresent = isPresent || false;
     education.endDate = isPresent ? null : endDate;
 
-    // Update optional fields (set to undefined to remove if empty)
     education.specialization = specialization || undefined;
     education.board = board || undefined;
     education.university = university || undefined;
@@ -168,30 +154,31 @@ export const updateEducation = async (req, res) => {
     education.description = description || undefined;
 
     const updatedEducation = await education.save();
-    console.log('✅ Updated Successfully:', updatedEducation);
-    res.json(updatedEducation);
+
+    // 🟢 Emit socket event (education updated)
+    emitSocketEvent('education_updated', updatedEducation);
+
+    return sendSuccess(res, 'Education entry updated successfully', updatedEducation);
   } catch (err) {
-    console.error('Error updating education:', err);
-    if (err.name === 'ValidationError') {
-      return res.status(400).json({ message: err.message });
-    }
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
 
-// Delete education entry
-export const deleteEducation = async (req, res) => {
+// @desc    Delete education entry
+// @route   DELETE /api/education/:id
+// @access  Private (Admin)
+export const deleteEducation = async (req, res, next) => {
   try {
     const education = await Education.findById(req.params.id);
-    
-    if (!education) {
-      return res.status(404).json({ message: 'Education entry not found' });
-    }
+    if (!education) return sendError(res, 'Education entry not found', 404);
 
     await education.deleteOne();
-    res.json({ message: 'Education entry deleted successfully' });
+
+    // 🔵 Emit socket event (education deleted)
+    emitSocketEvent('education_deleted', { id: req.params.id });
+
+    return sendSuccess(res, 'Education entry deleted successfully');
   } catch (err) {
-    console.error('Error deleting education:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };

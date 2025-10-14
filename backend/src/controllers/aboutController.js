@@ -1,5 +1,6 @@
 import About from '../models/About.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
+import { emitSocketEvent } from '../utils/socketEmitter.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/uploadHelper.js';
 
 // @desc    Get active about info
@@ -59,14 +60,19 @@ export const createOrUpdateAbout = async (req, res, next) => {
       updateData.resumeFile = { url: fileResult.url, publicId: fileResult.publicId };
     }
 
+    let responseAbout;
     if (about) {
       Object.assign(about, updateData);
-      await about.save();
-      return sendSuccess(res, "About information updated successfully", about);
+      responseAbout = await about.save();
+      sendSuccess(res, "About information updated successfully", responseAbout);
     } else {
-      const newAbout = await About.create(updateData);
-      return sendSuccess(res, "About information created successfully", newAbout, 201);
+      responseAbout = await About.create(updateData);
+      sendSuccess(res, "About information created successfully", responseAbout, 201);
     }
+
+    // ✅ Emit global socket event to all connected clients
+    emitSocketEvent("aboutUpdated", responseAbout);
+
   } catch (error) {
     next(error);
   }
@@ -87,7 +93,10 @@ export const updateStatistics = async (req, res, next) => {
     about.statistics = { ...about.statistics, ...req.body };
     await about.save();
 
-    return sendSuccess(res, 'Statistics updated successfully', about);
+    sendSuccess(res, 'Statistics updated successfully', about);
+    // ✅ Emit update event for statistics change
+    emitSocketEvent("aboutStatisticsUpdated", about);
+
   } catch (error) {
     next(error);
   }
@@ -110,7 +119,9 @@ export const deleteAbout = async (req, res, next) => {
 
     await about.deleteOne();
 
-    return sendSuccess(res, 'About information deleted successfully');
+    sendSuccess(res, 'About information deleted successfully');
+    // ✅ Emit delete event
+    emitSocketEvent("aboutDeleted", { id: req.params.id });
   } catch (error) {
     next(error);
   }

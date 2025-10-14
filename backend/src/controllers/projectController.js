@@ -2,6 +2,7 @@ import Project from '../models/Project.js';
 import { sendSuccess, sendError, sendPaginatedResponse } from '../utils/responseHandler.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/uploadHelper.js';
 import { normalizeProjectImages } from '../utils/cloudinaryUrl.js';
+import { emitSocketEvent } from '../utils/socketEmitter.js';
 
 // @desc    Get all projects
 // @route   GET /api/projects
@@ -18,17 +19,17 @@ export const getAllProjects = async (req, res, next) => {
 
     const skip = (page - 1) * limit;
 
-  const projects = await Project.find(filter)
+    const projects = await Project.find(filter)
       .sort({ featured: -1, order: 1, createdAt: -1 })
       .limit(parseInt(limit))
       .skip(skip);
 
-  const total = await Project.countDocuments(filter);
+    const total = await Project.countDocuments(filter);
 
-  // Normalize image URLs
-  const normalized = projects.map((p) => normalizeProjectImages(p));
+    // Normalize image URLs
+    const normalized = projects.map((p) => normalizeProjectImages(p));
 
-  return sendPaginatedResponse(res, normalized, parseInt(page), parseInt(limit), total);
+    return sendPaginatedResponse(res, normalized, parseInt(page), parseInt(limit), total);
   } catch (error) {
     next(error);
   }
@@ -45,7 +46,7 @@ export const getProjectById = async (req, res, next) => {
       return sendError(res, 'Project not found', 404);
     }
 
-  return sendSuccess(res, 'Project retrieved successfully', normalizeProjectImages(project));
+    return sendSuccess(res, 'Project retrieved successfully', normalizeProjectImages(project));
   } catch (error) {
     next(error);
   }
@@ -74,26 +75,26 @@ export const createProject = async (req, res, next) => {
 
     // Handle multiple images upload to Cloudinary
     if (req.files && req.files.length > 0) {
-      try {
-        for (const file of req.files) {
-          const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
-          projectData.images.push({
-            url: imageResult.url,
-            publicId: imageResult.publicId
-          });
-        }
-        
-        // Set first image as thumbnail
-        if (projectData.images.length > 0) {
-          projectData.thumbnailImage = projectData.images[0];
-        }
-      } catch (cloudinaryError) {
-        console.error('Cloudinary upload failed:', cloudinaryError.message);
+      for (const file of req.files) {
+        const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
+        projectData.images.push({
+          url: imageResult.url,
+          publicId: imageResult.publicId
+        });
+      }
+
+      // Set first image as thumbnail
+      if (projectData.images.length > 0) {
+        projectData.thumbnailImage = projectData.images[0];
       }
     }
 
     const project = await Project.create(projectData);
-  return sendSuccess(res, 'Project created successfully', normalizeProjectImages(project), 201);
+
+    // Emit socket event
+    emitSocketEvent('projectCreated', project);
+
+    return sendSuccess(res, 'Project created successfully', normalizeProjectImages(project), 201);
   } catch (error) {
     console.error('Error creating project:', error);
     next(error);
@@ -127,41 +128,41 @@ export const updateProject = async (req, res, next) => {
 
     // Update images if new ones are uploaded
     if (req.files && req.files.length > 0) {
-      try {
-        // Delete old images from Cloudinary
-        if (project.images && project.images.length > 0) {
-          for (const img of project.images) {
-            if (img.publicId) {
-              try {
-                await deleteFromCloudinary(img.publicId);
-              } catch (err) {
-                console.error('Failed to delete image from Cloudinary:', img.publicId);
-              }
+      // Delete old images from Cloudinary
+      if (project.images && project.images.length > 0) {
+        for (const img of project.images) {
+          if (img.publicId) {
+            try {
+              await deleteFromCloudinary(img.publicId);
+            } catch (err) {
+              console.error('Failed to delete image from Cloudinary:', img.publicId);
             }
           }
         }
+      }
 
-        // Upload new images
-        project.images = [];
-        for (const file of req.files) {
-          const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
-          project.images.push({
-            url: imageResult.url,
-            publicId: imageResult.publicId
-          });
-        }
+      // Upload new images
+      project.images = [];
+      for (const file of req.files) {
+        const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
+        project.images.push({
+          url: imageResult.url,
+          publicId: imageResult.publicId
+        });
+      }
 
-        // Update thumbnail
-        if (project.images.length > 0) {
-          project.thumbnailImage = project.images[0];
-        }
-      } catch (cloudinaryError) {
-        console.error('Cloudinary upload failed:', cloudinaryError.message);
+      // Update thumbnail
+      if (project.images.length > 0) {
+        project.thumbnailImage = project.images[0];
       }
     }
 
     await project.save();
-  return sendSuccess(res, 'Project updated successfully', normalizeProjectImages(project));
+
+    // Emit socket event
+    emitSocketEvent('projectUpdated', project);
+
+    return sendSuccess(res, 'Project updated successfully', normalizeProjectImages(project));
   } catch (error) {
     console.error('Error updating project:', error);
     next(error);
@@ -193,6 +194,10 @@ export const deleteProject = async (req, res, next) => {
     }
 
     await project.deleteOne();
+
+    // Emit socket event
+    emitSocketEvent('projectDeleted', { id: req.params.id });
+
     return sendSuccess(res, 'Project deleted successfully');
   } catch (error) {
     console.error('Error deleting project:', error);

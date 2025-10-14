@@ -1,5 +1,6 @@
 import Skill from '../models/Skill.js';
 import { sendSuccess, sendError, sendPaginatedResponse } from '../utils/responseHandler.js';
+import { emitSocketEvent } from '../utils/socketEmitter.js';
 
 // @desc    Get all skills
 // @route   GET /api/skills
@@ -69,6 +70,10 @@ export const getSkillById = async (req, res, next) => {
 export const createSkill = async (req, res, next) => {
   try {
     const skill = await Skill.create(req.body);
+
+    // Emit socket event when new skill is added
+    emitSocketEvent('skillCreated', skill);
+
     return sendSuccess(res, 'Skill created successfully', skill, 201);
   } catch (error) {
     next(error);
@@ -90,6 +95,9 @@ export const updateSkill = async (req, res, next) => {
       return sendError(res, 'Skill not found', 404);
     }
 
+    // Emit socket event when skill is updated
+    emitSocketEvent('skillUpdated', skill);
+
     return sendSuccess(res, 'Skill updated successfully', skill);
   } catch (error) {
     next(error);
@@ -108,6 +116,10 @@ export const deleteSkill = async (req, res, next) => {
     }
 
     await skill.deleteOne();
+
+    // Emit socket event when skill is deleted
+    emitSocketEvent('skillDeleted', { id: req.params.id });
+
     return sendSuccess(res, 'Skill deleted successfully');
   } catch (error) {
     next(error);

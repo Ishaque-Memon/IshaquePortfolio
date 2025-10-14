@@ -332,7 +332,7 @@ const Education = () => {
   }
 
   return (
-    <div className={`min-h-screen p-6 ${isDarkMode ? 'bg-neutral-900 text-white' : 'bg-gray-50 text-neutral-900'}`}>
+    <div className={`min-h-screen p-6 `}>
       {/* Header */}
       <div className="mb-8 flex justify-between items-center">
         <div>
