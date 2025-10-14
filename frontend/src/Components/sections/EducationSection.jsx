@@ -23,9 +23,12 @@ const EducationSection = () => {
     const fetchEducationData = async () => {
       try {
         const data = await getAllEducation();
-        setEducationData(data);
+        const educationArray = Array.isArray(data) ? data : (data?.data || []);
+        setEducationData(educationArray);
       } catch (err) {
+        console.error('Education fetch error:', err);
         setError("Failed to load education data.");
+        setEducationData([]);
       } finally {
         setLoading(false);
       }

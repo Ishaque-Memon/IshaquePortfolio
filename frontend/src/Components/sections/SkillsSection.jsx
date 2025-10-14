@@ -31,9 +31,15 @@ const SkillsSection = () => {
     const fetchSkills = async () => {
       try {
         const data = await getAllSkills();
-        setSkills(Array.isArray(data) ? data : []);
+        console.log('Fetched skills:', data);
+        
+        // Handle both direct array and response with data property
+        const skillsArray = Array.isArray(data) ? data : (data?.data || []);
+        setSkills(skillsArray);
       } catch (err) {
+        console.error('Error fetching skills:', err);
         setError("Failed to load skills.");
+        setSkills([]);
       } finally {
         setLoading(false);
       }
@@ -58,7 +64,7 @@ const SkillsSection = () => {
       }
       categories[skill.category].skills.push({
         name: skill.name,
-        level: skill.proficiency || 50,
+        level: skill.level || 50,
         icon: skill.icon || 'FiCode'
       });
     });
@@ -69,22 +75,28 @@ const SkillsSection = () => {
   // Helper functions for icons and colors
   const getCategoryIcon = (category) => {
     const iconMap = {
-      'Frontend Development': 'SiReact',
-      'Backend Development': 'SiNodedotjs',
-      'Database': 'SiMongodb',
-      'Tools & Others': 'SiGit'
+      'frontend': 'SiReact',
+      'backend': 'SiNodedotjs',
+      'database': 'SiMongodb',
+      'tools': 'SiGit',
+      'cloud': 'FiServer',
+      'framework': 'SiExpress',
+      'other': 'FiCode'
     };
-    return iconMap[category] || 'FiCode';
+    return iconMap[category?.toLowerCase()] || 'FiCode';
   };
 
   const getCategoryColor = (category) => {
     const colorMap = {
-      'Frontend Development': 'from-blue-500 to-cyan-500',
-      'Backend Development': 'from-green-500 to-emerald-500',
-      'Database': 'from-purple-500 to-pink-500',
-      'Tools & Others': 'from-orange-500 to-red-500'
+      'frontend': 'from-blue-500 to-cyan-500',
+      'backend': 'from-green-500 to-emerald-500',
+      'database': 'from-purple-500 to-pink-500',
+      'tools': 'from-orange-500 to-red-500',
+      'cloud': 'from-sky-500 to-blue-500',
+      'framework': 'from-indigo-500 to-purple-500',
+      'other': 'from-gray-500 to-gray-600'
     };
-    return colorMap[category] || 'from-gray-500 to-gray-600';
+    return colorMap[category?.toLowerCase()] || 'from-gray-500 to-gray-600';
   };
 
   const containerVariants = {
@@ -147,101 +159,109 @@ const SkillsSection = () => {
         )}
 
         {/* Error State */}
-        {error && !loading && (
+        {error && !loading && skills.length === 0 && (
           <div className="text-center py-12">
             <p className="text-red-500 mb-4">{error}</p>
-            <p className={isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}>
-              Using static data as fallback
-            </p>
           </div>
         )}
 
-        {/* Skills Grid */}
-        {!loading && (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          {transformApiSkills(skills).categories.map((category, idx) => {
-            const CategoryIcon = iconMap[category.icon] || FiCpu;
-            
-            return (
-              <motion.div key={idx} variants={itemVariants}>
-                <Card className={`h-full ${
-                  isDarkMode 
-                    ? 'bg-neutral-900/50 border-neutral-800 hover:border-neutral-700' 
-                    : 'bg-white border-neutral-200 hover:border-neutral-300'
-                } transition-all duration-300 hover:shadow-xl`}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      <div className={`p-3 rounded-lg bg-gradient-to-br ${category.color}`}>
-                        <CategoryIcon className="w-6 h-6 text-white" />
-                      </div>
-                      <span className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {category.name}
-                      </span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {category.skills.map((skill, skillIdx) => {
-                      const SkillIcon = iconMap[skill.icon] || FiCpu;
-                      
-                      return (
-                        <div key={skillIdx} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <SkillIcon className={`w-4 h-4 ${
-                                isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
-                              }`} />
-                              <span className={`text-sm font-medium ${
-                                isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
-                              }`}>
-                                {skill.name}
-                              </span>
-                            </div>
-                            <Badge variant="secondary" className="text-xs">
-                              {skill.level}%
-                            </Badge>
-                          </div>
-                          <Progress 
-                            value={skill.level} 
-                            className="h-2"
-                          />
+        {/* Skills Grid - Only render if skills data exists */}
+        {!loading && skills.length > 0 && (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            {transformApiSkills(skills).categories.map((category, idx) => {
+              const CategoryIcon = iconMap[category.icon] || FiCpu;
+              
+              return (
+                <motion.div key={idx} variants={itemVariants}>
+                  <Card className={`h-full ${
+                    isDarkMode 
+                      ? 'bg-neutral-900/50 border-neutral-800 hover:border-neutral-700' 
+                      : 'bg-white border-neutral-200 hover:border-neutral-300'
+                  } transition-all duration-300 hover:shadow-xl`}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <div className={`p-3 rounded-lg bg-gradient-to-br ${category.color}`}>
+                          <CategoryIcon className="w-6 h-6 text-white" />
                         </div>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                        <span className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
+                          {category.name}
+                        </span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {category.skills.map((skill, skillIdx) => {
+                        const SkillIcon = iconMap[skill.icon] || FiCpu;
+                        
+                        return (
+                          <div key={skillIdx} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <SkillIcon className={`w-4 h-4 ${
+                                  isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
+                                }`} />
+                                <span className={`text-sm font-medium ${
+                                  isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                                }`}>
+                                  {skill.name}
+                                </span>
+                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {skill.level}%
+                              </Badge>
+                            </div>
+                            <Progress 
+                              value={skill.level} 
+                              className="h-2"
+                            />
+                          </div>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         )}
 
-        {/* Additional Info */}
-        {!loading && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-12 text-center"
-        >
-          <Card className={`inline-block ${
-            isDarkMode 
-              ? 'bg-neutral-900/50 border-neutral-800' 
-              : 'bg-white border-neutral-200'
+        {/* No Skills Message - Only show if no data */}
+        {!loading && skills.length === 0 && !error && (
+          <div className={`text-center py-12 ${
+            isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
           }`}>
-            <CardContent className="py-4 px-6">
-              <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                🚀 Always learning and exploring new technologies
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
+            <FiCode className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <p className="text-lg font-medium">No skills data available yet</p>
+            <p className="text-sm mt-2">Add skills from the admin panel to display them here</p>
+          </div>
+        )}
+
+        {/* Additional Info - Only show if skills exist */}
+        {!loading && skills.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="mt-12 text-center"
+          >
+            <Card className={`inline-block ${
+              isDarkMode 
+                ? 'bg-neutral-900/50 border-neutral-800' 
+                : 'bg-white border-neutral-200'
+            }`}>
+              <CardContent className="py-4 px-6">
+                <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                  🚀 Always learning and exploring new technologies
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
       </div>
     </section>

@@ -19,9 +19,39 @@ const HomeSection = () => {
   // Update info when API data arrives
   useEffect(() => {
     if (apiPersonalInfo) {
-      setInfoToDisplay(apiPersonalInfo);
+      console.log('API Personal Info received:', apiPersonalInfo);
+      // The API returns { success, data, message }, so extract data
+      const dataToUse = apiPersonalInfo?.data || apiPersonalInfo;
+      console.log('Data to display:', dataToUse);
+      setInfoToDisplay(dataToUse);
     }
   }, [apiPersonalInfo]);
+
+  // Generate fallback image URL
+  const getProfileImage = () => {
+    const imageData = infoToDisplay?.profileImage;
+    
+    console.log('getProfileImage called with imageData:', imageData);
+    
+    let imageUrl = null;
+    
+    if (typeof imageData === 'string' && imageData.trim()) {
+      imageUrl = imageData;
+    } else if (imageData?.url && typeof imageData.url === 'string' && imageData.url.trim()) {
+      imageUrl = imageData.url;
+    }
+    
+    console.log('Final imageUrl:', imageUrl);
+    
+    if (imageUrl) {
+      return imageUrl;
+    }
+    
+    // Fallback avatar
+    const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay?.name || 'User')}&size=400&background=6366f1&color=fff`;
+    console.log('Using fallback:', fallback);
+    return fallback;
+  };
 
   return (
     <section
@@ -52,7 +82,7 @@ const HomeSection = () => {
               className="mb-6"
             >
               <Badge variant="outline" className="px-4 py-2 text-sm">
-                ✨ {infoToDisplay.availability || "Available for opportunities"}
+                ✨ {infoToDisplay?.availability || "Available for opportunities"}
               </Badge>
             </motion.div>
 
@@ -65,21 +95,22 @@ const HomeSection = () => {
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
                 Hi, I'm{" "}
                 <span className="gradient-text">
-                  {infoToDisplay.name}
+                  {infoToDisplay?.name || "Developer"}
                 </span>
               </h1>
               <h2 className={`text-2xl md:text-3xl font-semibold mb-6 ${
                 isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
               }`}>
-                {infoToDisplay.title}
+                {infoToDisplay?.title || "Full Stack Developer"}
               </h2>
               <p className={`text-lg md:text-xl mb-8 max-w-2xl ${
                 isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
               }`}>
-                {infoToDisplay.bio}
+                {infoToDisplay?.bio || "Building amazing web experiences"}
               </p>
             </motion.div>
 
+           {/* CTA Buttons */}
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -92,11 +123,23 @@ const HomeSection = () => {
                   View My Work
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href={infoToDisplay.resumePdf} download>
-                  <FiDownload /> Download Resume
-                </a>
-              </Button>
+              {infoToDisplay?.resumeFile?.url && (
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="gap-2"
+                  asChild
+                >
+                  <a 
+                    href={infoToDisplay.resumeFile.url}
+                    download="resume"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FiDownload /> Download Resume
+                  </a>
+                </Button>
+              )}
             </motion.div>
 
             {/* Social Links */}
@@ -106,7 +149,7 @@ const HomeSection = () => {
               transition={{ delay: 0.5 }}
               className="flex gap-4"
             >
-              {infoToDisplay.socialLinks?.github && (
+              {infoToDisplay?.socialLinks?.github && (
                 <Button variant="ghost" size="icon" asChild>
                   <a
                     href={infoToDisplay.socialLinks.github}
@@ -118,7 +161,7 @@ const HomeSection = () => {
                   </a>
                 </Button>
               )}
-              {infoToDisplay.socialLinks?.linkedin && (
+              {infoToDisplay?.socialLinks?.linkedin && (
                 <Button variant="ghost" size="icon" asChild>
                   <a
                     href={infoToDisplay.socialLinks.linkedin}
@@ -130,7 +173,7 @@ const HomeSection = () => {
                   </a>
                 </Button>
               )}
-              {infoToDisplay.socialLinks?.email && (
+              {infoToDisplay?.socialLinks?.email && (
                 <Button variant="ghost" size="icon" asChild>
                   <a
                     href={infoToDisplay.socialLinks.email}
@@ -159,11 +202,12 @@ const HomeSection = () => {
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <img
-                    src={infoToDisplay.profileImage}
-                    alt={infoToDisplay.name}
-                    className="w-full h-auto max-w-md rounded-lg"
+                    src={getProfileImage()}
+                    alt={infoToDisplay?.name || "Profile"}
+                    className="w-full h-auto max-w-md rounded-lg object-cover"
                     onError={(e) => {
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay.name)}&size=400&background=6366f1&color=fff`;
+                      // Double fallback if primary fails
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay?.name || 'User')}&size=400&background=6366f1&color=fff`;
                     }}
                   />
                 </div>

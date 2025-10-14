@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
-import { getPersonalInfo } from "@/api/portfolioApi";
+import { usePersonalInfo } from "@/hooks/usePortfolio";
+import { getAllSkills } from "@/api/portfolioApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,33 +19,70 @@ const iconMap = {
 
 const AboutSection = () => {
   const { isDarkMode } = useTheme();
+  const { personalInfo: apiPersonalInfo, loading, error } = usePersonalInfo();
+  
   const [infoToDisplay, setInfoToDisplay] = useState(null);
   const [statsToDisplay, setStatsToDisplay] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [skillsLoading, setSkillsLoading] = useState(true);
 
+  // Fetch personal info
   useEffect(() => {
-    const fetchPersonalInfo = async () => {
+    if (apiPersonalInfo) {
+      const data = apiPersonalInfo?.data || apiPersonalInfo;
+      console.log('AboutSection data:', data);
+      
+      setInfoToDisplay(data);
+      
+      // Convert statistics object to array for display
+      if (data?.statistics) {
+        const statsArray = [
+          { label: 'Years of Experience', value: data.statistics.yearsOfExperience || 0, icon: 'FiCode' },
+          { label: 'Projects Completed', value: data.statistics.projectsCompleted || 0, icon: 'FiAward' },
+          { label: 'Happy Clients', value: data.statistics.happyClients || 0, icon: 'FiCpu' },
+          { label: 'Certificates Earned', value: data.statistics.certificatesEarned || 0, icon: 'FiCheckCircle' }
+        ];
+        setStatsToDisplay(statsArray);
+      }
+    }
+  }, [apiPersonalInfo]);
+
+  // Fetch skills for Quick Skills tab
+  useEffect(() => {
+    const fetchSkills = async () => {
       try {
-        const data = await getPersonalInfo();
-        setInfoToDisplay(data);
-        setStatsToDisplay(data.stats || []);
+        const data = await getAllSkills();
+        const skillsArray = Array.isArray(data) ? data : (data?.data || []);
+        console.log('Fetched skills for About tab:', skillsArray);
+        setSkills(skillsArray);
       } catch (err) {
-        setError("Failed to load personal information.");
+        console.error('Error fetching skills:', err);
+        setSkills([]);
       } finally {
-        setLoading(false);
+        setSkillsLoading(false);
       }
     };
 
-    fetchPersonalInfo();
+    fetchSkills();
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+          <p className={isDarkMode ? "text-neutral-400" : "text-neutral-600"}>Loading...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div>{error}</div>;
+  if (error || !infoToDisplay) {
+    return (
+      <div className={`text-center py-12 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+        {error || "Failed to load information"}
+      </div>
+    );
   }
 
   const containerVariants = {
@@ -63,6 +101,12 @@ const AboutSection = () => {
       transition: { duration: 0.5 }
     }
   };
+
+  // Get profile image URL
+  const profileImageUrl = infoToDisplay?.profileImage?.url || infoToDisplay?.profileImage;
+  const locationText = infoToDisplay?.location?.city && infoToDisplay?.location?.country 
+    ? `${infoToDisplay.location.city}, ${infoToDisplay.location.country}`
+    : infoToDisplay?.location;
 
   return (
     <section
@@ -105,11 +149,11 @@ const AboutSection = () => {
                 <div className="flex flex-col items-center text-center space-y-4">
                   <Avatar className="w-32 h-32 ring-4 ring-primary-500/20">
                     <AvatarImage 
-                      src={infoToDisplay.profileImageAlt || infoToDisplay.profileImage} 
-                      alt={infoToDisplay.name}
+                      src={profileImageUrl}
+                      alt={infoToDisplay?.name}
                     />
                     <AvatarFallback className="text-3xl">
-                      {infoToDisplay?.name?.split(' ').map(n => n[0]).join('') || ''}
+                      {infoToDisplay?.name?.split(' ').map(n => n[0]).join('') || 'U'}
                     </AvatarFallback>
                   </Avatar>
 
@@ -117,29 +161,29 @@ const AboutSection = () => {
                     <h3 className={`text-2xl font-bold ${
                       isDarkMode ? 'text-white' : 'text-neutral-900'
                     }`}>
-                      {infoToDisplay.name}
+                      {infoToDisplay?.name}
                     </h3>
                     <p className="text-primary-500 font-medium mt-1">
-                      {infoToDisplay.title}
+                      {infoToDisplay?.title}
                     </p>
                   </div>
 
                   <div className={`space-y-2 text-sm ${
                     isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
                   }`}>
-                    {infoToDisplay.location && (
+                    {locationText && (
                       <div className="flex items-center gap-2 justify-center">
                         <FiMapPin className="w-4 h-4" />
-                        <span>{infoToDisplay.location}</span>
+                        <span>{locationText}</span>
                       </div>
                     )}
-                    {infoToDisplay.email && (
+                    {infoToDisplay?.email && (
                       <div className="flex items-center gap-2 justify-center">
                         <FiMail className="w-4 h-4" />
                         <span>{infoToDisplay.email}</span>
                       </div>
                     )}
-                    {infoToDisplay.phone && (
+                    {infoToDisplay?.phone && (
                       <div className="flex items-center gap-2 justify-center">
                         <FiPhone className="w-4 h-4" />
                         <span>{infoToDisplay.phone}</span>
@@ -148,7 +192,7 @@ const AboutSection = () => {
                   </div>
 
                   <Badge variant="outline" className="mt-4">
-                    {infoToDisplay.tagline || "Building Digital Experiences"}
+                    {infoToDisplay?.title || "Building Digital Experiences"}
                   </Badge>
                 </div>
               </CardContent>
@@ -163,9 +207,27 @@ const AboutSection = () => {
             className="lg:col-span-2"
           >
             <Tabs defaultValue="bio" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="bio">Biography</TabsTrigger>
-                <TabsTrigger value="skills">Quick Skills</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 h-auto gap-2 mb-6">
+                <TabsTrigger 
+                  value="bio"
+                  className={`data-[state=active]:bg-primary-500 data-[state=active]:text-white px-6 py-2 rounded-lg font-semibold transition-all ${
+                    isDarkMode 
+                      ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700' 
+                      : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
+                  }`}
+                >
+                  Biography
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="skills"
+                  className={`data-[state=active]:bg-primary-500 data-[state=active]:text-white px-6 py-2 rounded-lg font-semibold transition-all ${
+                    isDarkMode 
+                      ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700' 
+                      : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
+                  }`}
+                >
+                  Quick Skills
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="bio">
@@ -178,7 +240,7 @@ const AboutSection = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className={isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}>
-                      {infoToDisplay.bio}
+                      {infoToDisplay?.bio}
                     </p>
                     <p className={isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}>
                       I specialize in building modern web applications using cutting-edge technologies. 
@@ -202,16 +264,33 @@ const AboutSection = () => {
                     <CardTitle>Core Competencies</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {['React.js', 'Node.js', 'JavaScript', 'TypeScript', 'MongoDB', 
-                        'SQL Server', 'Express.js', 'Tailwind CSS', 'Git', 'REST APIs',
-                        'JWT Auth', 'Azure', 'Responsive Design', 'Problem Solving'
-                      ].map((skill, idx) => (
-                        <Badge key={idx} variant="secondary">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
+                    {/* Loading state for skills */}
+                    {skillsLoading && (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
+                        <p className={`ml-2 text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                          Loading skills...
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Show skills if available */}
+                    {!skillsLoading && skills.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {skills.map((skill, idx) => (
+                          <Badge key={idx} variant="secondary">
+                            {skill.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* No skills message */}
+                    {!skillsLoading && skills.length === 0 && (
+                      <div className={`text-center py-4 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                        <p className="text-sm">No skills added yet</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -219,44 +298,7 @@ const AboutSection = () => {
           </motion.div>
         </div>
 
-        {/* Stats Cards */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
-          {statsToDisplay.map((stat, idx) => {
-            const Icon = iconMap[stat.icon] || FiCode;
-            
-            return (
-              <motion.div key={idx} variants={itemVariants}>
-                <Card className={`text-center ${
-                  isDarkMode 
-                    ? 'bg-neutral-900 border-neutral-800 hover:border-neutral-700' 
-                    : 'bg-white border-neutral-200 hover:border-neutral-300'
-                } transition-all duration-300 hover:shadow-lg`}>
-                  <CardContent className="p-6">
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="p-3 rounded-full bg-gradient-to-br from-primary-500 to-accent-500">
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="text-3xl font-bold gradient-text">
-                        {stat.value}
-                      </div>
-                      <div className={`text-sm ${
-                        isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
-                      }`}>
-                        {stat.label}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+
       </div>
     </section>
   );

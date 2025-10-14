@@ -205,6 +205,9 @@ export const useCertificates = () => {
 /**
  * Custom hook for fetching personal info
  */
+/**
+ * Custom hook for fetching personal info
+ */
 export const usePersonalInfo = () => {
   const [personalInfo, setPersonalInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -214,11 +217,19 @@ export const usePersonalInfo = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('Fetching personal info...');
+      
       const response = await portfolioApi.getPersonalInfo();
-      setPersonalInfo(response.data);
+      console.log('Personal Info Response:', response);
+      
+      // Handle both response.data and direct response
+      const data = response?.data || response;
+      setPersonalInfo(data);
     } catch (err) {
       console.error('Error fetching personal info:', err);
-      setError(err.response?.data?.message || 'Failed to fetch personal info');
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch personal info';
+      setError(errorMessage);
+      setPersonalInfo(null);
     } finally {
       setLoading(false);
     }
@@ -230,10 +241,13 @@ export const usePersonalInfo = () => {
 
   const updatePersonalInfo = async (data) => {
     try {
+      console.log('Updating personal info with:', data);
       const response = await portfolioApi.updatePersonalInfo(data);
-      await fetchPersonalInfo();
+      console.log('Update response:', response);
+      await fetchPersonalInfo(); // Refresh data
       return response;
     } catch (err) {
+      console.error('Error updating personal info:', err);
       throw err;
     }
   };
@@ -246,7 +260,6 @@ export const usePersonalInfo = () => {
     updatePersonalInfo
   };
 };
-
 /**
  * Custom hook for fetching contact messages
  */
