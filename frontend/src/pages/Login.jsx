@@ -110,7 +110,7 @@ const Login = () => {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col gap-3">
+          <CardFooter className="flex flex-row gap-3">
             <Button 
               type="submit" 
               disabled={isLoading}

@@ -1,46 +1,23 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const aboutSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: [true, 'Title is required'],
-      trim: true,
-      default: 'Full Stack Developer'
-    },
-    name: {
-      type: String,
-      required: [true, 'Name is required'],
-      trim: true
-    },
-    bio: {
-      type: String,
-      required: [true, 'Bio is required']
-    },
-    profileImage: {
-      url: {
-        type: String,
-        required: false
-      },
-      publicId: String
-    },
-    resumeUrl: {
-      type: String,
-      trim: true
-    },
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      trim: true,
-      lowercase: true
-    },
-    phone: {
-      type: String,
-      trim: true
-    },
+    name: { type: String, required: true },
+    title: { type: String, required: true },
+    bio: { type: String },
+    email: { type: String },
+    phone: { type: String },
     location: {
       city: String,
-      country: String
+      country: String,
+    },
+    profileImage: {
+      url: String,
+      publicId: String,
+    },
+    resumeFile: {
+      url: String,
+      publicId: String,
     },
     socialLinks: {
       github: String,
@@ -48,34 +25,22 @@ const aboutSchema = new mongoose.Schema(
       twitter: String,
       facebook: String,
       instagram: String,
-      website: String
+      website: String,
     },
     statistics: {
-      yearsOfExperience: {
-        type: Number,
-        default: 0
-      },
-      projectsCompleted: {
-        type: Number,
-        default: 0
-      },
-      happyClients: {
-        type: Number,
-        default: 0
-      },
-      certificatesEarned: {
-        type: Number,
-        default: 0
-      }
+      yearsOfExperience: Number,
+      projectsCompleted: Number,
+      happyClients: Number,
+      certificatesEarned: Number,
+      linkedinFollowers: Number,
+      githubFollowers: Number,
+      twitterFollowers: Number,
+      facebookFollowers: Number,
+      instagramFollowers: Number,
     },
-    isActive: {
-      type: Boolean,
-      default: true
-    }
+    isActive: { type: Boolean, default: true },
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
 // Only one active about document allowed
@@ -89,6 +54,7 @@ aboutSchema.pre('save', async function(next) {
   next();
 });
 
-const About = mongoose.model('About', aboutSchema);
+export default mongoose.model("About", aboutSchema);
 
-export default About;
+
+

@@ -25,56 +25,53 @@ export const getAbout = async (req, res, next) => {
 export const createOrUpdateAbout = async (req, res, next) => {
   try {
     const { 
-      title, name, bio, email, phone, resumeUrl,
-      location, socialLinks, statistics 
+      title, name, bio, email, phone,
+      location, socialLinks, statistics
     } = req.body;
 
-    // Find existing active about
     let about = await About.findOne({ isActive: true });
-
     const updateData = {
       title,
       name,
       bio,
       email,
       phone,
-      resumeUrl,
-      // No need to parse - already objects from JSON body
-      location: location || undefined,
-      socialLinks: socialLinks || undefined,
-      statistics: statistics || undefined,
-      isActive: true
+      location: location ? JSON.parse(location) : undefined,
+      socialLinks: socialLinks ? JSON.parse(socialLinks) : undefined,
+      statistics: statistics ? JSON.parse(statistics) : undefined,
+      isActive: true,
     };
 
-    // Handle profile image upload
-    if (req.file) {
-      const imageResult = await uploadToCloudinary(req.file.buffer, 'portfolio/profile');
-      
-      // Delete old image if exists
-      if (about && about.profileImage.publicId) {
+    // Handle file uploads (profile + resume)
+    if (req.files?.profileImage?.[0]) {
+      const imgResult = await uploadToCloudinary(req.files.profileImage[0].buffer, "portfolio/profile");
+      if (about?.profileImage?.publicId) {
         await deleteFromCloudinary(about.profileImage.publicId);
       }
+      updateData.profileImage = { url: imgResult.url, publicId: imgResult.publicId };
+    }
 
-      updateData.profileImage = {
-        url: imageResult.url,
-        publicId: imageResult.publicId
-      };
+    if (req.files?.resumeFile?.[0]) {
+      const fileResult = await uploadToCloudinary(req.files.resumeFile[0].buffer, "portfolio/resume");
+      if (about?.resumeFile?.publicId) {
+        await deleteFromCloudinary(about.resumeFile.publicId);
+      }
+      updateData.resumeFile = { url: fileResult.url, publicId: fileResult.publicId };
     }
 
     if (about) {
-      // Update existing
       Object.assign(about, updateData);
       await about.save();
-      return sendSuccess(res, 'About information updated successfully', about);
+      return sendSuccess(res, "About information updated successfully", about);
     } else {
-      // Create new (profile image not required for now)
-      about = await About.create(updateData);
-      return sendSuccess(res, 'About information created successfully', about, 201);
+      const newAbout = await About.create(updateData);
+      return sendSuccess(res, "About information created successfully", newAbout, 201);
     }
   } catch (error) {
     next(error);
   }
 };
+
 
 // @desc    Update statistics only
 // @route   PATCH /api/about/statistics

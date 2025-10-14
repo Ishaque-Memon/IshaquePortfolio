@@ -76,22 +76,34 @@ const PersonalInfo = () => {
     }
   }, [personalInfo]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSuccessMessage("");
-    
-    try {
-      await updatePersonalInfo(formData);
-      setSuccessMessage("Personal information saved successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (err) {
-      console.error("Error updating personal info:", err);
-      alert(err.response?.data?.message || "Failed to save personal information");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setSuccessMessage("");
+
+  try {
+    const formPayload = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      if (typeof value === "object" && !(value instanceof File)) {
+        formPayload.append(key, JSON.stringify(value));
+      } else if (value instanceof File) {
+        formPayload.append(key, value);
+      } else {
+        formPayload.append(key, value);
+      }
+    });
+
+    await updatePersonalInfo(formPayload);
+    setSuccessMessage("Personal information saved successfully!");
+    setTimeout(() => setSuccessMessage(""), 3000);
+  } catch (err) {
+    console.error("Error updating personal info:", err);
+    alert(err.response?.data?.message || "Failed to save personal information");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   if (loading) {
     return (
@@ -206,6 +218,67 @@ const PersonalInfo = () => {
             </div>
           </CardContent>
         </Card>
+        
+                {/* Uploads Section */}
+        <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
+          <CardHeader>
+            <CardTitle>Profile Image & Resume</CardTitle>
+            <CardDescription>Upload your profile picture and resume</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="profileImage">Profile Image</Label>
+              <Input
+                id="profileImage"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFormData({ ...formData, profileImage: e.target.files[0] })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="resumeFile">Resume (PDF)</Label>
+              <Input
+                id="resumeFile"
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setFormData({ ...formData, resumeFile: e.target.files[0] })}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Social Statistics Section */}
+        <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
+          <CardHeader>
+            <CardTitle>Social Media Stats</CardTitle>
+            <CardDescription>Track your connections or followers</CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { key: "linkedinFollowers", label: "LinkedIn Followers" },
+              { key: "githubFollowers", label: "GitHub Followers" },
+              { key: "twitterFollowers", label: "Twitter Followers" },
+              { key: "facebookFollowers", label: "Facebook Followers" },
+              { key: "instagramFollowers", label: "Instagram Followers" },
+            ].map(({ key, label }) => (
+              <div key={key}>
+                <Label>{label}</Label>
+                <Input
+                  type="number"
+                  value={formData.statistics[key] || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      statistics: { ...formData.statistics, [key]: e.target.value },
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
 
         {/* Contact Information */}
         <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
