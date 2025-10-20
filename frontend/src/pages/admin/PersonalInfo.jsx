@@ -140,8 +140,8 @@ const PersonalInfo = () => {
           <div className="text-center space-y-4">
             {/* Avatar */}
             <div className="flex justify-center">
-              <Avatar className="h-32 w-32">
-                <AvatarImage src={personalInfo?.profileImage} />
+              <Avatar className="w-32 h-32 ring-4 ring-primary-500/20">
+                <AvatarImage src={personalInfo?.profileImage.url} />
                 <AvatarFallback className="text-4xl bg-gradient-to-br from-primary-500 to-accent-500 text-white">
                   {formData.name ? formData.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'NA'}
                 </AvatarFallback>
@@ -385,14 +385,18 @@ const PersonalInfo = () => {
 
       {/* Tabs for Edit/Preview */}
       <Tabs defaultValue="edit" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="edit" className="gap-2">
-            <FiEdit size={16} />
-            Edit Information
+        <TabsList className="flex w-full max-w-md gap-4 mx-auto mb-2 bg-transparent shadow-none p-0">
+          <TabsTrigger value="edit" asChild>
+            <Button variant="default" className="w-full gap-2">
+              <FiEdit size={16} />
+              Edit Information
+            </Button>
           </TabsTrigger>
-          <TabsTrigger value="preview" className="gap-2">
-            <FiEye size={16} />
-            Preview
+          <TabsTrigger value="preview" asChild>
+            <Button variant="default" className="w-full gap-2">
+              <FiEye size={16} />
+              Preview
+            </Button>
           </TabsTrigger>
         </TabsList>
 

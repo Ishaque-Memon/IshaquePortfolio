@@ -236,20 +236,11 @@ const AboutSection = () => {
                   : 'bg-white border-neutral-200'
                 }>
                   <CardHeader>
-                    <CardTitle>My Story</CardTitle>
+                    <CardTitle>About Me</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className={isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}>
                       {infoToDisplay?.bio}
-                    </p>
-                    <p className={isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}>
-                      I specialize in building modern web applications using cutting-edge technologies. 
-                      My passion lies in creating efficient, scalable, and user-friendly solutions that 
-                      make a real impact.
-                    </p>
-                    <p className={isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}>
-                      When I'm not coding, you can find me exploring new technologies, contributing to 
-                      open-source projects, or sharing knowledge with the developer community.
                     </p>
                   </CardContent>
                 </Card>

@@ -1,11 +1,23 @@
+// components/Skills.jsx
 import React, { useState } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSkills } from "../../hooks/usePortfolio";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiPlus, FiEdit2, FiTrash2, FiSearch, FiX, FiSave,
-  FiCode, FiDatabase, FiLayers, FiTool, FiCloud, FiGlobe
-} from "react-icons/fi";
+  FiPlus,
+  FiEdit2,
+  FiTrash2,
+  FiSearch,
+  FiX,
+  FiSave,
+  FiCode,
+  FiDatabase,
+  FiLayers,
+  FiTool,
+  FiCloud,
+  FiGlobe
+} from "@/assets/Icons/Icons"; // <- updated import path
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

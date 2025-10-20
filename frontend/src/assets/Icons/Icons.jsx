@@ -1,7 +1,7 @@
 // src/assets/Icons/Icons.jsx
 import React from "react";
 
-// React Icons Imports
+// --- React Icons imports (many families) ---
 import { BiCategory, BiSolidCategory } from "react-icons/bi";
 import {
   FaRegUser,
@@ -54,7 +54,7 @@ import { TiEdit } from "react-icons/ti";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { VscLayoutSidebarLeft, VscLayoutSidebarRight } from "react-icons/vsc";
 
-// Feather Icons (Fi) - including Sidebar specific icons
+// --- Feather icons (fi) used across app, including Skills ---
 import {
   FiHome,
   FiDollarSign,
@@ -74,19 +74,33 @@ import {
   FiEye,
   FiEyeOff,
   FiArrowRight,
-  FiCode,
-  FiBriefcase,
-  FiAward,
+  FiCode as FiCodeRaw,
+  FiBriefcase as FiBriefcaseRaw,
+  FiAward as FiAwardRaw,
   FiBookOpen,
   FiMessageSquare,
   FiBarChart,
   FiLogOut,
   FiMenu,
-  FiX,
+  FiX as FiXRaw,
   FiChevronLeft as FiChevLeft,
   FiChevronRight as FiChevRight,
   FiSun,
   FiMoon
+} from "react-icons/fi";
+
+// Additional fi icons specifically used in Skills (and exported as named)
+import {
+  FiPlus as FiPlusRaw,
+  FiEdit2 as FiEdit2Raw,
+  FiTrash2 as FiTrash2Raw,
+  FiSearch as FiSearchRaw,
+  FiSave as FiSaveRaw,
+  FiDatabase as FiDatabaseRaw,
+  FiLayers as FiLayersRaw,
+  FiTool as FiToolRaw,
+  FiCloud as FiCloudRaw,
+  FiGlobe as FiGlobeRaw
 } from "react-icons/fi";
 
 /**
@@ -94,7 +108,7 @@ import {
  * We also export a merged `Icons` object (and default) for compatibility.
  */
 
-// Fill Icons (solid)
+// Fill Icons (solid / illustrative)
 export const fillIcon = {
   ProgramIcon: <BiSolidCategory />,
   UserIcon: <FaUser />,
@@ -210,15 +224,15 @@ export const outlineIcon = {
 export const SidebarIcons = {
   FiHome,
   FiUser: FiUserAlt,
-  FiCode,
-  FiBriefcase,
-  FiAward,
+  FiCode: FiCodeRaw,
+  FiBriefcase: FiBriefcaseRaw,
+  FiAward: FiAwardRaw,
   FiBookOpen,
   FiMessageSquare,
   FiBarChart,
   FiLogOut,
   FiMenu,
-  FiX,
+  FiX: FiXRaw,
   FiChevronLeft: FiChevLeft,
   FiChevronRight: FiChevRight,
   FiSun,
@@ -233,3 +247,23 @@ export const Icons = {
 
 // default export (optional)
 export default Icons;
+
+/**
+ * Named exports for specific Feather icons used in Skills and other components.
+ * This allows importing `FiPlus, FiEdit2, ...` from "@/assets/Icons/Icons"
+ * and keeps the Skills component code unchanged except for the import path.
+ */
+export {
+  FiPlusRaw as FiPlus,
+  FiEdit2Raw as FiEdit2,
+  FiTrash2Raw as FiTrash2,
+  FiSearchRaw as FiSearch,
+  FiXRaw as FiX,
+  FiSaveRaw as FiSave,
+  FiCodeRaw as FiCode,
+  FiDatabaseRaw as FiDatabase,
+  FiLayersRaw as FiLayers,
+  FiToolRaw as FiTool,
+  FiCloudRaw as FiCloud,
+  FiGlobeRaw as FiGlobe
+};

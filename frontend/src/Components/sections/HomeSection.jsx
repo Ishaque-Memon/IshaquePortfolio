@@ -103,11 +103,11 @@ const HomeSection = () => {
               }`}>
                 {infoToDisplay?.title || "Full Stack Developer"}
               </h2>
-              <p className={`text-lg md:text-xl mb-8 max-w-2xl ${
+              {/* <p className={`text-lg md:text-xl mb-8 max-w-2xl ${
                 isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
               }`}>
                 {infoToDisplay?.bio || "Building amazing web experiences"}
-              </p>
+              </p> */}
             </motion.div>
 
            {/* CTA Buttons */}
