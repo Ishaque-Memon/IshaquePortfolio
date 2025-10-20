@@ -5,12 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useProjects, useSkills, useCertificates, useContactMessages } from "../../hooks/usePortfolio";
-import { 
-  FiHome, FiUser, FiCode, FiBriefcase, FiAward, 
-  FiBookOpen, FiMessageSquare, FiBarChart, FiLogOut,
-  FiMenu, FiX, FiChevronLeft, FiChevronRight, FiSun, FiMoon
-} from "react-icons/fi";
-import { VscLayoutSidebarLeft, VscLayoutSidebarRight } from "react-icons/vsc";
+import { outlineIcon, SidebarIcons } from "../../assets/Icons/Icons";
 import { Badge } from "@/components/ui/badge";
 
 const Sidebar = () => {
@@ -33,53 +28,53 @@ const Sidebar = () => {
   const navigationItems = [
     { 
       label: "Dashboard", 
-      icon: FiHome, 
+      icon: SidebarIcons.FiHome, 
       route: "/admin/dashboard", 
       iconColor: "text-blue-500" 
     },
     { 
       label: "Personal Info", 
-      icon: FiUser, 
+      icon: SidebarIcons.FiUser, 
       route: "/admin/personal-info", 
       iconColor: "text-purple-500" 
     },
     { 
       label: "Skills", 
-      icon: FiCode, 
+      icon: SidebarIcons.FiCode, 
       route: "/admin/skills", 
       iconColor: "text-green-500",
       count: skills && skills.length > 0 ? skills.length : null
     },
     { 
       label: "Projects", 
-      icon: FiBriefcase, 
+      icon: SidebarIcons.FiBriefcase, 
       route: "/admin/projects", 
       iconColor: "text-orange-500",
       count: projects && projects.length > 0 ? projects.length : null
     },
     { 
       label: "Certificates", 
-      icon: FiAward, 
+      icon: SidebarIcons.FiAward, 
       route: "/admin/certificates", 
       iconColor: "text-yellow-500",
       count: certificates && certificates.length > 0 ? certificates.length : null
     },
     { 
       label: "Education", 
-      icon: FiBookOpen, 
+      icon: SidebarIcons.FiBookOpen, 
       route: "/admin/education", 
       iconColor: "text-indigo-500" 
     },
     { 
       label: "Messages", 
-      icon: FiMessageSquare, 
+      icon: SidebarIcons.FiMessageSquare, 
       route: "/admin/messages", 
       iconColor: "text-pink-500",
       count: messages && messages.length > 0 ? messages.length : null
     },
     { 
       label: "Analytics", 
-      icon: FiBarChart, 
+      icon: SidebarIcons.FiBarChart, 
       route: "/admin/analytics", 
       iconColor: "text-cyan-500" 
     }
@@ -115,7 +110,7 @@ const Sidebar = () => {
                 type="button"
                 aria-label="Collapse sidebar"
               >
-                <VscLayoutSidebarLeft size={20} />
+                {outlineIcon.LeftSidebar}
               </button>
               <div className="flex items-center gap-3 flex-1">
                 <div className="hidden lg:block">
@@ -135,7 +130,7 @@ const Sidebar = () => {
                 type="button"
                 aria-label="Expand sidebar"
               >
-                <VscLayoutSidebarRight size={20} />
+                {outlineIcon.RightSidebar}
               </button>
             </div>
           )}
@@ -198,7 +193,7 @@ const Sidebar = () => {
             aria-label="Toggle theme"
           >
             <span className="flex items-center justify-center">
-              {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
+              {isDarkMode ? <SidebarIcons.FiSun size={20} /> : <SidebarIcons.FiMoon size={20} />}
             </span>
             {sidebarOpen && <span className="text-base hidden lg:inline">Toggle Theme</span>}
           </button>
@@ -214,7 +209,7 @@ const Sidebar = () => {
             aria-label="Logout"
           >
             <span className="flex items-center justify-center">
-              <FiLogOut size={20} />
+              <SidebarIcons.FiLogOut size={20} />
             </span>
             {sidebarOpen && <span className="text-base hidden lg:inline">Logout</span>}
           </button>
