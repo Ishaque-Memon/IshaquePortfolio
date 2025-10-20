@@ -26,7 +26,7 @@ import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen, FiCalendar, FiMapPi
 const Education = () => {
   const { isDarkMode } = useTheme();
   const { 
-    education: educations, 
+    education,
     loading, 
     error, 
     createEducation: createEducationAPI,
@@ -44,19 +44,26 @@ const Education = () => {
   const [optionsLoading, setOptionsLoading] = useState(true);
 
   // Fetch education options from backend
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const data = await getEducationOptions();
-        setEducationOptions(data);
-      } catch (err) {
-        console.error('Failed to load education options:', err);
-      } finally {
-        setOptionsLoading(false);
-      }
-    };
-    fetchOptions();
-  }, []);
+ useEffect(() => {
+  const fetchOptions = async () => {
+    try {
+      const data = await getEducationOptions();
+      // normalize response so component always has expected shape
+      setEducationOptions({
+        levels: data?.levels ?? [],
+        boardsUniversities: data?.boardsUniversities ?? [],
+        degreeOptions: data?.degreeOptions ?? {},
+        specializationOptions: data?.specializationOptions ?? {}
+      });
+    } catch (err) {
+      console.error('Failed to load education options:', err);
+    } finally {
+      setOptionsLoading(false);
+    }
+  };
+  fetchOptions();
+}, []);
+
 
   // Helper functions from backend
   const getDegreeOptions = (level) => educationOptions.degreeOptions[level] || [];
@@ -352,14 +359,14 @@ const Education = () => {
 
       {/* Education List */}
       <div className="grid gap-6">
-        {educations.length === 0 ? (
+        {education.length === 0 ? (
           <div className={`text-center py-12 ${isDarkMode ? 'bg-neutral-800' : 'bg-white'} rounded-lg shadow`}>
             <FiBookOpen className="mx-auto h-12 w-12 text-neutral-400" />
             <h3 className="mt-2 text-sm font-medium">No education entries</h3>
             <p className="mt-1 text-sm text-neutral-500">Get started by adding your first education entry.</p>
           </div>
         ) : (
-          educations.map((edu) => (
+          education.map((edu) => (
             <div
               key={edu._id}
               className={`p-6 rounded-lg shadow-md ${isDarkMode ? 'bg-neutral-800' : 'bg-white'}`}

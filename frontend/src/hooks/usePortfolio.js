@@ -329,10 +329,17 @@ export const useEducation = () => {
       setLoading(true);
       setError(null);
       const response = await portfolioApi.getAllEducation();
-      setEducation(response || []);
+      
+      // Fix: Handle response.data like other hooks
+      // Check if response has a data property, otherwise use response directly
+      const educationData = response?.data || response;
+      
+      // Ensure it's always an array
+      setEducation(Array.isArray(educationData) ? educationData : []);
     } catch (err) {
       console.error('Error fetching education:', err);
       setError(err.response?.data?.message || 'Failed to fetch education');
+      setEducation([]); // Set empty array on error
     } finally {
       setLoading(false);
     }

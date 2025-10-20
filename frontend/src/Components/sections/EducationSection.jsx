@@ -19,23 +19,97 @@ const EducationSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchEducationData = async () => {
-      try {
-        const data = await getAllEducation();
-        const educationArray = Array.isArray(data) ? data : (data?.data || []);
-        setEducationData(educationArray);
-      } catch (err) {
-        console.error('Education fetch error:', err);
-        setError("Failed to load education data.");
-        setEducationData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const formatDateShort = (dateStr) => {
+    if (!dateStr) return '';
+    const [year, month] = dateStr.split('-');
+    if (!month) return year;
+    return `${month}/${year}`;
+  };
 
-    fetchEducationData();
-  }, []);
+  const computeDuration = (startDate, endDate, isPresent) => {
+    if (!startDate && !endDate) return '';
+    if (isPresent) {
+      return `${formatDateShort(startDate)} - Present`;
+    }
+    return `${formatDateShort(startDate)} - ${formatDateShort(endDate)}`;
+  };
+
+  const normalizeItem = (e) => {
+    // pick institution from whichever field exists
+    const institution =
+      e.institution ||
+      e.school ||
+      e.college ||
+      e.institute ||
+      e.university ||
+      e.customInstitution ||
+      e.board ||
+      '';
+
+    // gpa/grade fallbacks
+    const gpa = e.gpa ?? e.grade ?? e.cgpa ?? '';
+
+    // achievements may be stored under different keys
+    const achievements =
+      Array.isArray(e.achievements) && e.achievements.length > 0
+        ? e.achievements
+        : Array.isArray(e.awards) && e.awards.length > 0
+        ? e.awards
+        : Array.isArray(e.keyAchievements) && e.keyAchievements.length > 0
+        ? e.keyAchievements
+        : [];
+
+    // coursework / projects fallbacks
+    const coursework = Array.isArray(e.coursework) ? e.coursework : Array.isArray(e.courses) ? e.courses : [];
+    const projects = Array.isArray(e.projects) ? e.projects : Array.isArray(e.academicProjects) ? e.academicProjects : [];
+
+    // description fallback
+    const description = e.description ?? e.about ?? '';
+
+    // status: prefer explicit status, otherwise use isPresent
+    const status = e.status ?? (e.isPresent ? 'In Progress' : 'Completed');
+
+    return {
+      _id: e._id || e.id || `${Math.random()}`, // fallback id
+      degree: e.degree || e.degreeName || e.title || '',
+      institution,
+      gpa,
+      duration: e.duration || computeDuration(e.startDate, e.endDate, e.isPresent),
+      location: e.location || e.city || '',
+      description,
+      achievements,
+      coursework,
+      projects,
+      status,
+      raw: e // keep original for debugging if needed
+    };
+  };
+
+  const fetchEducationData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getAllEducation();
+      console.log('getAllEducation response:', response);
+
+      // support API returning either array, { data: [...] }, or { payload: [...] }
+      const payload = Array.isArray(response) ? response : response?.data ?? response?.payload ?? [];
+
+      const educationArray = Array.isArray(payload) ? payload.map(normalizeItem) : [];
+      setEducationData(educationArray);
+    } catch (err) {
+      console.error('Education fetch error:', err);
+      setError("Failed to load education data.");
+      setEducationData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchEducationData();
+}, []);
+
 
   const timelineVariants = {
     hidden: { opacity: 0 },
@@ -100,10 +174,10 @@ const EducationSection = () => {
           viewport={{ once: true }}
           className="space-y-8"
         >
-          {educationData.map((edu, idx) => (
-            <motion.div key={idx} variants={itemVariants} className="relative">
+          {educationData.map((edu) => (
+            <motion.div key={edu._id} variants={itemVariants} className="relative">
               {/* Timeline Line */}
-              {idx !== educationData.length - 1 && (
+              {edu !== educationData[educationData.length - 1] && (
                 <div
                   className={`absolute left-6 top-20 w-0.5 h-full ${
                     isDarkMode ? "bg-neutral-800" : "bg-neutral-200"
