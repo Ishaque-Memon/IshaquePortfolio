@@ -54,7 +54,7 @@ import { TiEdit } from "react-icons/ti";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { VscLayoutSidebarLeft, VscLayoutSidebarRight } from "react-icons/vsc";
 
-// --- Feather icons (fi) used across app, including Skills ---
+// --- Feather icons (fi) ---
 import {
   FiHome,
   FiDollarSign,
@@ -86,11 +86,9 @@ import {
   FiChevronLeft as FiChevLeft,
   FiChevronRight as FiChevRight,
   FiSun,
-  FiMoon
-} from "react-icons/fi";
-
-// Additional fi icons specifically used in Skills (and exported as named)
-import {
+  FiMoon,
+  FiServer as FiServerRaw,
+  FiCpu as FiCpuRaw,
   FiPlus as FiPlusRaw,
   FiEdit2 as FiEdit2Raw,
   FiTrash2 as FiTrash2Raw,
@@ -103,12 +101,53 @@ import {
   FiGlobe as FiGlobeRaw
 } from "react-icons/fi";
 
-/**
- * fillIcon and outlineIcon contain React elements (JSX) as values.
- * We also export a merged `Icons` object (and default) for compatibility.
- */
+// --- Simple Icons (Si) for technologies ---
+import {
+  SiJavascript,
+  SiTypescript,
+  SiReact,
+  SiNodedotjs,
+  SiPython,
+  SiHtml5,
+  SiCss3,
+  SiMongodb,
+  SiTailwindcss,
+  SiMysql,
+  SiFirebase,
+  SiGit,
+  SiGithub,
+  SiExpress,
+  SiFigma,
+  SiPostman,
+  SiDocker,
+  SiRedis,
+  SiPostgresql,
+  SiGraphql,
+  SiNextdotjs,
+  SiVuedotjs,
+  SiAngular,
+  SiFlutter,
+  SiDart,
+  SiBootstrap,
+  SiSass,
+  SiWebpack,
+  SiVite,
+  SiLinux,
+  SiNginx,
+  SiGitlab,
+  SiVercel,
+  SiNetlify,
+  SiHeroku,
+  SiPhp,
+  SiGo,
+  SiJest
+} from "react-icons/si";
 
-// Fill Icons (solid / illustrative)
+/**
+ * ==========================================
+ * FILL ICONS (Solid/Illustrative)
+ * ==========================================
+ */
 export const fillIcon = {
   ProgramIcon: <BiSolidCategory />,
   UserIcon: <FaUser />,
@@ -125,7 +164,6 @@ export const fillIcon = {
   flag: <FaFontAwesomeFlag />,
   Hide: <MdOutlineHideImage />,
   Search: <FaSearch />,
-  // Expense Tracker specific
   Income: <FiTrendingUp />,
   Recurring: <FiRepeat />,
   Report: <FiFileText />,
@@ -133,7 +171,11 @@ export const fillIcon = {
   Chart: <FaChartPie />
 };
 
-// Outline / UI Icons
+/**
+ * ==========================================
+ * OUTLINE ICONS (UI/Interface)
+ * ==========================================
+ */
 export const outlineIcon = {
   DeleteIcon: <MdOutlineDeleteSweep />,
   EditIcon: <TiEdit />,
@@ -160,7 +202,6 @@ export const outlineIcon = {
   RightSidebar: <VscLayoutSidebarRight />,
   CircleLeft: <FaCircleChevronLeft />,
   CircleRight: <FaCircleChevronRight />,
-
   ProgramIcon: <BiCategory />,
   TeamIcon: <HiOutlineUsers />,
   CourseIcon: <IoBookOutline />,
@@ -178,8 +219,6 @@ export const outlineIcon = {
   Faculty: <HiOutlineUserGroup />,
   Programs: <MdOutlineSchool />,
   Bell: <FiBell />,
-
-  // Expense Tracker specific icons
   Dashboard: <FiHome />,
   Expenses: <FiDollarSign />,
   Categories: <FiTag />,
@@ -199,8 +238,6 @@ export const outlineIcon = {
   OpenEye: <FiEye />,
   CloseEye: <FiEyeOff />,
   ArrowRight: <FiArrowRight />,
-
-  // social & contact — ensure these exist
   github: <FaGithub />,
   linkedin: <FaLinkedin />,
   mail: <FaEnvelope />,
@@ -209,10 +246,8 @@ export const outlineIcon = {
   globe: <FaGlobe />,
   link: <FaLink />,
   briefcase: <FaBriefcase />,
-
-  // achievements / misc
   trophy: <FaTrophy />,
-  lightbulb: <FaBolt />, // idea / innovation
+  lightbulb: <FaBolt />,
   rocket: <FaRocket />,
   shield: <FaShieldAlt />,
   download: <FaDownload />,
@@ -220,7 +255,11 @@ export const outlineIcon = {
   lock: <FaLock />
 };
 
-// Sidebar specific icon components (exported as components, not JSX)
+/**
+ * ==========================================
+ * SIDEBAR ICONS (Navigation Components)
+ * ==========================================
+ */
 export const SidebarIcons = {
   FiHome,
   FiUser: FiUserAlt,
@@ -239,19 +278,138 @@ export const SidebarIcons = {
   FiMoon
 };
 
-// Backwards-compatible merged export: merges fillIcon and outlineIcon
+/**
+ * ==========================================
+ * SKILL ICONS (Technology & Tool Icons)
+ * Organized by category for better management
+ * ==========================================
+ */
+export const SkillIcons = {
+  // Frontend Technologies
+  SiReact,
+  SiJavascript,
+  SiTypescript,
+  SiHtml5,
+  SiCss3,
+  SiTailwindcss,
+  SiNextdotjs,
+  SiVuedotjs,
+  SiAngular,
+  SiBootstrap,
+  SiSass,
+
+  // Backend Technologies
+  SiNodedotjs,
+  SiExpress,
+  SiPython,
+  SiGo,
+  SiPhp,
+
+  // Mobile Development
+  SiFlutter,
+  SiDart,
+
+  // Databases
+  SiMongodb,
+  SiMysql,
+  SiPostgresql,
+  SiRedis,
+  SiFirebase,
+  SiGraphql,
+
+  // DevOps & Cloud
+  SiDocker,
+  SiLinux,
+  SiNginx,
+
+  // Version Control & Tools
+  SiGit,
+  SiGithub,
+  SiGitlab,
+  SiPostman,
+  SiFigma,
+
+  // Build Tools
+  SiWebpack,
+  SiVite,
+  SiJest,
+
+  // Platforms & Deployment
+  SiVercel,
+  SiNetlify,
+  SiHeroku,
+
+  // Generic Icons (Feather mapped to names)
+  FiCode: FiCodeRaw,
+  FiDatabase: FiDatabaseRaw,
+  FiLayers: FiLayersRaw,
+  FiTool: FiToolRaw,
+  FiCloud: FiCloudRaw,
+  FiGlobe: FiGlobeRaw,
+  FiServer: FiServerRaw,
+  FiCpu: FiCpuRaw
+};
+
+// Export individual icons for backward compatibility
+export {
+  SiReact,
+  SiJavascript,
+  SiTypescript,
+  SiHtml5,
+  SiCss3,
+  SiTailwindcss,
+  SiNextdotjs,
+  SiVuedotjs,
+  SiAngular,
+  SiBootstrap,
+  SiSass,
+  SiNodedotjs,
+  SiExpress,
+  SiPython,
+  SiGo,
+  SiPhp,
+  SiFlutter,
+  SiDart,
+  SiMongodb,
+  SiMysql,
+  SiPostgresql,
+  SiRedis,
+  SiFirebase,
+  SiGraphql,
+  SiDocker,
+  SiLinux,
+  SiNginx,
+  SiGit,
+  SiGithub,
+  SiGitlab,
+  SiPostman,
+  SiFigma,
+  SiWebpack,
+  SiVite,
+  SiVercel,
+  SiNetlify,
+  SiHeroku,
+  SiJest
+};
+
+/**
+ * ==========================================
+ * MERGED EXPORTS FOR COMPATIBILITY
+ * ==========================================
+ */
+// Backwards-compatible merged export
 export const Icons = {
   ...fillIcon,
   ...outlineIcon
 };
 
-// default export (optional)
+// Default export
 export default Icons;
 
 /**
- * Named exports for specific Feather icons used in Skills and other components.
- * This allows importing `FiPlus, FiEdit2, ...` from "@/assets/Icons/Icons"
- * and keeps the Skills component code unchanged except for the import path.
+ * ==========================================
+ * NAMED EXPORTS (Action & UI Icons)
+ * ==========================================
  */
 export {
   FiPlusRaw as FiPlus,
@@ -265,5 +423,7 @@ export {
   FiLayersRaw as FiLayers,
   FiToolRaw as FiTool,
   FiCloudRaw as FiCloud,
-  FiGlobeRaw as FiGlobe
+  FiGlobeRaw as FiGlobe,
+  FiServerRaw as FiServer,
+  FiCpuRaw as FiCpu
 };
