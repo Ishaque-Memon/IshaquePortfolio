@@ -163,11 +163,12 @@ const Sidebar = () => {
                     
                     {sidebarOpen && (
                       <>
-                        <span className="flex-1 text-left text-base font-medium hidden lg:inline">
+                        {/* label */}
+                        <span className="flex-1 text-left text-base font-medium hidden lg:block">
                           {item.label}
                         </span>
                         {item.count && (
-                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-neutral-700 text-white shadow-sm hidden lg:inline">
+                          <span className="ml-2 hidden lg:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-neutral-700 text-white shadow-sm">
                             {item.count}
                           </span>
                         )}

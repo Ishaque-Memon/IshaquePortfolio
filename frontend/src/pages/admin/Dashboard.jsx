@@ -93,7 +93,7 @@ const Dashboard = () => {
   ];
 
   return (
-  <div className={isDarkMode ? "space-y-8 bg-neutral-950 text-white min-h-screen" : "space-y-8 bg-neutral-100 text-neutral-900 min-h-screen"}>
+  <div className={isDarkMode ? "space-y-8  text-white min-h-screen" : "space-y-8  text-neutral-900 min-h-screen"}>
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
