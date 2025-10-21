@@ -9,7 +9,6 @@ import SkillsSection from '../components/sections/SkillsSection';
 import CounterSection from '../components/sections/CounterSection';
 import EducationSection from '../components/sections/EducationSection';
 import CertificatesSection from '../components/sections/CertificatesSection';
-import FYPSection from '../components/sections/FYPSection';
 import ProjectsSection from '../components/sections/ProjectsSection';
 import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/common/Footer';
@@ -54,9 +53,6 @@ const Home = () => {
           </div>
           <div className="carousel-item">
             <CertificatesSection />
-          </div>
-          <div className="carousel-item">
-            <FYPSection />
           </div>
           <div className="carousel-item">
             <ProjectsSection />

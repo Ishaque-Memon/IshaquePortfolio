@@ -92,7 +92,9 @@ const Projects = () => {
     status: "completed"
   });
   const [techInput, setTechInput] = useState("");
-  const [images, setImages] = useState([]);
+  const [imagesToUpload, setImagesToUpload] = useState([]); // For new images
+  const [existingImages, setExistingImages] = useState([]); // For images already on the project
+  const [imagesToDelete, setImagesToDelete] = useState([]); // Public IDs of images to delete
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOpenAddModal = () => {
@@ -108,7 +110,7 @@ const Projects = () => {
       status: "completed"
     });
     setTechInput("");
-    setImages([]);
+    setImagesToUpload([]);
     setIsAddModalOpen(true);
   };
 
@@ -126,7 +128,9 @@ const Projects = () => {
       status: project.status || "completed"
     });
     setTechInput("");
-    setImages([]);
+    setExistingImages(project.images || []); // Set existing images
+    setImagesToUpload([]); // Clear new images
+    setImagesToDelete([]); // Clear images to delete
     setIsEditModalOpen(true);
   };
 
@@ -153,10 +157,21 @@ const Projects = () => {
     });
   };
 
-  // Handle image file selection
-  const handleImageChange = (e) => {
+  // Handle new image file selection
+  const handleImagesToUploadChange = (e) => {
     const files = Array.from(e.target.files);
-    setImages(files);
+    setImagesToUpload((prevImages) => [...prevImages, ...files]);
+  };
+
+  // Handle removing an existing image (marks for deletion)
+  const handleRemoveExistingImage = (publicId) => {
+    setExistingImages((prevImages) => prevImages.filter(img => img.publicId !== publicId));
+    setImagesToDelete((prevPublicIds) => [...prevPublicIds, publicId]);
+  };
+
+  // Handle removing a newly selected image (before upload)
+  const handleRemoveNewImage = (index) => {
+    setImagesToUpload((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleSubmitAdd = async (e) => {
@@ -178,8 +193,8 @@ const Projects = () => {
       // Append technologies as JSON string
       formDataToSend.append('technologies', JSON.stringify(formData.technologies));
       
-      // Append images
-      images.forEach((image) => {
+      // Append new images to upload
+      imagesToUpload.forEach((image) => {
         formDataToSend.append('images', image);
       });
 
@@ -197,7 +212,7 @@ const Projects = () => {
         featured: false,
         status: "completed"
       });
-      setImages([]);
+      setImagesToUpload([]);
     } catch (err) {
       console.error("Error creating project:", err);
       alert(err.response?.data?.message || "Failed to create project");
@@ -222,14 +237,23 @@ const Projects = () => {
       if (formData.githubUrl) formDataToSend.append('githubUrl', formData.githubUrl);
       formDataToSend.append('technologies', JSON.stringify(formData.technologies));
       
-      images.forEach((image) => {
+      // Append new images to upload
+      imagesToUpload.forEach((image) => {
         formDataToSend.append('images', image);
       });
+
+      // Append public IDs of images to delete
+      if (imagesToDelete.length > 0) {
+        formDataToSend.append('imagesToDelete', JSON.stringify(imagesToDelete));
+      }
 
       await updateProjectAPI(selectedProject._id, formDataToSend);
       
       setIsEditModalOpen(false);
       setSelectedProject(null);
+      setExistingImages([]);
+      setImagesToUpload([]);
+      setImagesToDelete([]);
     } catch (err) {
       console.error("Error updating project:", err);
       alert(err.response?.data?.message || "Failed to update project");
@@ -600,13 +624,13 @@ const Projects = () => {
 
             {/* Image Upload */}
             <div>
-              <Label htmlFor="images">Project Images</Label>
+              <Label htmlFor="imagesToUpload">Project Images</Label>
               <div className="mt-2">
                 <label
-                  htmlFor="images"
+                  htmlFor="imagesToUpload"
                   className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer ${
-                    isDarkMode 
-                      ? 'border-neutral-700 hover:border-neutral-600 bg-neutral-800/50' 
+                    isDarkMode
+                      ? 'border-neutral-700 hover:border-neutral-600 bg-neutral-800/50'
                       : 'border-neutral-300 hover:border-neutral-400 bg-neutral-50'
                   }`}
                 >
@@ -618,16 +642,29 @@ const Projects = () => {
                     <p className="text-xs text-neutral-500">PNG, JPG, GIF up to 5MB</p>
                   </div>
                   <input
-                    id="images"
+                    id="imagesToUpload"
                     type="file"
                     multiple
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImagesToUploadChange}
                     className="hidden"
                   />
                 </label>
-                {images.length > 0 && (
-                  <p className="text-sm text-green-500 mt-2">{images.length} image(s) selected</p>
+                {imagesToUpload.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {imagesToUpload.map((image, index) => (
+                      <Badge key={index} className="gap-1 pr-1">
+                        {image.name}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveNewImage(index)}
+                          className="ml-1 hover:text-red-500"
+                        >
+                          <FiX size={14} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
@@ -815,21 +852,74 @@ const Projects = () => {
             </div>
 
             <div>
-              <Label htmlFor="edit-images">Update Project Images (optional)</Label>
-              <input
-                id="edit-images"
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageChange}
-                className="mt-2"
-              />
-              {images.length > 0 && (
-                <p className="text-sm text-green-500 mt-2">{images.length} new image(s) selected</p>
-              )}
-              {selectedProject?.images && selectedProject.images.length > 0 && (
-                <p className="text-sm text-neutral-500 mt-1">Current: {selectedProject.images.length} image(s)</p>
-              )}
+              <Label>Current Project Images</Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {existingImages.length > 0 ? (
+                  existingImages.map((image, index) => (
+                    <div key={image.publicId} className="relative group">
+                      <img
+                        src={image.url}
+                        alt={`Project screenshot ${index + 1}`}
+                        className="w-24 h-24 object-cover rounded-md border border-neutral-200 dark:border-neutral-700"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingImage(image.publicId)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Remove image"
+                      >
+                        <FiX size={14} />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-neutral-500">No images uploaded yet.</p>
+                )}
+              </div>
+
+              <Label htmlFor="edit-imagesToUpload" className="mt-4 block">Add New Project Images</Label>
+              <div className="mt-2">
+                <label
+                  htmlFor="edit-imagesToUpload"
+                  className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer ${
+                    isDarkMode
+                      ? 'border-neutral-700 hover:border-neutral-600 bg-neutral-800/50'
+                      : 'border-neutral-300 hover:border-neutral-400 bg-neutral-50'
+                  }`}
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <FiUpload className="w-10 h-10 mb-3 text-neutral-400" />
+                    <p className="mb-2 text-sm text-neutral-500">
+                      <span className="font-semibold">Click to upload</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-neutral-500">PNG, JPG, GIF up to 5MB</p>
+                  </div>
+                  <input
+                    id="edit-imagesToUpload"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImagesToUploadChange}
+                    className="hidden"
+                  />
+                </label>
+                {imagesToUpload.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {imagesToUpload.map((image, index) => (
+                      <Badge key={index} className="gap-1 pr-1">
+                        {image.name}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveNewImage(index)}
+                          className="ml-1 hover:text-red-500"
+                        >
+                          <FiX size={14} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

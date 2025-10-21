@@ -112,7 +112,7 @@ export const updateProject = async (req, res, next) => {
       return sendError(res, 'Project not found', 404);
     }
 
-    const { title, description, shortDescription, technologies, category, liveUrl, githubUrl, featured, order, status } = req.body;
+    const { title, description, shortDescription, technologies, category, liveUrl, githubUrl, featured, order, status, imagesToDelete } = req.body;
 
     // Update text fields
     if (title) project.title = title;
@@ -126,35 +126,40 @@ export const updateProject = async (req, res, next) => {
     if (order !== undefined) project.order = parseInt(order);
     if (status) project.status = status;
 
-    // Update images if new ones are uploaded
-    if (req.files && req.files.length > 0) {
-      // Delete old images from Cloudinary
-      if (project.images && project.images.length > 0) {
-        for (const img of project.images) {
-          if (img.publicId) {
-            try {
-              await deleteFromCloudinary(img.publicId);
-            } catch (err) {
-              console.error('Failed to delete image from Cloudinary:', img.publicId);
-            }
+    // Handle image deletions
+    let currentImages = project.images || [];
+    if (imagesToDelete) {
+      const publicIdsToDelete = JSON.parse(imagesToDelete);
+      for (const publicId of publicIdsToDelete) {
+        const imageIndex = currentImages.findIndex(img => img.publicId === publicId);
+        if (imageIndex !== -1) {
+          try {
+            await deleteFromCloudinary(publicId);
+            currentImages.splice(imageIndex, 1);
+          } catch (err) {
+            console.error(`Failed to delete image ${publicId} from Cloudinary:`, err);
           }
         }
       }
+    }
 
-      // Upload new images
-      project.images = [];
+    // Handle new image uploads
+    if (req.files && req.files.length > 0) {
       for (const file of req.files) {
         const imageResult = await uploadToCloudinary(file.buffer, 'portfolio/projects');
-        project.images.push({
+        currentImages.push({
           url: imageResult.url,
           publicId: imageResult.publicId
         });
       }
+    }
+    project.images = currentImages;
 
-      // Update thumbnail
-      if (project.images.length > 0) {
-        project.thumbnailImage = project.images[0];
-      }
+    // Update thumbnail image: if there are images, set the first one as thumbnail. Otherwise, clear it.
+    if (project.images.length > 0) {
+      project.thumbnailImage = project.images[0];
+    } else {
+      project.thumbnailImage = { url: '', publicId: '' };
     }
 
     await project.save();
