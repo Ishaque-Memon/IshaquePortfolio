@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
+import Loader from "@/Components/common/Loader";
 
 const HomeSection = () => {
   const { isDarkMode } = useTheme();
@@ -52,6 +53,19 @@ const HomeSection = () => {
     console.log('Using fallback:', fallback);
     return fallback;
   };
+
+  if (loading) {
+    return (
+      <section
+        id="home"
+        className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
+          isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
+        }`}
+      >
+        <Loader variant="spinner" text="Loading home section..." />
+      </section>
+    );
+  }
 
   return (
     <section

@@ -28,7 +28,7 @@ const Loader = ({
     }
   };
 
-  const config = sizeConfig[size];
+  const config = sizeConfig[size] || sizeConfig["default"];
 
   // Dots Loader
   if (variant === "dots") {

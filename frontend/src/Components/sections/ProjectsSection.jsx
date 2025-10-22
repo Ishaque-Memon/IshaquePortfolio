@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FiGithub, FiExternalLink, FiPlay } from "react-icons/fi";
+import Loader from "@/Components/common/Loader";
 
 const ProjectsSection = () => {
   const { isDarkMode } = useTheme();
@@ -77,8 +78,7 @@ const ProjectsSection = () => {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-            <p className={`ml-4 text-lg ${isDarkMode ? "text-neutral-400" : "text-neutral-600"}`}>Loading projects...</p>
+            <Loader variant="spinner" text="Loading projects..." />
           </div>
         )}
 

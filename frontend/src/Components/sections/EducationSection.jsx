@@ -12,6 +12,7 @@ import {
   FiTrendingUp,
   FiCheckCircle,
 } from "react-icons/fi";
+import Loader from "@/Components/common/Loader";
 
 const EducationSection = () => {
   const { isDarkMode } = useTheme();
@@ -129,7 +130,11 @@ useEffect(() => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader variant="spinner" text="Loading education data..." />
+      </div>
+    );
   }
 
   if (error) {

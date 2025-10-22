@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { SkillIcons, FiCode } from "@/assets/Icons/Icons";
+import Loader from "@/Components/common/Loader";
 
 /**
  * SkillsSection
@@ -165,8 +166,7 @@ const SkillsSection = () => {
         {/* Loading */}
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-            <p className={`mt-4 ${isDarkMode ? "text-neutral-400" : "text-neutral-600"}`}>Loading skills...</p>
+            <Loader variant="spinner" text="Loading skills..." />
           </div>
         )}
 

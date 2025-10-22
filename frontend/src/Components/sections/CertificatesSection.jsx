@@ -26,6 +26,7 @@ import {
   FiChevronLeft,
   FiChevronRight,
 } from "react-icons/fi";
+import Loader from "@/Components/common/Loader";
 
 // slider (exports named Slider + track/range/thumb)
 import { Slider, SliderTrack, SliderRange, SliderThumb } from "../ui/slider";
@@ -86,10 +87,7 @@ const CertificatesSection = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-        <p className={`ml-4 text-lg ${isDarkMode ? "text-neutral-400" : "text-neutral-600"}`}>
-          Loading certificates...
-        </p>
+        <Loader variant="spinner" text="Loading certificates..." />
       </div>
     );
   }

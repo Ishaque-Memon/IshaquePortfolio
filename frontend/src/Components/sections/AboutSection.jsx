@@ -11,6 +11,7 @@ import {
   FiCode, FiAward, FiCpu, FiCheckCircle,
   FiMapPin, FiMail, FiPhone
 } from "react-icons/fi";
+import Loader from "@/Components/common/Loader";
 
 // Icon mapping
 const iconMap = {
@@ -69,10 +70,7 @@ const AboutSection = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className={isDarkMode ? "text-neutral-400" : "text-neutral-600"}>Loading...</p>
-        </div>
+        <Loader variant="spinner" text="Loading personal info..." />
       </div>
     );
   }
@@ -258,10 +256,7 @@ const AboutSection = () => {
                     {/* Loading state for skills */}
                     {skillsLoading && (
                       <div className="flex items-center justify-center py-4">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
-                        <p className={`ml-2 text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                          Loading skills...
-                        </p>
+                        <Loader variant="spinner" size="small" text="Loading skills..." />
                       </div>
                     )}
 

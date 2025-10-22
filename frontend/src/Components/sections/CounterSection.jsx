@@ -17,6 +17,7 @@ import {
   FiHeart
 } from "react-icons/fi";
 import { FaLinkedin } from "react-icons/fa";
+import Loader from "@/Components/common/Loader";
 
 // Icon mapping using string keys
 const iconMap = {
@@ -214,8 +215,7 @@ const CounterSection = () => {
     return (
       <section className={`py-20 lg:py-32 ${isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className={isDarkMode ? "text-neutral-400" : "text-neutral-600"}>Loading statistics...</p>
+          <Loader variant="spinner" text="Loading statistics..." />
         </div>
       </section>
     );
