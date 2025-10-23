@@ -14,7 +14,6 @@ import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/common/Footer';
 import ScrollBot from '../components/common/ScrollBot';
 import MacOSDock from '../components/common/MacOSDock';
-import { Toaster } from '@/components/ui/sonner';
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +64,6 @@ const Home = () => {
           </div>
           <ScrollBot />
           <MacOSDock />
-          <Toaster />
         </div>
       )}
     </>

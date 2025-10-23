@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import AppRouter from "./router.jsx";
+import { Toaster } from "./Components/ui/sonner.jsx";
 import { logVisit } from "./api/portfolioApi.js";
 import io from "socket.io-client";
 import "./styles/globals.css";
@@ -40,6 +41,7 @@ function App() {
       <ThemeProvider>
         <AppRouter />
       </ThemeProvider>
+      <Toaster />
     </AuthProvider>
   );
 }

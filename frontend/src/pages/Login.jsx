@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import * as authApi from '../api/authApi';
+import { toast } from '../Components/ui/sonner';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -37,6 +38,7 @@ const Login = () => {
       const expiresIn = 7 * 24 * 60 * 60 * 1000;
       
       login(token, admin, expiresIn);
+      toast.success('Login successful!');
       navigate('/admin');
     } catch (err) {
       console.error('Login error:', err);

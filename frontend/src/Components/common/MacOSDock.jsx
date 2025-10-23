@@ -89,7 +89,7 @@ const dimensionsConfig = [
     orientation: "horizontal",
     iconSize: 60,
     spacing: 14,
-    position: { centered: true, bottom: 24, left: "25%" },
+    position: { centered: true, bottom: 24, left: "20%" },
   },
   {
     name: "Common Vertical tablet - 768x1024",
@@ -121,7 +121,7 @@ const dimensionsConfig = [
     orientation: "horizontal",
     iconSize: 66,
     spacing: 14,
-    position: { centered: true, bottom: 24, left:"25%" }
+    position: { centered: true, bottom: 24, left:"21%" }
   },
   {
     name: "Small phones",
@@ -701,7 +701,7 @@ const MacOSDock = () => {
     
     if (screenConfig.orientation === "horizontal") {
       if (screenConfig.position?.centered) {
-        pos.left = "50%";
+        pos.left = "48.4%";
         pos.transform = "translateX(-50%)";
       } else {
         if (typeof screenConfig.position?.left !== "undefined") {
