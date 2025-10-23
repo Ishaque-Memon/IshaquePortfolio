@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from '../Components/ui/sonner';
 
 const AuthContext = createContext(undefined);
 
@@ -56,6 +57,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userData');
     setIsAuthenticated(false);
     setUser(null);
+    toast.success('Logged out successfully');
   };
 
   const updateUser = (updatedUserData) => {
