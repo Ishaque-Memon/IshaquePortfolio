@@ -10,14 +10,15 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { ProjectStatusChart, SkillCategoryPie } from "../../Components/ui/charts.jsx";
 import { Badge } from "@/components/ui/badge";
+import Loader from "../../Components/common/Loader.jsx";
 
 const Analytics = () => {
   const { isDarkMode } = useTheme();
-  const { projects } = useProjects();
-  const { skills } = useSkills();
-  const { certificates } = useCertificates();
-  const { personalInfo } = usePersonalInfo();
-  const { messages } = useContactMessages();
+  const { projects, loading: loadingProjects } = useProjects();
+  const { skills, loading: loadingSkills } = useSkills();
+  const { certificates, loading: loadingCertificates } = useCertificates();
+  const { personalInfo, loading: loadingPersonalInfo } = usePersonalInfo();
+  const { messages, loading: loadingMessages } = useContactMessages();
 
   const [stats, setStats] = useState({
     totalProjects: 0,
@@ -58,7 +59,15 @@ const Analytics = () => {
     fetchAnalytics();
   }, [projects, skills, certificates, messages]);
 
+  const isLoading = loadingProjects || loadingSkills || loadingCertificates || loadingPersonalInfo || loadingMessages;
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loader variant="spinner" size="default" text="Loading Analytics..." />
+      </div>
+    );
+  }
 
   const mainStats = [
     {

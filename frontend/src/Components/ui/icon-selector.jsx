@@ -12,10 +12,10 @@ const ICON_CATEGORIES = {
     icons: [
       { value: "SiReact", label: "React", icon: SkillIcons.SiReact },
       { value: "SiJavascript", label: "JavaScript", icon: SkillIcons.SiJavascript },
-      { value: "SiTypescript", label: "TypeScript", icon: SkillIcons.SiTypescript },
+      { value: "FTypescript", label: "TypeScript", icon: SkillIcons.SiTypescript },
       { value: "SiHtml5", label: "HTML5", icon: SkillIcons.SiHtml5 },
       { value: "SiCss3", label: "CSS3", icon: SkillIcons.SiCss3 },
-      { value: "SiTailwindcss", label: "Tailwind", icon: SkillIcons.SiTailwindcss },
+      { value: "FTailwindcss", label: "Tailwind", icon: SkillIcons.SiTailwindcss },
       { value: "SiNextdotjs", label: "Next.js", icon: SkillIcons.SiNextdotjs },
       { value: "SiVuedotjs", label: "Vue.js", icon: SkillIcons.SiVuedotjs },
       { value: "SiAngular", label: "Angular", icon: SkillIcons.SiAngular },
@@ -28,6 +28,7 @@ const ICON_CATEGORIES = {
     color: "green",
     icons: [
       { value: "SiNodedotjs", label: "Node.js", icon: SkillIcons.SiNodedotjs },
+      { value: "BTypescript", label: "TypeScript", icon: SkillIcons.SiTypescript},
       { value: "SiExpress", label: "Express", icon: SkillIcons.SiExpress },
       { value: "SiPython", label: "Python", icon: SkillIcons.SiPython },
       { value: "SiGo", label: "Go", icon: SkillIcons.SiGo },

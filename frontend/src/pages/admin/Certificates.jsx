@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import Loader from "../../Components/common/Loader.jsx";
 import {
   Dialog,
   DialogContent,
@@ -243,12 +244,9 @@ const Certificates = () => {
 
       {/* Loading State */}
       {loading && (
-        <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
-          <CardContent className="p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-            <p className="text-neutral-500">Loading certificates...</p>
-          </CardContent>
-        </Card>
+        <div className="flex justify-center items-center h-full">
+          <Loader variant= "spinner" size="default" text="Loading certificates..." />
+        </div>
       )}
 
       {/* Stats */}

@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Loader from "../../Components/common/Loader.jsx";
 
 const PersonalInfo = () => {
   const { isDarkMode } = useTheme();
@@ -115,10 +116,7 @@ const PersonalInfo = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}>Loading personal information...</p>
-        </div>
+        <Loader variant="spinner" size="default" text="Loading personal information..." />
       </div>
     );
   }

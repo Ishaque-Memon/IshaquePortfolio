@@ -21,11 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import Loader from "../../Components/common/Loader.jsx";
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen, FiCalendar, FiMapPin, FiAward } from 'react-icons/fi';
 
 const Education = () => {
   const { isDarkMode } = useTheme();
-  const { 
+  const {
     education,
     loading, 
     error, 
@@ -323,7 +324,7 @@ const Education = () => {
   if (loading || optionsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <Loader variant="spinner" size="default" text="Loading education data..." />
       </div>
     );
   }

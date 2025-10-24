@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Loader from "../../Components/common/Loader.jsx";
 
 const Messages = () => {
   const location = useLocation();
@@ -200,12 +201,7 @@ const Messages = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent mx-auto"></div>
-          <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-            Loading messages...
-          </p>
-        </div>
+        <Loader variant="spinner" size="default" text="Loading messages..." />
       </div>
     );
   }
@@ -596,14 +592,14 @@ const MessageCard = React.forwardRef(({ message, index, isDarkMode, onView, onDe
               onClick={() => onView(message)}
               disabled={viewingMessageId === message._id}
               className={`relative p-2 rounded-lg transition-colors ${
-                isDarkMode 
-                  ? 'hover:bg-primary-500/10 text-primary-400' 
+                isDarkMode
+                  ? 'hover:bg-primary-500/10 text-primary-400'
                   : 'hover:bg-primary-50 text-primary-600'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               title="View message"
             >
               {viewingMessageId === message._id ? (
-                <div className="animate-spin rounded-full h-[18px] w-[18px] border-2 border-primary-500 border-t-transparent"></div>
+                <Loader size="small" variant="spinner" />
               ) : (
                 <FiEye size={18} />
               )}
@@ -611,8 +607,8 @@ const MessageCard = React.forwardRef(({ message, index, isDarkMode, onView, onDe
             <button
               onClick={() => onDelete(message)}
               className={`p-2 rounded-lg transition-colors ${
-                isDarkMode 
-                  ? 'hover:bg-red-500/10 text-red-400' 
+                isDarkMode
+                  ? 'hover:bg-red-500/10 text-red-400'
                   : 'hover:bg-red-50 text-red-600'
               }`}
               title="Delete message"

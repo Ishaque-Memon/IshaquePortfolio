@@ -11,6 +11,8 @@ import {
 } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Loader from "../../Components/common/Loader.jsx";
+
 const Dashboard = () => {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
@@ -120,10 +122,8 @@ const Dashboard = () => {
               >
                 <CardContent className="p-6">
                   {stat.loading ? (
-                    <div className="animate-pulse">
-                      <div className="h-4 bg-neutral-300 dark:bg-neutral-700 rounded w-20 mb-2"></div>
-                      <div className="h-8 bg-neutral-300 dark:bg-neutral-700 rounded w-16 mb-2"></div>
-                      <div className="h-3 bg-neutral-300 dark:bg-neutral-700 rounded w-24"></div>
+                    <div className="flex items-center justify-center h-full">
+                      <Loader size="small" variant="spinner" />
                     </div>
                   ) : (
                     <div className="flex items-start justify-between">

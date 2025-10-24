@@ -136,7 +136,7 @@ const DEVICE_CONFIGURATIONS = [
     orientation: "horizontal",
     iconSize: 66,
     spacing: 14,
-    position: { centered: true, bottom: 24, left:"21%" }
+    position: { centered: true, bottom: 24, left:"24%" }
   },
   {
     name: "Small phones",
@@ -394,10 +394,10 @@ const MacOSDock = () => {
   
   // ========== Auto-hide State (Landscape Mode) ==========
   const [isAutoHidden, setIsAutoHidden] = useState(false);
-  const [lastMouseActivityTime, setLastMouseActivityTime] = useState(Date.now());
   
   // ========== Refs ==========
   const autoHideTimerRef = useRef(null);
+  const lastMouseActivityTimeRef = useRef(Date.now());
   const dockElementRef = useRef(null);
   const isMouseButtonDownRef = useRef(false);
   const hasShownIntroAnimationRef = useRef(false);
@@ -755,7 +755,7 @@ const MacOSDock = () => {
       }
       
       setIsAutoHidden(false);
-      setLastMouseActivityTime(Date.now());
+      lastMouseActivityTimeRef.current = Date.now();
       
       // Set timer to hide dock after inactivity
       autoHideTimerRef.current = setTimeout(() => {
@@ -770,7 +770,7 @@ const MacOSDock = () => {
      */
     const handleMouseMove = (event) => {
       const currentTime = Date.now();
-      const timeSinceLastActivity = currentTime - lastMouseActivityTime;
+      const timeSinceLastActivity = currentTime - lastMouseActivityTimeRef.current;
       
       // Throttle timer resets to avoid excessive updates
       if (timeSinceLastActivity > MOUSE_ACTIVITY_THROTTLE_MS) {
@@ -779,9 +779,9 @@ const MacOSDock = () => {
       
       // Show dock when mouse approaches bottom edge
       const distanceFromBottomEdge = window.innerHeight - event.clientY;
-      const shouldRevealDock = 
-        !isMouseButtonDownRef.current && 
-        distanceFromBottomEdge <= edgeDetectionZone && 
+      const shouldRevealDock =
+        !isMouseButtonDownRef.current &&
+        distanceFromBottomEdge <= edgeDetectionZone &&
         (isAutoHidden || !isDockVisible);
       
       if (shouldRevealDock) {
@@ -821,12 +821,12 @@ const MacOSDock = () => {
     /**
      * Track mouse button state to prevent accidental reveals during drag
      */
-    const handleMouseDown = () => { 
-      isMouseButtonDownRef.current = true; 
+    const handleMouseDown = () => {
+      isMouseButtonDownRef.current = true;
     };
     
-    const handleMouseUp = () => { 
-      isMouseButtonDownRef.current = false; 
+    const handleMouseUp = () => {
+      isMouseButtonDownRef.current = false;
     };
     
     // Initial timer setup
@@ -851,7 +851,7 @@ const MacOSDock = () => {
       document.removeEventListener('keydown', handleKeyPress);
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [screenConfiguration.orientation, hasMainLoaderFinished, isUIOverlayOpen, isDockHovered, lastMouseActivityTime]);
+  }, [screenConfiguration.orientation, hasMainLoaderFinished, isUIOverlayOpen, isDockHovered]);
 
   /**
    * ========================================================================
@@ -917,7 +917,7 @@ const MacOSDock = () => {
    */
   const handleDockMouseLeave = () => {
     setIsDockHovered(false);
-    setLastMouseActivityTime(Date.now());
+    lastMouseActivityTimeRef.current = Date.now();
     
     // In landscape mode, auto-hide after a delay
     if (screenConfiguration.orientation === "horizontal") {
@@ -1012,13 +1012,6 @@ const MacOSDock = () => {
       label: "Certificates", 
       color: "from-yellow-500 to-yellow-600", 
       sectionId: "certificates" 
-    },
-    { 
-      id: "fyp", 
-      icon: FiFileText, 
-      label: "Final Year Project", 
-      color: "from-pink-500 to-pink-600", 
-      sectionId: "fyp" 
     },
     { 
       id: "contact", 
