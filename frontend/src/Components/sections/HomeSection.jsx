@@ -133,7 +133,7 @@ const HomeSection = () => {
               className="flex flex-wrap gap-4 mb-8"
             >
               <Link to="projects" smooth={true} duration={500}>
-                <Button size="lg" className="gap-2">
+                <Button variant="default" size="lg" className="gap-2">
                   View My Work
                 </Button>
               </Link>

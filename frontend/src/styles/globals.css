@@ -7,11 +7,14 @@
 @layer base {
   :root {
     --primary: 217 91% 60%;
+    --primary-rgb: 59, 130, 246; /* Equivalent to 217 91% 60% HSL */
     --primary-foreground: 210 40% 98%;
     --accent: 292 100% 71%;
     --accent-foreground: 210 40% 98%;
     --background: 210 40% 98%;
+    --background-rgb: 248, 250, 252; /* Equivalent to 210 40% 98% HSL */
     --foreground: 210 8% 5%;
+    --foreground-rgb: 15, 23, 42; /* Equivalent to 210 8% 5% HSL */
     --card: 0 0% 100%;
     --card-foreground: 210 8% 5%;
     --popover: 0 0% 100%;
@@ -31,15 +34,22 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --icon-green: 160 80% 39%; /* #10b981 */
+    --icon-purple: 262 92% 65%; /* #a855f7 */
+    --icon-orange: 27 95% 53%; /* #f97316 */
+    --icon-blue-dark: 200 80% 36%; /* #0e76a8 */
   }
 
   .dark {
     --primary: 217 91% 60%;
+    --primary-rgb: 59, 130, 246; /* Equivalent to 217 91% 60% HSL */
     --primary-foreground: 210 8% 5%;
     --accent: 292 100% 71%;
     --accent-foreground: 210 8% 5%;
     --background: 210 8% 5%;
+    --background-rgb: 15, 23, 42; /* Equivalent to 210 8% 5% HSL */
     --foreground: 210 40% 98%;
+    --foreground-rgb: 248, 250, 252; /* Equivalent to 210 40% 98% HSL */
     --card: 217 33% 17%;
     --card-foreground: 210 40% 98%;
     --popover: 217 33% 17%;
@@ -58,6 +68,10 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --icon-green: 160 80% 39%; /* #10b981 */
+    --icon-purple: 262 92% 65%; /* #a855f7 */
+    --icon-orange: 27 95% 53%; /* #f97316 */
+    --icon-blue-dark: 200 80% 36%; /* #0e76a8 */
   }
 
   html {
@@ -72,6 +86,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    @apply bg-background text-foreground; /* Added from index.css */
   }
 
   /* Smooth scrollbar */
@@ -94,6 +109,10 @@
 
   code {
     font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  }
+
+  * {
+    @apply border-border; /* Added from index.css */
   }
 }
 
@@ -208,7 +227,7 @@
 
   /* Text selection */
   ::selection {
-    @apply bg-primary-500 bg-opacity-20 text-primary-900;
+    @apply bg-primary-500 bg-opacity-20 text-primary-foreground;
   }
 }
 

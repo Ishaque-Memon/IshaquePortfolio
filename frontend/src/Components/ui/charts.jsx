@@ -15,16 +15,22 @@ export const skillCategoryData = [
   { name: 'Other', value: 1 },
 ];
 
-const COLORS = ['#06b6d4', '#a21caf', '#22c55e', '#f59e42', '#ec4899'];
+const COLORS = [
+  'hsl(var(--chart-1))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
+];
 
 export function ProjectStatusChart({ data }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data}>
-        <XAxis dataKey="name" stroke="#888" />
+        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
         <YAxis allowDecimals={false} />
         <Tooltip />
-        <Bar dataKey="value" fill="#06b6d4" radius={[8, 8, 0, 0]} />
+        <Bar dataKey="value" fill="hsl(var(--chart-1))" radius={[8, 8, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

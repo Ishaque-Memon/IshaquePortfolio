@@ -78,7 +78,7 @@ const Navbar = () => {
       WebkitBackdropFilter: "blur(0px)",
     },
     scrolled: {
-      backgroundColor: isDarkMode ? "rgba(15, 23, 42, 0.85)" : "rgba(248, 250, 252, 0.85)",
+      backgroundColor: isDarkMode ? "rgba(var(--background-rgb), 0.85)" : "rgba(var(--background-rgb), 0.85)",
       backdropFilter: "blur(20px)",
       WebkitBackdropFilter: "blur(20px)",
     }
@@ -114,7 +114,7 @@ const Navbar = () => {
         animate={isScrolled ? "scrolled" : "transparent"}
         style={{
           borderBottomColor: isScrolled 
-            ? (isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)")
+            ? (isDarkMode ? "rgba(var(--foreground-rgb), 0.1)" : "rgba(var(--foreground-rgb), 0.1)")
             : "transparent"
         }}
       >
@@ -159,8 +159,8 @@ const Navbar = () => {
                       fontWeight: "900",
                       lineHeight: "1",
                       textShadow: isDarkMode
-                        ? "0px 0px 20px rgba(255,255,255,0.5)"
-                        : "0px 0px 20px rgba(0,0,0,0.3)",
+                        ? "0px 0px 20px rgba(var(--foreground-rgb),0.5)"
+                        : "0px 0px 20px rgba(var(--foreground-rgb),0.3)",
                       filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
                     }}
                   >
@@ -175,8 +175,8 @@ const Navbar = () => {
                       fontWeight: "900",
                       lineHeight: "1",
                       textShadow: isDarkMode
-                        ? "0px 0px 15px rgba(255,255,255,0.4)"
-                        : "0px 0px 15px rgba(0,0,0,0.3)",
+                        ? "0px 0px 15px rgba(var(--foreground-rgb),0.4)"
+                        : "0px 0px 15px rgba(var(--foreground-rgb),0.3)",
                       filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
                     }}
                   >

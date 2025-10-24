@@ -37,7 +37,7 @@ const NotificationDropdown = ({ notifications = [], unreadCount = 0, isDarkMode,
       >
         <FiBell size={22} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full shadow">
+          <span className="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-destructive rounded-full shadow">
             {unreadCount}
           </span>
         )}
@@ -48,7 +48,7 @@ const NotificationDropdown = ({ notifications = [], unreadCount = 0, isDarkMode,
         >
           <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 font-semibold text-base flex items-center gap-2">
             <FiInbox className="text-primary-500" /> Notifications
-            {unreadCount > 0 && <span className="ml-auto text-xs bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 rounded-full">{unreadCount} unread</span>}
+            {unreadCount > 0 && <span className="ml-auto text-xs bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-200 px-2 py-0.5 rounded-full">{unreadCount} unread</span>}
           </div>
           <div className="flex-1 min-h-[120px] max-h-72 overflow-y-auto">
             {loading ? (
@@ -66,12 +66,12 @@ const NotificationDropdown = ({ notifications = [], unreadCount = 0, isDarkMode,
                 {notifications.map((n, i) => (
                   <li
                     key={n.id || i}
-                    className={`p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer relative rounded-lg my-1 mx-2 ${!n.isRead ? 'bg-blue-50 dark:bg-neutral-800/60 border-l-4 border-blue-500' : ''}`}
+                    className={`p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer relative rounded-lg my-1 mx-2 ${!n.isRead ? 'bg-primary-50 dark:bg-neutral-800/60 border-l-4 border-primary-500' : ''}`}
                     onClick={() => onNotificationClick && onNotificationClick(n)}
                   >
                     <div className="font-medium text-sm mb-1 flex items-center gap-2">
                       {n.title}
-                      {!n.isRead && <span className="ml-1 w-2 h-2 rounded-full bg-blue-500 inline-block" />}
+                      {!n.isRead && <span className="ml-1 w-2 h-2 rounded-full bg-primary-500 inline-block" />}
                     </div>
                     <div className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2">{n.body}</div>
                     <div className="text-[10px] text-neutral-400 mt-1">{n.time}</div>
@@ -95,7 +95,7 @@ const NotificationDropdown = ({ notifications = [], unreadCount = 0, isDarkMode,
             )}
             {notifications.length > 0 && (
               <button
-                className="text-xs font-semibold px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition-all flex items-center gap-1"
+                className="text-xs font-semibold px-3 py-1 rounded bg-primary-500 text-white hover:bg-primary-600 transition-all flex items-center gap-1"
                 onClick={() => {
                   setOpen(false);
                   if (onClearAll) onClearAll();

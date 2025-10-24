@@ -159,7 +159,7 @@ const CounterSection = () => {
         icon: "FiCode",
         color: "from-blue-500 to-cyan-500",
         bgColor: "from-blue-500/10 to-cyan-500/10",
-        iconColor: "#3b82f6"
+        iconColor: "hsl(var(--primary))"
       },
       {
         id: 'projects',
@@ -170,7 +170,7 @@ const CounterSection = () => {
         icon: "FiAward",
         color: "from-green-500 to-emerald-500",
         bgColor: "from-green-500/10 to-emerald-500/10",
-        iconColor: "#10b981"
+        iconColor: "hsl(var(--icon-green))"
       },
       {
         id: 'clients',
@@ -181,7 +181,7 @@ const CounterSection = () => {
         icon: "FiUsers",
         color: "from-purple-500 to-pink-500",
         bgColor: "from-purple-500/10 to-pink-500/10",
-        iconColor: "#a855f7"
+        iconColor: "hsl(var(--icon-purple))"
       },
       {
         id: 'certificates',
@@ -192,7 +192,7 @@ const CounterSection = () => {
         icon: "FiTrendingUp",
         color: "from-orange-500 to-red-500",
         bgColor: "from-orange-500/10 to-red-500/10",
-        iconColor: "#f97316"
+        iconColor: "hsl(var(--icon-orange))"
       },
       // include linkedin followers (example): will show because your API had linkedinFollowers: 1500
       {
@@ -204,7 +204,7 @@ const CounterSection = () => {
         icon: "FaLinkedin",
         color: "from-blue-600 to-blue-700",
         bgColor: "from-blue-600/10 to-blue-700/10",
-        iconColor: "#0e76a8"
+        iconColor: "hsl(var(--icon-blue-dark))"
       }
     ];
 

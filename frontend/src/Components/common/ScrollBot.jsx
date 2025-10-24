@@ -42,8 +42,8 @@ const ScrollButton = () => {
 
       pulseTween.current = gsap.to(el, {
         boxShadow: isDarkMode 
-          ? "0 8px 32px rgba(0, 0, 0, 0.4), 0 0 30px rgba(99, 102, 241, 0.3)" 
-          : "0 8px 32px rgba(0, 0, 0, 0.15), 0 0 30px rgba(59, 130, 246, 0.3)",
+          ? "0 8px 32px rgba(var(--foreground-rgb), 0.4), 0 0 30px rgba(var(--primary-rgb), 0.3)"
+          : "0 8px 32px rgba(var(--foreground-rgb), 0.15), 0 0 30px rgba(var(--primary-rgb), 0.3)",
         repeat: -1,
         yoyo: true,
         duration: 2,
@@ -144,8 +144,8 @@ const ScrollButton = () => {
           opacity: 0,
           transform: "translateY(30px)",
           boxShadow: isDarkMode
-            ? "0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.1)"
-            : "0 8px 32px rgba(0, 0, 0, 0.1), 0 0 20px rgba(59, 130, 246, 0.1)",
+            ? "0 8px 32px rgba(var(--foreground-rgb), 0.3), 0 0 20px rgba(var(--primary-rgb), 0.1)"
+            : "0 8px 32px rgba(var(--foreground-rgb), 0.1), 0 0 20px rgba(var(--primary-rgb), 0.1)",
         }}
       >
         {/* Animated background glow */}

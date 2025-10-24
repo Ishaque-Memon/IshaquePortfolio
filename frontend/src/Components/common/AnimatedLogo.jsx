@@ -160,8 +160,8 @@ timeline
             className="relative gradient-text transform-gpu"
             style={{
               textShadow: isDarkMode 
-                ? "0px 0px 20px rgba(255, 255, 255, 0.5)"
-                : "0px 0px 20px rgba(0, 0, 0, 0.3)",
+                ? "0px 0px 20px rgba(var(--foreground-rgb), 0.5)"
+                : "0px 0px 20px rgba(var(--foreground-rgb), 0.3)",
               willChange: "transform, opacity",
             }}
           >
@@ -174,8 +174,8 @@ timeline
             className={`relative ${isDarkMode ? 'text-white' : 'text-neutral-900'} transform-gpu`}
             style={{
               textShadow: isDarkMode 
-                ? "0px 0px 15px rgba(255, 255, 255, 0.4)"
-                : "0px 0px 15px rgba(0, 0, 0, 0.3)",
+                ? "0px 0px 15px rgba(var(--foreground-rgb), 0.4)"
+                : "0px 0px 15px rgba(var(--foreground-rgb), 0.3)",
               willChange: "transform, opacity",
             }}
           >
@@ -191,8 +191,8 @@ timeline
           }`}
           style={{
             textShadow: isDarkMode 
-              ? "0 2px 10px rgba(0, 0, 0, 0.3)"
-              : "0 2px 10px rgba(255, 255, 255, 0.5)",
+              ? "0 2px 10px rgba(var(--foreground-rgb), 0.3)"
+              : "0 2px 10px rgba(var(--foreground-rgb), 0.5)",
             fontFamily: "Inter, sans-serif",
             willChange: "transform, opacity",
           }}
