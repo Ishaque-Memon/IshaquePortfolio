@@ -431,7 +431,7 @@ const Education = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleOpenEditModal(edu)}
-                    className={isDarkMode ? 'hover:bg-neutral-700' : 'hover:bg-gray-100'}
+                    className={isDarkMode ? 'hover:bg-neutral-400' : 'hover:bg-gray-500'}
                   >
                     <FiEdit2 size={18} />
                   </Button>
@@ -631,7 +631,7 @@ const Education = () => {
             <div className="flex justify-end gap-3 pt-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="destructive"
                 onClick={() => setIsAddModalOpen(false)}
                 disabled={isSubmitting}
               >
@@ -831,7 +831,7 @@ const Education = () => {
             <div className="flex justify-end gap-3 pt-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="destructive"
                 onClick={() => setIsEditModalOpen(false)}
                 disabled={isSubmitting}
               >
