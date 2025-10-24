@@ -7,6 +7,7 @@ import { usePersonalInfo } from "@/hooks/usePortfolio";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Import Avatar components
 import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
 import Loader from "@/Components/common/Loader";
 
@@ -206,31 +207,24 @@ const HomeSection = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex justify-center lg:justify-end relative"
+            className="flex justify-center items-center relative"
           >
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-full h-full max-w-md max-h-md rounded-full bg-gradient-to-br from-primary-500/30 to-accent-500/30 blur-2xl animate-spin-slow opacity-70"></div>
             </div>
-            <Card className={`overflow-hidden relative z-10 ${
-              isDarkMode
-                ? 'card-glass'
-                : 'card-modern'
-            }`}>
-              <CardContent className="p-0">
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
-                  <img
-                    src={getProfileImage()}
-                    alt={infoToDisplay?.name || "Profile"}
-                    className="w-full h-auto max-w-md rounded-lg object-cover transform group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      // Double fallback if primary fails
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay?.name || 'User')}&size=400&background=6366f1&color=fff`;
-                    }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <Avatar
+              size="3xl"
+              glow={true}
+              className="relative z-10 shadow-lg transition-all duration-300 hover:shadow-xl h-40 w-40 text-3xl lg:h-[50%] lg:w-[50%] lg:text-5xl"
+            >
+              <AvatarImage
+                src={getProfileImage()}
+                alt={infoToDisplay?.name || "Profile"}
+              />
+              <AvatarFallback className="bg-gradient-to-br from-primary-500 to-accent-500 text-white font-semibold">
+                {infoToDisplay?.name?.charAt(0).toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
           </motion.div>
         </div>
 
