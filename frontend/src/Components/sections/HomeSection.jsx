@@ -76,8 +76,9 @@ const HomeSection = () => {
     >
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/20 to-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-full blur-3xl animate-gentle-glow animate-bubble-float"></div>
+        <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/20 to-primary-500/20 rounded-full blur-3xl animate-gentle-glow animate-bubble-float delay-500"></div>
+        <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-blue-500/15 to-purple-500/15 rounded-full blur-3xl animate-gentle-glow animate-bubble-float delay-1000"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
@@ -95,7 +96,7 @@ const HomeSection = () => {
               transition={{ delay: 0.2 }}
               className="mb-6"
             >
-              <Badge variant="outline" className="px-4 py-2 text-sm">
+              <Badge variant="outline" className="px-4 py-2 text-sm border-primary-500 text-primary-500 dark:border-accent-500 dark:text-accent-500">
                 ✨ {infoToDisplay?.availability || "Available for opportunities"}
               </Badge>
             </motion.div>
@@ -133,15 +134,15 @@ const HomeSection = () => {
               className="flex flex-wrap gap-4 mb-8"
             >
               <Link to="projects" smooth={true} duration={500}>
-                <Button variant="default" size="lg" className="gap-2">
+                <Button size="lg" className="gap-2 btn-primary">
                   View My Work
                 </Button>
               </Link>
               {infoToDisplay?.resumeFile?.url && (
                 <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="gap-2"
+                  variant="outline"
+                  size="lg"
+                  className="gap-2 btn-secondary"
                   asChild
                 >
                   <a 
@@ -205,20 +206,23 @@ const HomeSection = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex justify-center lg:justify-end"
+            className="flex justify-center lg:justify-end relative"
           >
-            <Card className={`overflow-hidden ${
-              isDarkMode 
-                ? 'bg-neutral-900/50 border-neutral-800' 
-                : 'bg-white border-neutral-200'
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-full max-w-md max-h-md rounded-full bg-gradient-to-br from-primary-500/30 to-accent-500/30 blur-2xl animate-spin-slow opacity-70"></div>
+            </div>
+            <Card className={`overflow-hidden relative z-10 ${
+              isDarkMode
+                ? 'card-glass'
+                : 'card-modern'
             }`}>
               <CardContent className="p-0">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
                   <img
                     src={getProfileImage()}
                     alt={infoToDisplay?.name || "Profile"}
-                    className="w-full h-auto max-w-md rounded-lg object-cover"
+                    className="w-full h-auto max-w-md rounded-lg object-cover transform group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       // Double fallback if primary fails
                       e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay?.name || 'User')}&size=400&background=6366f1&color=fff`;
@@ -244,10 +248,10 @@ const HomeSection = () => {
               className="cursor-pointer"
             >
               <div className={`w-6 h-10 rounded-full border-2 ${
-                isDarkMode ? 'border-neutral-600' : 'border-neutral-400'
+                isDarkMode ? 'border-primary-400' : 'border-primary-600'
               } flex justify-center p-2`}>
                 <div className={`w-1 h-2 rounded-full ${
-                  isDarkMode ? 'bg-neutral-400' : 'bg-neutral-600'
+                  isDarkMode ? 'bg-primary-400' : 'bg-primary-600'
                 } animate-pulse`}></div>
               </div>
             </motion.div>

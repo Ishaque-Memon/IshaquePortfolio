@@ -225,7 +225,8 @@ module.exports = {
   			'slide-down': 'slideDown 0.5s ease-out',
   			'fade-in': 'fadeIn 0.6s ease-out',
   			'scale-in': 'scaleIn 0.4s ease-out',
-  			'bounce-subtle': 'bounceSubtle 2s infinite'
+  			'bounce-subtle': 'bounceSubtle 2s infinite',
+  			'spin-slow': 'spin 8s linear infinite'
   		},
   		keyframes: {
   			float: {
@@ -288,6 +289,14 @@ module.exports = {
   				},
   				'50%': {
   					transform: 'translateY(-5px)'
+  				}
+  			},
+  			spin: {
+  				from: {
+  					transform: 'rotate(0deg)'
+  				},
+  				to: {
+  					transform: 'rotate(360deg)'
   				}
   			}
   		},
