@@ -15,10 +15,11 @@ export const errorHandler = (err, req, res, next) => {
 
   // Mongoose duplicate key error
   if (err.code === 11000) {
-    const field = Object.keys(err.keyPattern)[0];
+    const fields = Object.keys(err.keyPattern);
+    const values = fields.map(f => err.keyValue[f]).join(', ');
     return res.status(400).json({
       success: false,
-      message: `${field} already exists`
+      message: `A skill with this ${fields.join(' & ')} (${values}) already exists.`
     });
   }
 

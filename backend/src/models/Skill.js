@@ -5,13 +5,12 @@ const skillSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Skill name is required'],
-      trim: true,
-      unique: true
+      trim: true
     },
     category: {
       type: String,
       required: [true, 'Skill category is required'],
-      enum: ['frontend', 'backend', 'framework', 'tools', 'cloud', 'other'],
+      enum: ['frontend', 'backend','database', 'framework', 'tools', 'cloud', 'other'],
       default: 'other'
     },
     proficiency: {
@@ -46,6 +45,7 @@ const skillSchema = new mongoose.Schema(
 
 // Index for faster queries
 skillSchema.index({ category: 1, order: 1 });
+skillSchema.index({ name: 1, category: 1 }, { unique: true });
 
 const Skill = mongoose.model('Skill', skillSchema);
 
