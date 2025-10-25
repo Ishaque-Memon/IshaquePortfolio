@@ -215,7 +215,7 @@ const HomeSection = () => {
             <Avatar
               size="3xl"
               glow={true}
-              className="relative z-10 shadow-lg transition-all duration-300 hover:shadow-xl h-40 w-40 text-3xl lg:h-[50%] lg:w-[50%] lg:text-5xl"
+              className="relative z-10 shadow-lg transition-all duration-300 hover:shadow-xl h-40 w-40 text-3xl lg:h-[60%] lg:w-[60%] lg:text-5xl"
             >
               <AvatarImage
                 src={getProfileImage()}

@@ -1,35 +1,78 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { contactInfo, personalInfo } from "@/data/portfolioData";
 import portfolioApi from "@/api/portfolioApi";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { toast } from "@/components/ui/sonner";
 import { 
   FiMail, 
   FiPhone, 
-  FiMapPin, 
+  FiUser,
   FiSend,
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiInstagram
+  FiCheckCircle,
+  FiClock,
+  FiX
 } from "react-icons/fi";
-import { toast } from "@/components/ui/sonner";
+import { 
+  FaMapPin,
+  FaGithub,
+  FaLinkedin,
+  FaTwitter,
+  FaEnvelope
+} from "react-icons/fa";
+import { FiMessageSquare } from "@/assets/Icons/Icons";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Enhanced ContactSection with ModernContact design
+ * - Uses icons from Icons.jsx
+ * - Follows global CSS patterns
+ * - GSAP scroll animations
+ * - shadcn/ui components
+ */
 const ContactSection = () => {
   const { isDarkMode } = useTheme();
+  const sectionRef = useRef(null);
+  const formRef = useRef(null);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: ""
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStatus, setFormStatus] = useState('idle');
+
+  useEffect(() => {
+    const formElements = formRef.current?.querySelectorAll('.form-element');
+    
+    if (formElements && formElements.length > 0) {
+      gsap.fromTo(
+        formElements,
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: formRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,328 +84,467 @@ const ContactSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setFormStatus('sending');
 
     try {
-      // API call to backend
       await portfolioApi.submitContactForm(formData);
-
-      toast.success("Message sent successfully! I'll get back to you soon.");
       
-      // Reset form
+      setFormStatus('success');
+      toast.success("Message sent successfully! I'll get back to you soon.");
       setFormData({
         name: "",
         email: "",
         subject: "",
         message: ""
       });
+
+      setTimeout(() => {
+        setFormStatus('idle');
+      }, 5000);
     } catch (error) {
       console.error("Error sending message:", error);
+      setFormStatus('error');
       toast.error(error.message || "Failed to send message. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+      setTimeout(() => {
+        setFormStatus('idle');
+      }, 5000);
     }
   };
 
   const socialIcons = {
-    github: FiGithub,
-    linkedin: FiLinkedin,
-    twitter: FiTwitter,
-    instagram: FiInstagram
+    github: FaGithub,
+    linkedin: FaLinkedin,
+    twitter: FaTwitter,
+    instagram: FaEnvelope
   };
+
+  const contactInfoItems = [
+    {
+      icon: FiMail,
+      label: "Email",
+      value: contactInfo.email || "your@email.com",
+      href: `mailto:${contactInfo.email}`,
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      icon: FiPhone,
+      label: "Phone",
+      value: contactInfo.phone || "+1 234 567 8900",
+      href: `tel:${contactInfo.phone}`,
+      color: "from-green-500 to-emerald-500"
+    },
+    {
+      icon: FaMapPin,
+      label: "Location",
+      value: contactInfo.address || "Your Location",
+      href: "https://maps.google.com/",
+      color: "from-red-500 to-pink-500"
+    }
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { y: 30, opacity: 0 },
     visible: {
-      opacity: 1,
       y: 0,
-      transition: { duration: 0.5 }
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
     }
   };
 
   return (
     <section
       id="contact"
-      className={`min-h-screen py-20 ${
-        isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
-      }`}
+      ref={sectionRef}
+      className={`py-20 lg:py-32 ${
+        isDarkMode ? 'bg-neutral-900' : 'bg-white'
+      } transition-colors duration-300 relative overflow-hidden`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-full blur-3xl animate-gentle-float"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent-500/5 to-primary-500/5 rounded-full blur-3xl animate-gentle-glow"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        
+        {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
           className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">Get In Touch</span>
+          <h2 className={`text-4xl lg:text-5xl font-bold mb-6 ${
+            isDarkMode ? 'text-white' : 'text-neutral-900'
+          }`}>
+            Let's Start a <span className="gradient-text">Conversation</span>
           </h2>
-          <p className={`text-lg ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-            Have a question or want to work together?
+          <p className={`text-xl max-w-3xl mx-auto ${
+            isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+          }`}>
+            Have a project in mind? I'd love to hear from you. Send me a message
+            and I'll respond as soon as possible.
           </p>
+          <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full mt-8"></div>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
-        >
-          {/* Contact Info Cards */}
-          <motion.div variants={itemVariants} className="lg:col-span-1 space-y-6">
-            {/* Contact Details */}
-            <Card className={`${
-              isDarkMode 
-                ? 'bg-neutral-900 border-neutral-800' 
-                : 'bg-white border-neutral-200'
-            }`}>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-                <CardDescription>Feel free to reach out through any of these channels</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {contactInfo.email && (
-                  <a 
-                    href={`mailto:${contactInfo.email}`}
-                    className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
-                      isDarkMode 
-                        ? 'hover:bg-neutral-800' 
-                        : 'hover:bg-neutral-50'
-                    }`}
-                  >
-                    <div className="p-2 rounded-full bg-primary-500/10">
-                      <FiMail className="w-5 h-5 text-primary-500" />
-                    </div>
-                    <div className="flex-1">
-                      <p className={`text-sm font-medium ${
-                        isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
-                      }`}>
-                        Email
-                      </p>
-                      <p className={`${
-                        isDarkMode ? 'text-white' : 'text-neutral-900'
-                      } break-all`}>
-                        {contactInfo.email}
-                      </p>
-                    </div>
-                  </a>
-                )}
-
-                {contactInfo.phone && (
-                  <a 
-                    href={`tel:${contactInfo.phone}`}
-                    className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
-                      isDarkMode 
-                        ? 'hover:bg-neutral-800' 
-                        : 'hover:bg-neutral-50'
-                    }`}
-                  >
-                    <div className="p-2 rounded-full bg-primary-500/10">
-                      <FiPhone className="w-5 h-5 text-primary-500" />
-                    </div>
-                    <div className="flex-1">
-                      <p className={`text-sm font-medium ${
-                        isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
-                      }`}>
-                        Phone
-                      </p>
-                      <p className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {contactInfo.phone}
-                      </p>
-                    </div>
-                  </a>
-                )}
-
-                {contactInfo.address && (
-                  <div className={`flex items-start gap-3 p-3 rounded-lg`}>
-                    <div className="p-2 rounded-full bg-primary-500/10">
-                      <FiMapPin className="w-5 h-5 text-primary-500" />
-                    </div>
-                    <div className="flex-1">
-                      <p className={`text-sm font-medium ${
-                        isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
-                      }`}>
-                        Location
-                      </p>
-                      <p className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {contactInfo.address}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+        <div className="grid lg:grid-cols-2 gap-16">
+          
+          {/* Contact Information */}
+          <motion.div
+            className="space-y-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.div variants={itemVariants}>
+              <h3 className={`text-2xl lg:text-3xl font-bold mb-8 ${
+                isDarkMode ? 'text-white' : 'text-neutral-900'
+              }`}>
+                Get in Touch
+              </h3>
+              
+              {/* Contact Info Cards */}
+              <div className="space-y-6">
+                {contactInfoItems.map((info, index) => {
+                  const IconComponent = info.icon;
+                  return (
+                    <motion.a
+                      key={index}
+                      href={info.href}
+                      target={info.label === "Location" ? "_blank" : undefined}
+                      rel={info.label === "Location" ? "noopener noreferrer" : undefined}
+                      className={`block p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
+                        isDarkMode 
+                          ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' 
+                          : 'bg-neutral-50 border-neutral-200 hover:border-neutral-300'
+                      }`}
+                      whileHover={{ y: -2, scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`p-3 rounded-xl bg-gradient-to-r ${info.color}/20`}>
+                          <IconComponent className={`w-6 h-6 ${isDarkMode ? 'text-white' : 'text-neutral-700'}`} />
+                        </div>
+                        <div>
+                          <h4 className={`font-semibold ${
+                            isDarkMode ? 'text-white' : 'text-neutral-900'
+                          }`}>
+                            {info.label}
+                          </h4>
+                          <p className={`${
+                            isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                          }`}>
+                            {info.value}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.a>
+                  );
+                })}
+              </div>
+            </motion.div>
 
             {/* Social Links */}
-            <Card className={`${
-              isDarkMode 
-                ? 'bg-neutral-900 border-neutral-800' 
-                : 'bg-white border-neutral-200'
-            }`}>
-              <CardHeader>
-                <CardTitle>Connect with Me</CardTitle>
-                <CardDescription>Follow me on social media</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  {personalInfo.social && Object.entries(personalInfo.social).map(([platform, url]) => {
-                    const Icon = socialIcons[platform] || FiMail;
-                    return (
-                      <Button
-                        key={platform}
-                        asChild
-                        variant="outline"
-                        className="h-auto py-3"
-                      >
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-col items-center gap-2"
-                        >
-                          <Icon className="w-5 h-5" />
-                          <span className="text-xs capitalize">{platform}</span>
-                        </a>
-                      </Button>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div variants={itemVariants}>
+              <h4 className={`text-lg font-semibold mb-4 ${
+                isDarkMode ? 'text-white' : 'text-neutral-900'
+              }`}>
+                Follow Me
+              </h4>
+              <div className="flex space-x-4">
+                {personalInfo.social && Object.entries(personalInfo.social).map(([platform, url]) => {
+                  const Icon = socialIcons[platform] || FiMail;
+                  return (
+                    <motion.a
+                      key={platform}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`p-3 rounded-xl border transition-all duration-300 ${
+                        isDarkMode 
+                          ? 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-600' 
+                          : 'bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300'
+                      }`}
+                      whileHover={{ scale: 1.1, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </motion.a>
+                  );
+                })}
+              </div>
+            </motion.div>
 
-            {/* Availability Badge */}
-            <div className="text-center">
-              <Badge variant="outline" className="text-sm px-4 py-2">
-                <span className="relative flex h-2 w-2 mr-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            {/* Availability Status */}
+            <motion.div
+              variants={itemVariants}
+              className={`p-6 rounded-2xl border ${
+                isDarkMode 
+                  ? 'bg-green-900/20 border-green-700/50' 
+                  : 'bg-green-50 border-green-200'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className={`font-semibold ${
+                  isDarkMode ? 'text-green-400' : 'text-green-700'
+                }`}>
+                  Available for new projects
                 </span>
-                Available for freelance work
-              </Badge>
-            </div>
+              </div>
+              <p className={`mt-2 text-sm ${
+                isDarkMode ? 'text-green-300' : 'text-green-600'
+              }`}>
+                I'm currently accepting new freelance projects and collaboration opportunities.
+              </p>
+            </motion.div>
           </motion.div>
 
           {/* Contact Form */}
-          <motion.div variants={itemVariants} className="lg:col-span-2">
-            <Card className={`${
+          <motion.div
+            ref={formRef}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <Card className={`p-8 rounded-3xl border ${
               isDarkMode 
-                ? 'bg-neutral-900 border-neutral-800' 
-                : 'bg-white border-neutral-200'
+                ? 'bg-neutral-800 border-neutral-700' 
+                : 'bg-neutral-50 border-neutral-200'
             }`}>
-              <CardHeader>
-                <CardTitle className="text-2xl">Send me a message</CardTitle>
-                <CardDescription>
-                  Fill out the form below and I'll get back to you as soon as possible
-                </CardDescription>
+              <CardHeader className="p-0 mb-8">
+                <CardTitle className={`text-2xl ${
+                  isDarkMode ? 'text-white' : 'text-neutral-900'
+                }`}>
+                  Send Me a Message
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name & Email Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name *</Label>
+
+              <CardContent className="p-0">
+                <div className="space-y-6">
+                  {/* Name Field */}
+                  <div className="form-element">
+                    <Label className={`block text-sm font-semibold mb-2 ${
+                      isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                    }`}>
+                      Your Name
+                    </Label>
+                    <div className="relative">
+                      <FiUser className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                        isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
+                      }`} />
                       <Input
-                        id="name"
-                        name="name"
                         type="text"
-                        placeholder="Your name"
+                        name="name"
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className={isDarkMode 
-                          ? 'bg-neutral-800 border-neutral-700' 
-                          : 'bg-white border-neutral-300'
-                        }
+                        className={`pl-12 pr-4 py-6 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                          isDarkMode 
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                            : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
+                        }`}
+                        placeholder="Enter your full name"
                       />
                     </div>
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email *</Label>
+                  {/* Email Field */}
+                  <div className="form-element">
+                    <Label className={`block text-sm font-semibold mb-2 ${
+                      isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                    }`}>
+                      Email Address
+                    </Label>
+                    <div className="relative">
+                      <FiMail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                        isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
+                      }`} />
                       <Input
-                        id="email"
-                        name="email"
                         type="email"
-                        placeholder="your.email@example.com"
+                        name="email"
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className={isDarkMode 
-                          ? 'bg-neutral-800 border-neutral-700' 
-                          : 'bg-white border-neutral-300'
-                        }
+                        className={`pl-12 pr-4 py-6 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                          isDarkMode 
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                            : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
+                        }`}
+                        placeholder="your@email.com"
                       />
                     </div>
                   </div>
 
-                  {/* Subject */}
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject *</Label>
-                    <Input
-                      id="subject"
-                      name="subject"
-                      type="text"
-                      placeholder="What's this about?"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      required
-                      className={isDarkMode 
-                        ? 'bg-neutral-800 border-neutral-700' 
-                        : 'bg-white border-neutral-300'
-                      }
-                    />
+                  {/* Subject Field */}
+                  <div className="form-element">
+                    <Label className={`block text-sm font-semibold mb-2 ${
+                      isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                    }`}>
+                      Subject
+                    </Label>
+                    <div className="relative">
+                      <FiMessageSquare className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                        isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
+                      }`} />
+                      <Input
+                        type="text"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        required
+                        className={`pl-12 pr-4 py-6 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                          isDarkMode 
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                            : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
+                        }`}
+                        placeholder="What's this about?"
+                      />
+                    </div>
                   </div>
 
-                  {/* Message */}
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message *</Label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      placeholder="Tell me about your project or inquiry..."
-                      value={formData.message}
-                      onChange={handleChange}
-                      required
-                      rows={6}
-                      className={isDarkMode 
-                        ? 'bg-neutral-800 border-neutral-700 resize-none' 
-                        : 'bg-white border-neutral-300 resize-none'
-                      }
-                    />
+                  {/* Message Field */}
+                  <div className="form-element">
+                    <Label className={`block text-sm font-semibold mb-2 ${
+                      isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                    }`}>
+                      Message
+                    </Label>
+                    <div className="relative">
+                      <FiMessageSquare className={`absolute left-4 top-4 w-5 h-5 z-10 ${
+                        isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
+                      }`} />
+                      <Textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        required
+                        rows={6}
+                        className={`pl-12 pr-4 py-4 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none ${
+                          isDarkMode 
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                            : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
+                        }`}
+                        placeholder="Tell me about your project or just say hello!"
+                      />
+                    </div>
                   </div>
 
                   {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full md:w-auto px-8"
+                  <motion.div
+                    whileHover={formStatus !== 'sending' ? { scale: 1.02 } : {}}
+                    whileTap={formStatus !== 'sending' ? { scale: 0.98 } : {}}
                   >
-                    {isSubmitting ? (
-                      <>
-                        <span className="animate-spin mr-2">⏳</span>
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <FiSend className="w-4 h-4 mr-2" />
-                        Send Message
-                      </>
+                    <Button
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={formStatus === 'sending'}
+                      className={`w-full py-6 px-8 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                        formStatus === 'sending'
+                          ? 'bg-neutral-400 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 shadow-lg hover:shadow-xl'
+                      } text-white`}
+                    >
+                      <AnimatePresence mode="wait">
+                        {formStatus === 'sending' ? (
+                          <motion.div
+                            key="sending"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center space-x-2"
+                          >
+                            <FiClock className="w-5 h-5 animate-spin" />
+                            <span>Sending...</span>
+                          </motion.div>
+                        ) : formStatus === 'success' ? (
+                          <motion.div
+                            key="success"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center space-x-2"
+                          >
+                            <FiCheckCircle className="w-5 h-5" />
+                            <span>Message Sent!</span>
+                          </motion.div>
+                        ) : formStatus === 'error' ? (
+                          <motion.div
+                            key="error"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center space-x-2"
+                          >
+                            <FiX className="w-5 h-5" />
+                            <span>Failed to Send</span>
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="idle"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center space-x-2"
+                          >
+                            <FiSend className="w-5 h-5" />
+                            <span>Send Message</span>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </Button>
+                  </motion.div>
+
+                  {/* Success/Error Messages */}
+                  <AnimatePresence>
+                    {formStatus === 'success' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-center p-4 bg-green-500/10 border border-green-500/20 rounded-xl"
+                      >
+                        <p className="text-green-500 font-medium">
+                          Thank you for your message! I'll get back to you soon.
+                        </p>
+                      </motion.div>
                     )}
-                  </Button>
-                </form>
+                    {formStatus === 'error' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl"
+                      >
+                        <p className="text-red-500 font-medium">
+                          Failed to send message. Please try again or contact me directly.
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
