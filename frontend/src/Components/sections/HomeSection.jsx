@@ -222,7 +222,7 @@ const HomeSection = () => {
                 alt={infoToDisplay?.name || "Profile"}
               />
               <AvatarFallback className="bg-gradient-to-br from-primary-500 to-accent-500 text-white font-semibold">
-                {infoToDisplay?.name?.charAt(0).toUpperCase() || "U"}
+                {infoToDisplay?.name?.charAt(0).toUpperCase() || "MI"}
               </AvatarFallback>
             </Avatar>
           </motion.div>
