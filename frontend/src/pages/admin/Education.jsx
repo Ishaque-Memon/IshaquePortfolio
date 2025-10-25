@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useEducation } from '../../hooks/usePortfolio';
 import { getEducationOptions, uploadImage } from '../../api/portfolioApi';
@@ -25,391 +25,48 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
 import Loader from "../../Components/common/Loader.jsx";
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen, FiCalendar, FiMapPin, FiAward, FiLink, FiUpload } from 'react-icons/fi';
 
-const Education = () => {
-  const { isDarkMode } = useTheme();
+/*
+  EducationForm MOVED OUTSIDE the parent component and memoized.
+  This keeps the component reference stable so React updates props
+  without unmounting/remounting the form on every keystroke.
+*/
+const EducationForm = React.memo((props) => {
   const {
-    education,
-    loading, 
-    error, 
-    createEducation: createEducationAPI,
-    updateEducation: updateEducationAPI,
-    deleteEducation: deleteEducationAPI
-  } = useEducation();
+    formData,
+    setFormData,
+    onSubmit,
+    isEdit = false,
+    educationOptions,
+    getDegreeOptions,
+    getSpecializationOptions,
+    shouldShowSpecialization,
+    needsManualInstitutionInput,
+    getFieldLabel,
+    getSpecializationLabel,
+    getInstitutionFieldType,
+    getFilteredBoards,
+    logoUploading,
+    logoUploadError,
+    handleLogoFileChange,
+    isSubmitting,
+    setIsAddModalOpen,
+    setIsEditModalOpen,
+    isDarkMode,
+  } = props;
 
-  // Education options from backend
-  const [educationOptions, setEducationOptions] = useState({
-    levels: [],
-    boardsUniversities: [],
-    degreeOptions: {},
-    specializationOptions: {},
-    educationStatusOptions: []
-  });
-  const [optionsLoading, setOptionsLoading] = useState(true);
+  if (!formData) return null;
 
-  // Fetch education options
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const response = await getEducationOptions();
-        const data = response.data || response;
-        
-        setEducationOptions({
-          levels: data?.levels ?? [],
-          boardsUniversities: data?.boardsUniversities ?? [],
-          degreeOptions: data?.degreeOptions ?? {},
-          specializationOptions: data?.specializationOptions ?? {},
-          educationStatusOptions: data?.educationStatusOptions ?? []
-        });
-      } catch (err) {
-        console.error('Failed to load education options:', err);
-      } finally {
-        setOptionsLoading(false);
-      }
-    };
-    fetchOptions();
-  }, []);
-
-  // Helper functions
-  const getDegreeOptions = (level) => educationOptions.degreeOptions[level] || [];
-  const getSpecializationOptions = (level) => educationOptions.specializationOptions[level] || [];
-  
-  const shouldShowSpecialization = (level) => {
-    return ['bachelor', 'master', 'mphil', 'phd'].includes(level);
-  };
-
-  const getFieldLabel = (level) => {
-    if (level === 'ssc' || level === 'hsc') return 'Group/Field';
-    if (level === 'olevel' || level === 'alevel') return 'Subject Group';
-    return 'Degree Name';
-  };
-
-  const getSpecializationLabel = (level) => {
-    if (level === 'bachelor' || level === 'master') return 'Major/Specialization';
-    if (level === 'mphil' || level === 'phd') return 'Research Area';
-    return 'Specialization';
-  };
-
-  const getInstitutionFieldType = (level) => {
-    if (level === 'ssc' || level === 'olevel') return 'school';
-    if (level === 'hsc' || level === 'alevel') return 'college';
-    if (level === 'diploma' || level === 'certification') return 'institute';
-    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) return 'university';
-    return 'board';
-  };
-
-  const getFilteredBoards = (level) => {
-    const boards = educationOptions.boardsUniversities;
-    
-    if (level === 'ssc' || level === 'hsc') {
-      return boards.filter(b => b.type === 'board' && !['cambridge', 'edexcel'].includes(b.value));
-    }
-    if (level === 'olevel' || level === 'alevel') {
-      return boards.filter(b => ['cambridge', 'edexcel', 'custom'].includes(b.value));
-    }
-    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) {
-      return boards.filter(b => b.type === 'university' || b.value === 'custom');
-    }
-    return boards;
-  };
-
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedEducation, setSelectedEducation] = useState(null);
-  const [formData, setFormData] = useState({
-    level: "",
-    degree: "",
-    specialization: "",
-    boardUniversity: "",
-    customInstitution: "",
-    location: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-    grade: "",
-    isPresent: false,
-    logoUrl: "",
-    academicDescription: "",
-    educationStatus: "Planned"
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // File upload state
-  const [logoUploading, setLogoUploading] = useState(false);
-  const [logoUploadError, setLogoUploadError] = useState("");
-
-  // File upload handler - FIXED
-  const handleLogoFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    setLogoUploading(true);
-    setLogoUploadError("");
-    
-    try {
-      const uploadedUrl = await uploadImage(file);
-      console.log('Image uploaded successfully:', uploadedUrl);
-      setFormData((prev) => ({ ...prev, logoUrl: uploadedUrl }));
-    } catch (err) {
-      console.error('Logo upload error:', err);
-      setLogoUploadError("Failed to upload image. Please try again.");
-    } finally {
-      setLogoUploading(false);
-    }
-  };
-
-  const handleOpenAddModal = () => {
-    setFormData({
-      level: "",
-      degree: "",
-      specialization: "",
-      boardUniversity: "",
-      customInstitution: "",
-      location: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-      grade: "",
-      isPresent: false,
-      logoUrl: "",
-      academicDescription: "",
-      educationStatus: "Planned"
-    });
-    setLogoUploadError("");
-    setIsAddModalOpen(true);
-  };
-
-  const handleOpenEditModal = (education) => {
-    setSelectedEducation(education);
-
-    // Find institution value - FIXED
-    let preselectedBoardUniversity = "";
-    if (education.customInstitution) {
-      preselectedBoardUniversity = "custom";
-    } else {
-      const storedInstitutionLabel = education.school || education.college || education.institute || education.university || education.board;
-      const foundOption = educationOptions.boardsUniversities.find(
-        (option) => option.label === storedInstitutionLabel
-      );
-      preselectedBoardUniversity = foundOption ? foundOption.value : "";
-    }
-
-    setFormData({
-      level: education.level || "",
-      degree: education.degree || "",
-      specialization: education.specialization || "",
-      boardUniversity: preselectedBoardUniversity,
-      customInstitution: education.customInstitution || "",
-      location: education.location || "",
-      startDate: education.startDate || "",
-      endDate: education.endDate || "",
-      description: education.description || "",
-      grade: education.grade || "",
-      isPresent: education.isPresent || false,
-      logoUrl: education.logoUrl || "",
-      academicDescription: education.academicDescription || "",
-      educationStatus: education.educationStatus || "Planned"
-    });
-    setLogoUploadError("");
-    setIsEditModalOpen(true);
-  };
-
-  const handleOpenDeleteDialog = (education) => {
-    setSelectedEducation(education);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleSubmitAdd = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      const dataToSubmit = {
-        level: formData.level,
-        degree: formData.degree,
-        specialization: formData.specialization || undefined,
-        location: formData.location || undefined,
-        startDate: formData.startDate,
-        endDate: formData.isPresent ? null : formData.endDate,
-        isPresent: formData.isPresent,
-        grade: formData.grade || undefined,
-        description: formData.description || undefined,
-        logoUrl: formData.logoUrl || undefined,
-        academicDescription: formData.academicDescription || undefined,
-        educationStatus: formData.educationStatus
-      };
-
-      // Add institution fields
-      const institutionType = getInstitutionFieldType(formData.level);
-      if (formData.boardUniversity === 'custom') {
-        dataToSubmit.customInstitution = formData.customInstitution;
-      } else if (formData.boardUniversity) {
-        const institutionOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-        const institutionLabel = institutionOption?.label || formData.boardUniversity;
-
-        if (institutionType === 'school') {
-          dataToSubmit.school = institutionLabel;
-        } else if (institutionType === 'college') {
-          dataToSubmit.college = institutionLabel;
-        } else if (institutionType === 'institute') {
-          dataToSubmit.institute = institutionLabel;
-        } else if (institutionType === 'university') {
-          dataToSubmit.university = institutionLabel;
-        }
-
-        // Add board for SSC/HSC
-        if (formData.level === 'ssc' || formData.level === 'hsc') {
-          dataToSubmit.board = institutionLabel;
-        }
-      }
-
-      console.log('Submitting education data:', dataToSubmit);
-      await createEducationAPI(dataToSubmit);
-      setIsAddModalOpen(false);
-    } catch (err) {
-      console.error("Error creating education:", err);
-      alert(err.response?.data?.message || "Failed to create education entry");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleSubmitEdit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      const dataToSubmit = {
-        level: formData.level,
-        degree: formData.degree,
-        specialization: formData.specialization || undefined,
-        location: formData.location || undefined,
-        startDate: formData.startDate,
-        endDate: formData.isPresent ? null : formData.endDate,
-        isPresent: formData.isPresent,
-        grade: formData.grade || undefined,
-        description: formData.description || undefined,
-        logoUrl: formData.logoUrl || undefined,
-        academicDescription: formData.academicDescription || undefined,
-        educationStatus: formData.educationStatus
-      };
-
-      // Add institution fields
-      const institutionType = getInstitutionFieldType(formData.level);
-      if (formData.boardUniversity === 'custom') {
-        dataToSubmit.customInstitution = formData.customInstitution;
-        // Clear other institution fields
-        dataToSubmit.school = undefined;
-        dataToSubmit.college = undefined;
-        dataToSubmit.institute = undefined;
-        dataToSubmit.university = undefined;
-      } else if (formData.boardUniversity) {
-        const institutionOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-        const institutionLabel = institutionOption?.label || formData.boardUniversity;
-
-        // Clear custom institution
-        dataToSubmit.customInstitution = undefined;
-
-        if (institutionType === 'school') {
-          dataToSubmit.school = institutionLabel;
-          dataToSubmit.college = undefined;
-          dataToSubmit.institute = undefined;
-          dataToSubmit.university = undefined;
-        } else if (institutionType === 'college') {
-          dataToSubmit.college = institutionLabel;
-          dataToSubmit.school = undefined;
-          dataToSubmit.institute = undefined;
-          dataToSubmit.university = undefined;
-        } else if (institutionType === 'institute') {
-          dataToSubmit.institute = institutionLabel;
-          dataToSubmit.school = undefined;
-          dataToSubmit.college = undefined;
-          dataToSubmit.university = undefined;
-        } else if (institutionType === 'university') {
-          dataToSubmit.university = institutionLabel;
-          dataToSubmit.school = undefined;
-          dataToSubmit.college = undefined;
-          dataToSubmit.institute = undefined;
-        }
-
-        // Add board for SSC/HSC
-        if (formData.level === 'ssc' || formData.level === 'hsc') {
-          dataToSubmit.board = institutionLabel;
-        } else {
-          dataToSubmit.board = undefined;
-        }
-      }
-
-      console.log('Updating education with data:', dataToSubmit);
-      await updateEducationAPI(selectedEducation._id, dataToSubmit);
-      setIsEditModalOpen(false);
-    } catch (err) {
-      console.error("Error updating education:", err);
-      alert(err.response?.data?.message || "Failed to update education entry");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      await deleteEducationAPI(selectedEducation._id);
-      setIsDeleteDialogOpen(false);
-      setSelectedEducation(null);
-    } catch (err) {
-      console.error("Error deleting education:", err);
-      alert(err.response?.data?.message || "Failed to delete education entry");
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const [year, month] = dateString.split('-');
-    return `${month}/${year}`;
-  };
-
-  const getLevelBadgeColor = (level) => {
-    const colors = {
-      ssc: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-      hsc: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-      bachelor: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-      master: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
-      phd: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-      default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-    };
-    return colors[level] || colors.default;
-  };
-
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case 'Completed':
-      case 'Graduated':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'InProgress':
-      case 'Undergraduate':
-      case 'Postgraduate':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'Planned':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'DroppedOut':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-    }
-  };
-
-  // Education Form Component (reusable for add/edit)
-  const EducationForm = ({ onSubmit, isEdit = false }) => (
+  return (
     <form onSubmit={onSubmit} className="space-y-4">
       {/* Education Level */}
       <div>
         <Label htmlFor={`${isEdit ? 'edit-' : ''}level`}>Education Level *</Label>
-        <Select 
-          value={formData.level} 
-          onValueChange={(value) => setFormData({ 
-            ...formData, 
-            level: value, 
-            degree: "", 
+        <Select
+          value={formData.level}
+          onValueChange={(value) => setFormData({
+            ...formData,
+            level: value,
+            degree: "",
             specialization: "",
             boardUniversity: ""
           })}
@@ -483,12 +140,10 @@ const Education = () => {
       )}
 
       {/* Board/University */}
-      {formData.level && (
+      {formData.level && !needsManualInstitutionInput(formData.level) && (
         <div>
           <Label htmlFor={`${isEdit ? 'edit-' : ''}boardUniversity`}>
-            {getInstitutionFieldType(formData.level) === 'school' ? 'School' :
-             getInstitutionFieldType(formData.level) === 'college' ? 'College' :
-             getInstitutionFieldType(formData.level) === 'institute' ? 'Institute' : 'University'}
+            {getInstitutionFieldType(formData.level) === 'institute' ? 'Institute' : 'University'} *
           </Label>
           <Select value={formData.boardUniversity} onValueChange={(value) => setFormData({ ...formData, boardUniversity: value, customInstitution: '' })}>
             <SelectTrigger>
@@ -500,8 +155,55 @@ const Education = () => {
                   {board.label}
                 </SelectItem>
               ))}
+              <SelectItem value="custom">Other Institution</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+      )}
+
+      {/* Board Selection for SSC/HSC/O-Level/A-Level */}
+      {formData.level && needsManualInstitutionInput(formData.level) && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}boardUniversity`}>Board *</Label>
+          <Select value={formData.boardUniversity} onValueChange={(value) => setFormData({ ...formData, boardUniversity: value })}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select board" />
+            </SelectTrigger>
+            <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+              {getFilteredBoards(formData.level).map((board) => (
+                <SelectItem key={board.value} value={board.value}>
+                  {board.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* School Name / College Name */}
+      {formData.level && (formData.level === 'ssc' || formData.level === 'olevel') && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}schoolName`}>School Name *</Label>
+          <Input
+            id={`${isEdit ? 'edit-' : ''}schoolName`}
+            value={formData.schoolName}
+            onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
+            required
+            placeholder="Enter your school name"
+          />
+        </div>
+      )}
+
+      {formData.level && (formData.level === 'hsc' || formData.level === 'alevel') && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}collegeName`}>College Name *</Label>
+          <Input
+            id={`${isEdit ? 'edit-' : ''}collegeName`}
+            value={formData.collegeName}
+            onChange={(e) => setFormData({ ...formData, collegeName: e.target.value })}
+            required
+            placeholder="Enter your college name"
+          />
         </div>
       )}
 
@@ -541,10 +243,10 @@ const Education = () => {
           )}
           {formData.logoUrl && (
             <div className="flex items-center gap-3 p-3 border rounded-lg">
-              <img 
-                src={formData.logoUrl} 
-                alt="Logo Preview" 
-                className="h-16 w-16 object-contain border rounded" 
+              <img
+                src={formData.logoUrl}
+                alt="Logo Preview"
+                className="h-16 w-16 object-contain border rounded"
               />
               <div className="flex-1">
                 <p className="text-xs text-green-600 dark:text-green-400">Image uploaded successfully</p>
@@ -603,10 +305,10 @@ const Education = () => {
         <Checkbox
           id={`${isEdit ? 'edit-' : ''}isPresent`}
           checked={formData.isPresent}
-          onCheckedChange={(checked) => setFormData({ 
-            ...formData, 
-            isPresent: checked, 
-            endDate: checked ? "" : formData.endDate 
+          onCheckedChange={(checked) => setFormData({
+            ...formData,
+            isPresent: checked,
+            endDate: checked ? "" : formData.endDate
           })}
         />
         <Label htmlFor={`${isEdit ? 'edit-' : ''}isPresent`} className="cursor-pointer">
@@ -640,7 +342,7 @@ const Education = () => {
       {/* Academic Description */}
       <div>
         <Label htmlFor={`${isEdit ? 'edit-' : ''}academicDescription`}>
-          Academic Description ({formData.academicDescription.length}/1000)
+          Academic Description ({(formData.academicDescription || "").length}/1000)
         </Label>
         <Textarea
           id={`${isEdit ? 'edit-' : ''}academicDescription`}
@@ -683,6 +385,414 @@ const Education = () => {
       </div>
     </form>
   );
+});
+
+/*
+  Main Education component (unchanged logic, but now uses the moved EducationForm above)
+*/
+const Education = () => {
+  const { isDarkMode } = useTheme();
+  const {
+    education,
+    loading,
+    error,
+    createEducation: createEducationAPI,
+    updateEducation: updateEducationAPI,
+    deleteEducation: deleteEducationAPI
+  } = useEducation();
+
+  // Education options from backend
+  const [educationOptions, setEducationOptions] = useState({
+    levels: [],
+    boardsUniversities: [],
+    degreeOptions: {},
+    specializationOptions: {},
+    educationStatusOptions: []
+  });
+  const [optionsLoading, setOptionsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const response = await getEducationOptions();
+        const data = response.data || response;
+
+        setEducationOptions({
+          levels: data?.levels ?? [],
+          boardsUniversities: data?.boardsUniversities ?? [],
+          degreeOptions: data?.degreeOptions ?? {},
+          specializationOptions: data?.specializationOptions ?? {},
+          educationStatusOptions: data?.educationStatusOptions ?? []
+        });
+      } catch (err) {
+        console.error('Failed to load education options:', err);
+      } finally {
+        setOptionsLoading(false);
+      }
+    };
+    fetchOptions();
+  }, []);
+
+  // Helper functions
+  const getDegreeOptions = (level) => educationOptions.degreeOptions[level] || [];
+  const getSpecializationOptions = (level) => educationOptions.specializationOptions[level] || [];
+
+  const shouldShowSpecialization = (level) => {
+    return ['bachelor', 'master', 'mphil', 'phd'].includes(level);
+  };
+
+  const getFieldLabel = (level) => {
+    if (level === 'ssc' || level === 'hsc') return 'Group/Field';
+    if (level === 'olevel' || level === 'alevel') return 'Subject Group';
+    return 'Degree Name';
+  };
+
+  const getSpecializationLabel = (level) => {
+    if (level === 'bachelor' || level === 'master') return 'Major/Specialization';
+    if (level === 'mphil' || level === 'phd') return 'Research Area';
+    return 'Specialization';
+  };
+
+  const getInstitutionFieldType = (level) => {
+    if (level === 'ssc' || level === 'olevel') return 'school';
+    if (level === 'hsc' || level === 'alevel') return 'college';
+    if (level === 'diploma' || level === 'certification') return 'institute';
+    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) return 'university';
+    return 'board';
+  };
+
+  const getFilteredBoards = (level) => {
+    const boards = educationOptions.boardsUniversities;
+
+    if (level === 'ssc' || level === 'hsc') {
+      return boards.filter(b => b.type === 'board' && !['cambridge', 'edexcel'].includes(b.value));
+    }
+    if (level === 'olevel' || level === 'alevel') {
+      return boards.filter(b => ['cambridge', 'edexcel'].includes(b.value));
+    }
+    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) {
+      return boards.filter(b => b.type === 'university');
+    }
+    return boards;
+  };
+
+  const needsManualInstitutionInput = (level) => {
+    return ['ssc', 'hsc', 'olevel', 'alevel'].includes(level);
+  };
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedEducation, setSelectedEducation] = useState(null);
+  const [formData, setFormData] = useState({
+    level: "",
+    degree: "",
+    specialization: "",
+    boardUniversity: "",
+    customInstitution: "",
+    schoolName: "",
+    collegeName: "",
+    location: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+    grade: "",
+    isPresent: false,
+    logoUrl: "",
+    academicDescription: "",
+    educationStatus: "Planned"
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState("");
+
+  const handleLogoFileChange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    setLogoUploading(true);
+    setLogoUploadError("");
+
+    try {
+      const uploadedUrl = await uploadImage(file);
+      setFormData((prev) => ({ ...prev, logoUrl: uploadedUrl }));
+    } catch (err) {
+      console.error('Logo upload error:', err);
+      setLogoUploadError("Failed to upload image. Please try again.");
+    } finally {
+      setLogoUploading(false);
+    }
+  };
+
+  const handleOpenAddModal = () => {
+    setFormData({
+      level: "",
+      degree: "",
+      specialization: "",
+      boardUniversity: "",
+      customInstitution: "",
+      schoolName: "",
+      collegeName: "",
+      location: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+      grade: "",
+      isPresent: false,
+      logoUrl: "",
+      academicDescription: "",
+      educationStatus: "Planned"
+    });
+    setLogoUploadError("");
+    setIsAddModalOpen(true);
+  };
+
+  const handleOpenEditModal = (educationItem) => {
+    setSelectedEducation(educationItem);
+
+    let preselectedBoardUniversity = "";
+    if (educationItem.customInstitution) {
+      preselectedBoardUniversity = "custom";
+    } else if (educationItem.board) {
+      const foundBoard = educationOptions.boardsUniversities.find(
+        (option) => option.label === educationItem.board && option.type === 'board'
+      );
+      preselectedBoardUniversity = foundBoard ? foundBoard.value : "";
+    } else if (educationItem.university) {
+      const foundUniversity = educationOptions.boardsUniversities.find(
+        (option) => option.label === educationItem.university && option.type === 'university'
+      );
+      preselectedBoardUniversity = foundUniversity ? foundUniversity.value : "";
+    }
+
+    setFormData({
+      level: educationItem.level || "",
+      degree: educationItem.degree || "",
+      specialization: educationItem.specialization || "",
+      boardUniversity: preselectedBoardUniversity,
+      customInstitution: educationItem.customInstitution || "",
+      schoolName: educationItem.school || "",
+      collegeName: educationItem.college || "",
+      location: educationItem.location || "",
+      startDate: educationItem.startDate || "",
+      endDate: educationItem.endDate || "",
+      description: educationItem.description || "",
+      grade: educationItem.grade || "",
+      isPresent: educationItem.isPresent || false,
+      logoUrl: educationItem.logoUrl || "",
+      academicDescription: educationItem.academicDescription || "",
+      educationStatus: educationItem.educationStatus || "Planned"
+    });
+    setLogoUploadError("");
+    setIsEditModalOpen(true);
+  };
+
+  const handleOpenDeleteDialog = (educationItem) => {
+    setSelectedEducation(educationItem);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleSubmitAdd = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const dataToSubmit = {
+        level: formData.level,
+        degree: formData.degree,
+        specialization: formData.specialization || undefined,
+        location: formData.location || undefined,
+        startDate: formData.startDate,
+        endDate: formData.isPresent ? null : formData.endDate,
+        isPresent: formData.isPresent,
+        grade: formData.grade || undefined,
+        description: formData.description || undefined,
+        logoUrl: formData.logoUrl || undefined,
+        academicDescription: formData.academicDescription || undefined,
+        educationStatus: formData.educationStatus
+      };
+
+      const institutionType = getInstitutionFieldType(formData.level);
+
+      if (formData.level === 'ssc' || formData.level === 'hsc') {
+        if (formData.boardUniversity) {
+          const boardOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.board = boardOption?.label || formData.boardUniversity;
+        }
+        if (formData.level === 'ssc' && formData.schoolName) {
+          dataToSubmit.school = formData.schoolName;
+        } else if (formData.level === 'hsc' && formData.collegeName) {
+          dataToSubmit.college = formData.collegeName;
+        }
+      } else if (formData.level === 'olevel' || formData.level === 'alevel') {
+        if (formData.boardUniversity) {
+          const boardOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.board = boardOption?.label || formData.boardUniversity;
+        }
+        if (formData.level === 'olevel' && formData.schoolName) {
+          dataToSubmit.school = formData.schoolName;
+        } else if (formData.level === 'alevel' && formData.collegeName) {
+          dataToSubmit.college = formData.collegeName;
+        }
+      } else if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(formData.level)) {
+        if (formData.boardUniversity === 'custom') {
+          dataToSubmit.customInstitution = formData.customInstitution;
+        } else if (formData.boardUniversity) {
+          const universityOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.university = universityOption?.label || formData.boardUniversity;
+        }
+      } else if (institutionType === 'institute') {
+        if (formData.boardUniversity === 'custom') {
+          dataToSubmit.customInstitution = formData.customInstitution;
+        } else if (formData.boardUniversity) {
+          const instituteOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.institute = instituteOption?.label || formData.boardUniversity;
+        }
+      }
+
+      await createEducationAPI(dataToSubmit);
+      setIsAddModalOpen(false);
+    } catch (err) {
+      console.error("Error creating education:", err);
+      alert(err.response?.data?.message || "Failed to create education entry");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitEdit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const dataToSubmit = {
+        level: formData.level,
+        degree: formData.degree,
+        specialization: formData.specialization || undefined,
+        location: formData.location || undefined,
+        startDate: formData.startDate,
+        endDate: formData.isPresent ? null : formData.endDate,
+        isPresent: formData.isPresent,
+        grade: formData.grade || undefined,
+        description: formData.description || undefined,
+        logoUrl: formData.logoUrl || undefined,
+        academicDescription: formData.academicDescription || undefined,
+        educationStatus: formData.educationStatus
+      };
+
+      const institutionType = getInstitutionFieldType(formData.level);
+
+      if (formData.level === 'ssc' || formData.level === 'hsc') {
+        if (formData.boardUniversity) {
+          const boardOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.board = boardOption?.label || formData.boardUniversity;
+        }
+        if (formData.level === 'ssc' && formData.schoolName) {
+          dataToSubmit.school = formData.schoolName;
+        } else if (formData.level === 'hsc' && formData.collegeName) {
+          dataToSubmit.college = formData.collegeName;
+        }
+        dataToSubmit.customInstitution = undefined;
+        dataToSubmit.institute = undefined;
+        dataToSubmit.university = undefined;
+      } else if (formData.level === 'olevel' || formData.level === 'alevel') {
+        if (formData.boardUniversity) {
+          const boardOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.board = boardOption?.label || formData.boardUniversity;
+        }
+        if (formData.level === 'olevel' && formData.schoolName) {
+          dataToSubmit.school = formData.schoolName;
+        } else if (formData.level === 'alevel' && formData.collegeName) {
+          dataToSubmit.college = formData.collegeName;
+        }
+        dataToSubmit.customInstitution = undefined;
+        dataToSubmit.institute = undefined;
+        dataToSubmit.university = undefined;
+      } else if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(formData.level)) {
+        if (formData.boardUniversity === 'custom') {
+          dataToSubmit.customInstitution = formData.customInstitution;
+          dataToSubmit.university = undefined;
+        } else if (formData.boardUniversity) {
+          const universityOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.university = universityOption?.label || formData.boardUniversity;
+          dataToSubmit.customInstitution = undefined;
+        }
+        dataToSubmit.school = undefined;
+        dataToSubmit.college = undefined;
+        dataToSubmit.board = undefined;
+        dataToSubmit.institute = undefined;
+      } else if (institutionType === 'institute') {
+        if (formData.boardUniversity === 'custom') {
+          dataToSubmit.customInstitution = formData.customInstitution;
+          dataToSubmit.institute = undefined;
+        } else if (formData.boardUniversity) {
+          const instituteOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+          dataToSubmit.institute = instituteOption?.label || formData.boardUniversity;
+          dataToSubmit.customInstitution = undefined;
+        }
+        dataToSubmit.school = undefined;
+        dataToSubmit.college = undefined;
+        dataToSubmit.board = undefined;
+        dataToSubmit.university = undefined;
+      }
+
+      await updateEducationAPI(selectedEducation._id, dataToSubmit);
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error("Error updating education:", err);
+      alert(err.response?.data?.message || "Failed to update education entry");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteEducationAPI(selectedEducation._id);
+      setIsDeleteDialogOpen(false);
+      setSelectedEducation(null);
+    } catch (err) {
+      console.error("Error deleting education:", err);
+      alert(err.response?.data?.message || "Failed to delete education entry");
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const [year, month] = dateString.split('-');
+    return `${month}/${year}`;
+  };
+
+  const getLevelBadgeColor = (level) => {
+    const colors = {
+      ssc: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+      hsc: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+      bachelor: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+      master: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
+      phd: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+      default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+    };
+    return colors[level] || colors.default;
+  };
+
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case 'Completed':
+      case 'Graduated':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'InProgress':
+      case 'Undergraduate':
+      case 'Postgraduate':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'Planned':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'DroppedOut':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+    }
+  };
 
   if (loading || optionsLoading) {
     return (
@@ -759,24 +869,20 @@ const Education = () => {
                       </span>
                     )}
                   </div>
-                  
+
                   <h3 className="text-xl font-semibold mb-1">{edu.degree}</h3>
                   {edu.specialization && (
-                    <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'} mb-2`}>
-                      {edu.specialization}
-                    </p>
+                    <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'} mb-2`}>{edu.specialization}</p>
                   )}
-                  
+
                   <p className={`text-sm ${isDarkMode ? 'text-neutral-300' : 'text-neutral-700'} font-medium`}>
                     {edu.school || edu.college || edu.institute || edu.university || edu.customInstitution}
                   </p>
-                  
+
                   {(edu.board || edu.location) && (
                     <div className="flex gap-4 mt-2">
                       {edu.board && (
-                        <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                          Board: {edu.board}
-                        </p>
+                        <p className={`text-sm ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>Board: {edu.board}</p>
                       )}
                       {edu.location && (
                         <p className={`text-sm flex items-center ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
@@ -786,16 +892,14 @@ const Education = () => {
                       )}
                     </div>
                   )}
-                  
+
                   <p className={`text-sm flex items-center mt-2 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
                     <FiCalendar className="mr-2" size={14} />
                     {formatDate(edu.startDate)} - {edu.isPresent ? 'Present' : formatDate(edu.endDate)}
                   </p>
-                  
+
                   {edu.description && (
-                    <p className={`text-sm mt-3 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                      {edu.description}
-                    </p>
+                    <p className={`text-sm mt-3 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`}>{edu.description}</p>
                   )}
 
                   {edu.academicDescription && (
@@ -805,7 +909,7 @@ const Education = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex gap-2 ml-4">
                   <Button
                     variant="ghost"
@@ -832,71 +936,82 @@ const Education = () => {
 
       {/* Add Education Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className={`max-w-3xl max-h-[90vh] overflow-y-auto ${
-          isDarkMode
-            ? 'bg-neutral-900 border border-neutral-800 text-white'
-            : 'bg-white border border-neutral-200 text-neutral-900'
-        }`}>
+        <DialogContent className={`max-w-3xl max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-neutral-900 border border-neutral-800 text-white' : 'bg-white border border-neutral-200 text-neutral-900'}`}>
           <DialogHeader>
-            <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-              Add Education
-            </DialogTitle>
-            <DialogDescription>
-              Add a new education entry to your profile
-            </DialogDescription>
+            <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>Add Education</DialogTitle>
+            <DialogDescription>Add a new education entry to your profile</DialogDescription>
           </DialogHeader>
-          <EducationForm onSubmit={handleSubmitAdd} isEdit={false} />
+          {formData && (
+            <EducationForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleSubmitAdd}
+              isEdit={false}
+              educationOptions={educationOptions}
+              getDegreeOptions={getDegreeOptions}
+              getSpecializationOptions={getSpecializationOptions}
+              shouldShowSpecialization={shouldShowSpecialization}
+              needsManualInstitutionInput={needsManualInstitutionInput}
+              getFieldLabel={getFieldLabel}
+              getSpecializationLabel={getSpecializationLabel}
+              getInstitutionFieldType={getInstitutionFieldType}
+              getFilteredBoards={getFilteredBoards}
+              logoUploading={logoUploading}
+              logoUploadError={logoUploadError}
+              handleLogoFileChange={handleLogoFileChange}
+              isSubmitting={isSubmitting}
+              setIsAddModalOpen={setIsAddModalOpen}
+              setIsEditModalOpen={setIsEditModalOpen}
+              isDarkMode={isDarkMode}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
       {/* Edit Education Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className={`max-w-3xl max-h-[90vh] overflow-y-auto ${
-          isDarkMode
-            ? 'bg-neutral-900 border border-neutral-800 text-white'
-            : 'bg-white border border-neutral-200 text-neutral-900'
-        }`}>
+        <DialogContent className={`max-w-3xl max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-neutral-900 border border-neutral-800 text-white' : 'bg-white border border-neutral-200 text-neutral-900'}`}>
           <DialogHeader>
-            <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-              Edit Education
-            </DialogTitle>
-            <DialogDescription>
-              Update education entry details
-            </DialogDescription>
+            <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>Edit Education</DialogTitle>
+            <DialogDescription>Update education entry details</DialogDescription>
           </DialogHeader>
-          <EducationForm onSubmit={handleSubmitEdit} isEdit={true} />
+          {formData && (
+            <EducationForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleSubmitEdit}
+              isEdit={true}
+              educationOptions={educationOptions}
+              getDegreeOptions={getDegreeOptions}
+              getSpecializationOptions={getSpecializationOptions}
+              shouldShowSpecialization={shouldShowSpecialization}
+              needsManualInstitutionInput={needsManualInstitutionInput}
+              getFieldLabel={getFieldLabel}
+              getSpecializationLabel={getSpecializationLabel}
+              getInstitutionFieldType={getInstitutionFieldType}
+              getFilteredBoards={getFilteredBoards}
+              logoUploading={logoUploading}
+              logoUploadError={logoUploadError}
+              handleLogoFileChange={handleLogoFileChange}
+              isSubmitting={isSubmitting}
+              setIsAddModalOpen={setIsAddModalOpen}
+              setIsEditModalOpen={setIsEditModalOpen}
+              isDarkMode={isDarkMode}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className={
-          isDarkMode
-            ? 'bg-neutral-900 border border-neutral-800 text-white'
-            : 'bg-white border border-neutral-200 text-neutral-900'
-        }>
+        <DialogContent className={isDarkMode ? 'bg-neutral-900 border border-neutral-800 text-white' : 'bg-white border border-neutral-200 text-neutral-900'}>
           <DialogHeader>
-            <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-              Delete Education Entry
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this education entry? This action cannot be undone.
-            </DialogDescription>
+            <DialogTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>Delete Education Entry</DialogTitle>
+            <DialogDescription>Are you sure you want to delete this education entry? This action cannot be undone.</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Delete
-            </Button>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">Delete</Button>
           </div>
         </DialogContent>
       </Dialog>
