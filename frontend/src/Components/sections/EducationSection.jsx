@@ -226,7 +226,7 @@ const EducationSection = () => {
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-64">
-            <Loader variant="spinner" text="Loading education data..." />
+            <Loader variant="spinner" text="Loading Education..." />
           </div>
         </div>
       </section>

@@ -63,7 +63,7 @@ const HomeSection = () => {
           isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
         }`}
       >
-        <Loader variant="spinner" text="Loading home section..." />
+        <Loader variant="spinner" text="Loading Portfolio..." />
       </section>
     );
   }

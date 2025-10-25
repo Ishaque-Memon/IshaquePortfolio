@@ -164,7 +164,7 @@ const SkillsSection = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
-            <Loader variant="spinner" text="Loading skills..." />
+            <Loader variant="spinner" text="Loading Skills..." />
           </div>
         </div>
       </section>

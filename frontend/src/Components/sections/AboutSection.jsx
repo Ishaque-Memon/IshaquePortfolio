@@ -70,7 +70,7 @@ const AboutSection = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader variant="spinner" text="Loading personal info..." />
+        <Loader variant="spinner" text="Loading Personal Info..." />
       </div>
     );
   }
