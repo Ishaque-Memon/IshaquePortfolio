@@ -8,24 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/sonner";
-import { 
-  FiMail, 
-  FiPhone, 
-  FiUser,
-  FiSend,
-  FiCheckCircle,
-  FiClock,
-  FiX
-} from "react-icons/fi";
-import { 
-  FaMapPin,
-  FaGithub,
-  FaLinkedin,
-  FaTwitter,
-  FaEnvelope
-} from "react-icons/fa";
-import { FiMessageSquare } from "@/assets/Icons/Icons";
+import { outlineIcon, SidebarIcons } from "@/assets/Icons/Icons";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -33,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Enhanced ContactSection with ModernContact design
- * - Uses icons from Icons.jsx
+ * - Uses icons from Icons.jsx only
  * - Follows global CSS patterns
  * - GSAP scroll animations
  * - shadcn/ui components
@@ -90,7 +73,7 @@ const ContactSection = () => {
       await portfolioApi.submitContactForm(formData);
       
       setFormStatus('success');
-      toast.success("Message sent successfully! I'll get back to you soon.");
+      
       setFormData({
         name: "",
         email: "",
@@ -104,43 +87,43 @@ const ContactSection = () => {
     } catch (error) {
       console.error("Error sending message:", error);
       setFormStatus('error');
-      toast.error(error.message || "Failed to send message. Please try again.");
+      
       setTimeout(() => {
         setFormStatus('idle');
       }, 5000);
     }
   };
 
-  const socialIcons = {
-    github: FaGithub,
-    linkedin: FaLinkedin,
-    twitter: FaTwitter,
-    instagram: FaEnvelope
-  };
-
   const contactInfoItems = [
     {
-      icon: FiMail,
+      icon: outlineIcon.Mail,
       label: "Email",
       value: contactInfo.email || "your@email.com",
       href: `mailto:${contactInfo.email}`,
       color: "from-blue-500 to-cyan-500"
     },
     {
-      icon: FiPhone,
+      icon: outlineIcon.Phone,
       label: "Phone",
       value: contactInfo.phone || "+1 234 567 8900",
       href: `tel:${contactInfo.phone}`,
       color: "from-green-500 to-emerald-500"
     },
     {
-      icon: FaMapPin,
+      icon: outlineIcon.globe,
       label: "Location",
       value: contactInfo.address || "Your Location",
       href: "https://maps.google.com/",
       color: "from-red-500 to-pink-500"
     }
   ];
+
+  const socialLinks = personalInfo.social ? [
+    { platform: 'github', icon: outlineIcon.github, url: personalInfo.social.github },
+    { platform: 'linkedin', icon: outlineIcon.linkedin, url: personalInfo.social.linkedin },
+    { platform: 'twitter', icon: outlineIcon.mail, url: personalInfo.social.twitter },
+    { platform: 'mail', icon: outlineIcon.envelope, url: personalInfo.social.mail }
+  ].filter(link => link.url) : [];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -222,62 +205,58 @@ const ContactSection = () => {
               
               {/* Contact Info Cards */}
               <div className="space-y-6">
-                {contactInfoItems.map((info, index) => {
-                  const IconComponent = info.icon;
-                  return (
-                    <motion.a
-                      key={index}
-                      href={info.href}
-                      target={info.label === "Location" ? "_blank" : undefined}
-                      rel={info.label === "Location" ? "noopener noreferrer" : undefined}
-                      className={`block p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
-                        isDarkMode 
-                          ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' 
-                          : 'bg-neutral-50 border-neutral-200 hover:border-neutral-300'
-                      }`}
-                      whileHover={{ y: -2, scale: 1.02 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`p-3 rounded-xl bg-gradient-to-r ${info.color}/20`}>
-                          <IconComponent className={`w-6 h-6 ${isDarkMode ? 'text-white' : 'text-neutral-700'}`} />
-                        </div>
-                        <div>
-                          <h4 className={`font-semibold ${
-                            isDarkMode ? 'text-white' : 'text-neutral-900'
-                          }`}>
-                            {info.label}
-                          </h4>
-                          <p className={`${
-                            isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
-                          }`}>
-                            {info.value}
-                          </p>
-                        </div>
+                {contactInfoItems.map((info, index) => (
+                  <motion.a
+                    key={index}
+                    href={info.href}
+                    target={info.label === "Location" ? "_blank" : undefined}
+                    rel={info.label === "Location" ? "noopener noreferrer" : undefined}
+                    className={`block p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
+                      isDarkMode 
+                        ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' 
+                        : 'bg-neutral-50 border-neutral-200 hover:border-neutral-300'
+                    }`}
+                    whileHover={{ y: -2, scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className={`p-3 rounded-xl bg-gradient-to-r ${info.color}/20 text-2xl`}>
+                        {info.icon}
                       </div>
-                    </motion.a>
-                  );
-                })}
+                      <div>
+                        <h4 className={`font-semibold ${
+                          isDarkMode ? 'text-white' : 'text-neutral-900'
+                        }`}>
+                          {info.label}
+                        </h4>
+                        <p className={`${
+                          isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                        }`}>
+                          {info.value}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.a>
+                ))}
               </div>
             </motion.div>
 
             {/* Social Links */}
-            <motion.div variants={itemVariants}>
-              <h4 className={`text-lg font-semibold mb-4 ${
-                isDarkMode ? 'text-white' : 'text-neutral-900'
-              }`}>
-                Follow Me
-              </h4>
-              <div className="flex space-x-4">
-                {personalInfo.social && Object.entries(personalInfo.social).map(([platform, url]) => {
-                  const Icon = socialIcons[platform] || FiMail;
-                  return (
+            {socialLinks.length > 0 && (
+              <motion.div variants={itemVariants}>
+                <h4 className={`text-lg font-semibold mb-4 ${
+                  isDarkMode ? 'text-white' : 'text-neutral-900'
+                }`}>
+                  Follow Me
+                </h4>
+                <div className="flex space-x-4">
+                  {socialLinks.map((social) => (
                     <motion.a
-                      key={platform}
-                      href={url}
+                      key={social.platform}
+                      href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-3 rounded-xl border transition-all duration-300 ${
+                      className={`p-3 rounded-xl border transition-all duration-300 text-xl ${
                         isDarkMode 
                           ? 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-600' 
                           : 'bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300'
@@ -285,12 +264,12 @@ const ContactSection = () => {
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Icon className="w-5 h-5" />
+                      {social.icon}
                     </motion.a>
-                  );
-                })}
-              </div>
-            </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
             {/* Availability Status */}
             <motion.div
@@ -348,9 +327,11 @@ const ContactSection = () => {
                       Your Name
                     </Label>
                     <div className="relative">
-                      <FiUser className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                      <div className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-xl z-10 ${
                         isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
-                      }`} />
+                      }`}>
+                        {outlineIcon.User}
+                      </div>
                       <Input
                         type="text"
                         name="name"
@@ -375,9 +356,11 @@ const ContactSection = () => {
                       Email Address
                     </Label>
                     <div className="relative">
-                      <FiMail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                      <div className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-xl z-10 ${
                         isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
-                      }`} />
+                      }`}>
+                        {outlineIcon.Mail}
+                      </div>
                       <Input
                         type="email"
                         name="email"
@@ -402,9 +385,11 @@ const ContactSection = () => {
                       Subject
                     </Label>
                     <div className="relative">
-                      <FiMessageSquare className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 ${
+                      <div className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-xl z-10 ${
                         isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
-                      }`} />
+                      }`}>
+                        {SidebarIcons.FiMessageSquare && <SidebarIcons.FiMessageSquare />}
+                      </div>
                       <Input
                         type="text"
                         name="subject"
@@ -429,9 +414,11 @@ const ContactSection = () => {
                       Message
                     </Label>
                     <div className="relative">
-                      <FiMessageSquare className={`absolute left-4 top-4 w-5 h-5 z-10 ${
+                      <div className={`absolute left-4 top-4 text-xl z-10 ${
                         isDarkMode ? 'text-neutral-500' : 'text-neutral-400'
-                      }`} />
+                      }`}>
+                        {SidebarIcons.FiMessageSquare && <SidebarIcons.FiMessageSquare />}
+                      </div>
                       <Textarea
                         name="message"
                         value={formData.message}
@@ -460,7 +447,7 @@ const ContactSection = () => {
                       className={`w-full py-6 px-8 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
                         formStatus === 'sending'
                           ? 'bg-neutral-400 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 shadow-lg hover:shadow-xl'
+                          : 'btn-primary'
                       } text-white`}
                     >
                       <AnimatePresence mode="wait">
@@ -470,9 +457,9 @@ const ContactSection = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="flex items-center space-x-2"
+                            className="flex items-center space-x-2 text-xl"
                           >
-                            <FiClock className="w-5 h-5 animate-spin" />
+                            <span className="animate-spin">⏳</span>
                             <span>Sending...</span>
                           </motion.div>
                         ) : formStatus === 'success' ? (
@@ -483,7 +470,7 @@ const ContactSection = () => {
                             exit={{ opacity: 0 }}
                             className="flex items-center space-x-2"
                           >
-                            <FiCheckCircle className="w-5 h-5" />
+                            <span className="text-xl">{outlineIcon.CheckMark}</span>
                             <span>Message Sent!</span>
                           </motion.div>
                         ) : formStatus === 'error' ? (
@@ -494,7 +481,7 @@ const ContactSection = () => {
                             exit={{ opacity: 0 }}
                             className="flex items-center space-x-2"
                           >
-                            <FiX className="w-5 h-5" />
+                            <span className="text-xl">{outlineIcon.CancelIcon}</span>
                             <span>Failed to Send</span>
                           </motion.div>
                         ) : (
@@ -505,7 +492,7 @@ const ContactSection = () => {
                             exit={{ opacity: 0 }}
                             className="flex items-center space-x-2"
                           >
-                            <FiSend className="w-5 h-5" />
+                            <span className="text-xl">{outlineIcon.ArrowRight}</span>
                             <span>Send Message</span>
                           </motion.div>
                         )}
