@@ -219,6 +219,21 @@ export const uploadFile = async (file, folder = 'general') => {
   return response.data;
 };
 
+// ========== IMAGE UPLOAD ========== 
+/**
+ * Upload an image file to the backend (or Cloudinary via backend)
+ * Returns the uploaded image URL
+ */
+export const uploadImage = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  // Adjust the endpoint if your backend uses a different route
+  const response = await axiosInstance.post('/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  // Expecting { url: 'https://...' }
+  return response.data.url;
+};
 
 // ==================== ANALYTICS ====================
 export const fetchAnalyticsSummary = async () => {
@@ -279,7 +294,8 @@ export default {
   deleteEducation,
   
   // File Upload
-  uploadFile
+  uploadFile,
+  uploadImage
 };
 
 export { axiosInstance };

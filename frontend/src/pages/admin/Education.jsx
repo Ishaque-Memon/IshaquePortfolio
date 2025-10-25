@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useEducation } from '../../hooks/usePortfolio';
-import { getEducationOptions } from '../../api/portfolioApi';
+import { getEducationOptions, uploadImage } from '../../api/portfolioApi';
 import {
   Dialog,
   DialogContent,
@@ -21,8 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import Loader from "../../Components/common/Loader.jsx";
-import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen, FiCalendar, FiMapPin, FiAward } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen, FiCalendar, FiMapPin, FiAward, FiLink, FiUpload } from 'react-icons/fi';
 
 const Education = () => {
   const { isDarkMode } = useTheme();
@@ -40,33 +41,35 @@ const Education = () => {
     levels: [],
     boardsUniversities: [],
     degreeOptions: {},
-    specializationOptions: {}
+    specializationOptions: {},
+    educationStatusOptions: []
   });
   const [optionsLoading, setOptionsLoading] = useState(true);
 
-  // Fetch education options from backend
- useEffect(() => {
-  const fetchOptions = async () => {
-    try {
-      const data = await getEducationOptions();
-      // normalize response so component always has expected shape
-      setEducationOptions({
-        levels: data?.levels ?? [],
-        boardsUniversities: data?.boardsUniversities ?? [],
-        degreeOptions: data?.degreeOptions ?? {},
-        specializationOptions: data?.specializationOptions ?? {}
-      });
-    } catch (err) {
-      console.error('Failed to load education options:', err);
-    } finally {
-      setOptionsLoading(false);
-    }
-  };
-  fetchOptions();
-}, []);
+  // Fetch education options
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const response = await getEducationOptions();
+        const data = response.data || response;
+        
+        setEducationOptions({
+          levels: data?.levels ?? [],
+          boardsUniversities: data?.boardsUniversities ?? [],
+          degreeOptions: data?.degreeOptions ?? {},
+          specializationOptions: data?.specializationOptions ?? {},
+          educationStatusOptions: data?.educationStatusOptions ?? []
+        });
+      } catch (err) {
+        console.error('Failed to load education options:', err);
+      } finally {
+        setOptionsLoading(false);
+      }
+    };
+    fetchOptions();
+  }, []);
 
-
-  // Helper functions from backend
+  // Helper functions
   const getDegreeOptions = (level) => educationOptions.degreeOptions[level] || [];
   const getSpecializationOptions = (level) => educationOptions.specializationOptions[level] || [];
   
@@ -117,7 +120,6 @@ const Education = () => {
     level: "",
     degree: "",
     specialization: "",
-    institution: "",
     boardUniversity: "",
     customInstitution: "",
     location: "",
@@ -125,19 +127,42 @@ const Education = () => {
     endDate: "",
     description: "",
     grade: "",
-    isPresent: false
+    isPresent: false,
+    logoUrl: "",
+    academicDescription: "",
+    educationStatus: "Planned"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Rest of the component code remains the same...
-  // (handleOpenAddModal, handleOpenEditModal, handleSubmitAdd, etc.)
+  // File upload state
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState("");
+
+  // File upload handler - FIXED
+  const handleLogoFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setLogoUploading(true);
+    setLogoUploadError("");
+    
+    try {
+      const uploadedUrl = await uploadImage(file);
+      console.log('Image uploaded successfully:', uploadedUrl);
+      setFormData((prev) => ({ ...prev, logoUrl: uploadedUrl }));
+    } catch (err) {
+      console.error('Logo upload error:', err);
+      setLogoUploadError("Failed to upload image. Please try again.");
+    } finally {
+      setLogoUploading(false);
+    }
+  };
 
   const handleOpenAddModal = () => {
     setFormData({
       level: "",
       degree: "",
       specialization: "",
-      institution: "",
       boardUniversity: "",
       customInstitution: "",
       location: "",
@@ -145,27 +170,47 @@ const Education = () => {
       endDate: "",
       description: "",
       grade: "",
-      isPresent: false
+      isPresent: false,
+      logoUrl: "",
+      academicDescription: "",
+      educationStatus: "Planned"
     });
+    setLogoUploadError("");
     setIsAddModalOpen(true);
   };
 
   const handleOpenEditModal = (education) => {
     setSelectedEducation(education);
+
+    // Find institution value - FIXED
+    let preselectedBoardUniversity = "";
+    if (education.customInstitution) {
+      preselectedBoardUniversity = "custom";
+    } else {
+      const storedInstitutionLabel = education.school || education.college || education.institute || education.university || education.board;
+      const foundOption = educationOptions.boardsUniversities.find(
+        (option) => option.label === storedInstitutionLabel
+      );
+      preselectedBoardUniversity = foundOption ? foundOption.value : "";
+    }
+
     setFormData({
-      level: education.level,
-      degree: education.degree,
+      level: education.level || "",
+      degree: education.degree || "",
       specialization: education.specialization || "",
-      institution: "",
-      boardUniversity: education.board || education.university || "",
+      boardUniversity: preselectedBoardUniversity,
       customInstitution: education.customInstitution || "",
       location: education.location || "",
-      startDate: education.startDate,
+      startDate: education.startDate || "",
       endDate: education.endDate || "",
       description: education.description || "",
       grade: education.grade || "",
-      isPresent: education.isPresent
+      isPresent: education.isPresent || false,
+      logoUrl: education.logoUrl || "",
+      academicDescription: education.academicDescription || "",
+      educationStatus: education.educationStatus || "Planned"
     });
+    setLogoUploadError("");
     setIsEditModalOpen(true);
   };
 
@@ -177,61 +222,50 @@ const Education = () => {
   const handleSubmitAdd = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
     try {
       const dataToSubmit = {
         level: formData.level,
         degree: formData.degree,
-        specialization: formData.specialization,
-        location: formData.location,
+        specialization: formData.specialization || undefined,
+        location: formData.location || undefined,
         startDate: formData.startDate,
         endDate: formData.isPresent ? null : formData.endDate,
         isPresent: formData.isPresent,
-        grade: formData.grade,
-        description: formData.description
+        grade: formData.grade || undefined,
+        description: formData.description || undefined,
+        logoUrl: formData.logoUrl || undefined,
+        academicDescription: formData.academicDescription || undefined,
+        educationStatus: formData.educationStatus
       };
 
-      // Add institution fields based on level
+      // Add institution fields
       const institutionType = getInstitutionFieldType(formData.level);
       if (formData.boardUniversity === 'custom') {
         dataToSubmit.customInstitution = formData.customInstitution;
-      } else {
+      } else if (formData.boardUniversity) {
+        const institutionOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+        const institutionLabel = institutionOption?.label || formData.boardUniversity;
+
         if (institutionType === 'school') {
-          const schoolOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.school = schoolOption?.label || formData.boardUniversity;
+          dataToSubmit.school = institutionLabel;
         } else if (institutionType === 'college') {
-          const collegeOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.college = collegeOption?.label || formData.boardUniversity;
+          dataToSubmit.college = institutionLabel;
         } else if (institutionType === 'institute') {
-          const instituteOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.institute = instituteOption?.label || formData.boardUniversity;
+          dataToSubmit.institute = institutionLabel;
         } else if (institutionType === 'university') {
-          const universityOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.university = universityOption?.label || formData.boardUniversity;
+          dataToSubmit.university = institutionLabel;
+        }
+
+        // Add board for SSC/HSC
+        if (formData.level === 'ssc' || formData.level === 'hsc') {
+          dataToSubmit.board = institutionLabel;
         }
       }
 
-      // Add board for SSC/HSC
-      if (formData.level === 'ssc' || formData.level === 'hsc') {
-        const boardOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-        dataToSubmit.board = boardOption?.label || formData.boardUniversity;
-      }
-
+      console.log('Submitting education data:', dataToSubmit);
       await createEducationAPI(dataToSubmit);
       setIsAddModalOpen(false);
-      setFormData({
-        level: "",
-        degree: "",
-        specialization: "",
-        institution: "",
-        boardUniversity: "",
-        customInstitution: "",
-        location: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-        grade: "",
-        isPresent: false
-      });
     } catch (err) {
       console.error("Error creating education:", err);
       alert(err.response?.data?.message || "Failed to create education entry");
@@ -243,45 +277,70 @@ const Education = () => {
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
     try {
       const dataToSubmit = {
         level: formData.level,
         degree: formData.degree,
-        specialization: formData.specialization,
-        location: formData.location,
+        specialization: formData.specialization || undefined,
+        location: formData.location || undefined,
         startDate: formData.startDate,
         endDate: formData.isPresent ? null : formData.endDate,
         isPresent: formData.isPresent,
-        grade: formData.grade,
-        description: formData.description
+        grade: formData.grade || undefined,
+        description: formData.description || undefined,
+        logoUrl: formData.logoUrl || undefined,
+        academicDescription: formData.academicDescription || undefined,
+        educationStatus: formData.educationStatus
       };
 
-      // Add institution fields based on level
+      // Add institution fields
       const institutionType = getInstitutionFieldType(formData.level);
       if (formData.boardUniversity === 'custom') {
         dataToSubmit.customInstitution = formData.customInstitution;
-      } else {
+        // Clear other institution fields
+        dataToSubmit.school = undefined;
+        dataToSubmit.college = undefined;
+        dataToSubmit.institute = undefined;
+        dataToSubmit.university = undefined;
+      } else if (formData.boardUniversity) {
+        const institutionOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
+        const institutionLabel = institutionOption?.label || formData.boardUniversity;
+
+        // Clear custom institution
+        dataToSubmit.customInstitution = undefined;
+
         if (institutionType === 'school') {
-          const schoolOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.school = schoolOption?.label || formData.boardUniversity;
+          dataToSubmit.school = institutionLabel;
+          dataToSubmit.college = undefined;
+          dataToSubmit.institute = undefined;
+          dataToSubmit.university = undefined;
         } else if (institutionType === 'college') {
-          const collegeOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.college = collegeOption?.label || formData.boardUniversity;
+          dataToSubmit.college = institutionLabel;
+          dataToSubmit.school = undefined;
+          dataToSubmit.institute = undefined;
+          dataToSubmit.university = undefined;
         } else if (institutionType === 'institute') {
-          const instituteOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.institute = instituteOption?.label || formData.boardUniversity;
+          dataToSubmit.institute = institutionLabel;
+          dataToSubmit.school = undefined;
+          dataToSubmit.college = undefined;
+          dataToSubmit.university = undefined;
         } else if (institutionType === 'university') {
-          const universityOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-          dataToSubmit.university = universityOption?.label || formData.boardUniversity;
+          dataToSubmit.university = institutionLabel;
+          dataToSubmit.school = undefined;
+          dataToSubmit.college = undefined;
+          dataToSubmit.institute = undefined;
+        }
+
+        // Add board for SSC/HSC
+        if (formData.level === 'ssc' || formData.level === 'hsc') {
+          dataToSubmit.board = institutionLabel;
+        } else {
+          dataToSubmit.board = undefined;
         }
       }
 
-      // Add board for SSC/HSC
-      if (formData.level === 'ssc' || formData.level === 'hsc') {
-        const boardOption = educationOptions.boardsUniversities.find(b => b.value === formData.boardUniversity);
-        dataToSubmit.board = boardOption?.label || formData.boardUniversity;
-      }
-
+      console.log('Updating education with data:', dataToSubmit);
       await updateEducationAPI(selectedEducation._id, dataToSubmit);
       setIsEditModalOpen(false);
     } catch (err) {
@@ -321,6 +380,310 @@ const Education = () => {
     return colors[level] || colors.default;
   };
 
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case 'Completed':
+      case 'Graduated':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'InProgress':
+      case 'Undergraduate':
+      case 'Postgraduate':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'Planned':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'DroppedOut':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+    }
+  };
+
+  // Education Form Component (reusable for add/edit)
+  const EducationForm = ({ onSubmit, isEdit = false }) => (
+    <form onSubmit={onSubmit} className="space-y-4">
+      {/* Education Level */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}level`}>Education Level *</Label>
+        <Select 
+          value={formData.level} 
+          onValueChange={(value) => setFormData({ 
+            ...formData, 
+            level: value, 
+            degree: "", 
+            specialization: "",
+            boardUniversity: ""
+          })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select education level" />
+          </SelectTrigger>
+          <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+            {educationOptions.levels.map((level) => (
+              <SelectItem key={level.value} value={level.value}>
+                {level.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Education Status */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}educationStatus`}>Education Status *</Label>
+        <Select value={formData.educationStatus} onValueChange={(value) => setFormData({ ...formData, educationStatus: value })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select education status" />
+          </SelectTrigger>
+          <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+            {educationOptions.educationStatusOptions.map((status) => (
+              <SelectItem key={status.value} value={status.value}>
+                {status.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Degree/Group */}
+      {formData.level && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}degree`}>{getFieldLabel(formData.level)} *</Label>
+          <Select value={formData.degree} onValueChange={(value) => setFormData({ ...formData, degree: value })}>
+            <SelectTrigger>
+              <SelectValue placeholder={`Select ${getFieldLabel(formData.level).toLowerCase()}`} />
+            </SelectTrigger>
+            <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+              {getDegreeOptions(formData.level).map((degree) => (
+                <SelectItem key={degree} value={degree}>
+                  {degree}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Specialization */}
+      {shouldShowSpecialization(formData.level) && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}specialization`}>{getSpecializationLabel(formData.level)}</Label>
+          <Select value={formData.specialization} onValueChange={(value) => setFormData({ ...formData, specialization: value })}>
+            <SelectTrigger>
+              <SelectValue placeholder={`Select ${getSpecializationLabel(formData.level).toLowerCase()}`} />
+            </SelectTrigger>
+            <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+              {getSpecializationOptions(formData.level).map((spec) => (
+                <SelectItem key={spec} value={spec}>
+                  {spec}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Board/University */}
+      {formData.level && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}boardUniversity`}>
+            {getInstitutionFieldType(formData.level) === 'school' ? 'School' :
+             getInstitutionFieldType(formData.level) === 'college' ? 'College' :
+             getInstitutionFieldType(formData.level) === 'institute' ? 'Institute' : 'University'}
+          </Label>
+          <Select value={formData.boardUniversity} onValueChange={(value) => setFormData({ ...formData, boardUniversity: value, customInstitution: '' })}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select institution" />
+            </SelectTrigger>
+            <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
+              {getFilteredBoards(formData.level).map((board) => (
+                <SelectItem key={board.value} value={board.value}>
+                  {board.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Custom Institution */}
+      {formData.boardUniversity === 'custom' && (
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}customInstitution`}>Institution Name *</Label>
+          <Input
+            id={`${isEdit ? 'edit-' : ''}customInstitution`}
+            value={formData.customInstitution}
+            onChange={(e) => setFormData({ ...formData, customInstitution: e.target.value })}
+            required
+            placeholder="Enter institution name"
+          />
+        </div>
+      )}
+
+      {/* Logo Upload */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}logoUrl`}>Institution Logo</Label>
+        <div className="space-y-2">
+          <Input
+            id={`${isEdit ? 'edit-' : ''}logoUrl`}
+            type="file"
+            accept="image/*"
+            onChange={handleLogoFileChange}
+            disabled={logoUploading}
+          />
+          {logoUploading && (
+            <div className="flex items-center gap-2 text-sm text-blue-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+              <span>Uploading...</span>
+            </div>
+          )}
+          {logoUploadError && (
+            <span className="text-xs text-red-500">{logoUploadError}</span>
+          )}
+          {formData.logoUrl && (
+            <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <img 
+                src={formData.logoUrl} 
+                alt="Logo Preview" 
+                className="h-16 w-16 object-contain border rounded" 
+              />
+              <div className="flex-1">
+                <p className="text-xs text-green-600 dark:text-green-400">Image uploaded successfully</p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setFormData({ ...formData, logoUrl: "" })}
+                className="text-red-500 hover:text-red-600"
+              >
+                <FiX size={16} />
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Location */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}location`}>Location</Label>
+        <Input
+          id={`${isEdit ? 'edit-' : ''}location`}
+          value={formData.location}
+          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+          placeholder="City, Country"
+        />
+      </div>
+
+      {/* Dates */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}startDate`}>Start Date *</Label>
+          <Input
+            id={`${isEdit ? 'edit-' : ''}startDate`}
+            type="month"
+            value={formData.startDate}
+            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor={`${isEdit ? 'edit-' : ''}endDate`}>End Date</Label>
+          <Input
+            id={`${isEdit ? 'edit-' : ''}endDate`}
+            type="month"
+            value={formData.endDate}
+            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+            disabled={formData.isPresent}
+          />
+        </div>
+      </div>
+
+      {/* Currently Studying */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id={`${isEdit ? 'edit-' : ''}isPresent`}
+          checked={formData.isPresent}
+          onCheckedChange={(checked) => setFormData({ 
+            ...formData, 
+            isPresent: checked, 
+            endDate: checked ? "" : formData.endDate 
+          })}
+        />
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}isPresent`} className="cursor-pointer">
+          Currently studying here
+        </Label>
+      </div>
+
+      {/* Grade */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}grade`}>Grade/CGPA</Label>
+        <Input
+          id={`${isEdit ? 'edit-' : ''}grade`}
+          value={formData.grade}
+          onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+          placeholder="e.g., A+, 3.8/4.0"
+        />
+      </div>
+
+      {/* Description */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}description`}>Description</Label>
+        <Textarea
+          id={`${isEdit ? 'edit-' : ''}description`}
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          placeholder="Additional details, achievements, etc."
+          rows={3}
+        />
+      </div>
+
+      {/* Academic Description */}
+      <div>
+        <Label htmlFor={`${isEdit ? 'edit-' : ''}academicDescription`}>
+          Academic Description ({formData.academicDescription.length}/1000)
+        </Label>
+        <Textarea
+          id={`${isEdit ? 'edit-' : ''}academicDescription`}
+          value={formData.academicDescription}
+          onChange={(e) => setFormData({ ...formData, academicDescription: e.target.value })}
+          placeholder="Detailed academic experiences, projects, or relevant coursework."
+          rows={5}
+          maxLength={1000}
+        />
+      </div>
+
+      {/* Buttons */}
+      <div className="flex justify-end gap-3 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => isEdit ? setIsEditModalOpen(false) : setIsAddModalOpen(false)}
+          disabled={isSubmitting}
+        >
+          <FiX className="mr-2" size={16} />
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+          disabled={isSubmitting || logoUploading}
+        >
+          {isSubmitting ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              {isEdit ? 'Updating...' : 'Adding...'}
+            </>
+          ) : (
+            <>
+              <FiSave size={16} className="mr-2" />
+              {isEdit ? 'Update Education' : 'Add Education'}
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+
   if (loading || optionsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -340,7 +703,7 @@ const Education = () => {
   }
 
   return (
-    <div className={`min-h-screen p-6 `}>
+    <div className="min-h-screen p-6">
       {/* Header */}
       <div className="mb-8 flex justify-between items-center">
         <div>
@@ -349,7 +712,7 @@ const Education = () => {
             Manage your educational background
           </p>
         </div>
-        <Button 
+        <Button
           onClick={handleOpenAddModal}
           className="bg-blue-600 hover:bg-blue-700 text-white"
         >
@@ -372,13 +735,23 @@ const Education = () => {
               key={edu._id}
               className={`p-6 rounded-lg shadow-md ${isDarkMode ? 'bg-neutral-800' : 'bg-white'}`}
             >
-              {/* Education card content - keep existing JSX */}
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
+                    {edu.logoUrl && (
+                      <Avatar className="h-10 w-10 border-2 border-primary-500/50">
+                        <AvatarImage src={edu.logoUrl} alt={`${edu.institution} logo`} />
+                        <AvatarFallback>{(edu.school || edu.college || edu.university || 'ED').charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    )}
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getLevelBadgeColor(edu.level)}`}>
                       {educationOptions.levels.find(l => l.value === edu.level)?.label || edu.level}
                     </span>
+                    {edu.educationStatus && (
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(edu.educationStatus)}`}>
+                        {educationOptions.educationStatusOptions.find(s => s.value === edu.educationStatus)?.label || edu.educationStatus}
+                      </span>
+                    )}
                     {edu.grade && (
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${isDarkMode ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800'}`}>
                         <FiAward className="inline mr-1" size={12} />
@@ -424,6 +797,13 @@ const Education = () => {
                       {edu.description}
                     </p>
                   )}
+
+                  {edu.academicDescription && (
+                    <div className={`text-sm mt-3 p-3 rounded-md ${isDarkMode ? 'bg-neutral-700 text-neutral-300' : 'bg-neutral-100 text-neutral-700'}`}>
+                      <h4 className="font-semibold mb-1">Academic Details:</h4>
+                      <p>{edu.academicDescription}</p>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex gap-2 ml-4">
@@ -431,7 +811,7 @@ const Education = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleOpenEditModal(edu)}
-                    className={isDarkMode ? 'hover:bg-neutral-400' : 'hover:bg-gray-500'}
+                    className={isDarkMode ? 'hover:bg-neutral-700' : 'hover:bg-gray-100'}
                   >
                     <FiEdit2 size={18} />
                   </Button>
@@ -465,198 +845,7 @@ const Education = () => {
               Add a new education entry to your profile
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmitAdd} className="space-y-4">
-            {/* Education Level */}
-            <div>
-              <Label htmlFor="level">Education Level *</Label>
-              <Select value={formData.level} onValueChange={(value) => setFormData({ ...formData, level: value, degree: "", specialization: "" })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select education level" />
-                </SelectTrigger>
-                <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                  {educationOptions.levels.map((level) => (
-                    <SelectItem key={level.value} value={level.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                      {level.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Degree/Group */}
-            {formData.level && (
-              <div>
-                <Label htmlFor="degree">{getFieldLabel(formData.level)} *</Label>
-                <Select value={formData.degree} onValueChange={(value) => setFormData({ ...formData, degree: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={`Select ${getFieldLabel(formData.level).toLowerCase()}`} />
-                  </SelectTrigger>
-                  <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                    {getDegreeOptions(formData.level).map((degree) => (
-                      <SelectItem key={degree} value={degree} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {degree}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Specialization */}
-            {shouldShowSpecialization(formData.level) && (
-              <div>
-                <Label htmlFor="specialization">{getSpecializationLabel(formData.level)}</Label>
-                <Select value={formData.specialization} onValueChange={(value) => setFormData({ ...formData, specialization: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={`Select ${getSpecializationLabel(formData.level).toLowerCase()}`} />
-                  </SelectTrigger>
-                  <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                    {getSpecializationOptions(formData.level).map((spec) => (
-                      <SelectItem key={spec} value={spec} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {spec}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Board/University */}
-            {formData.level && (
-              <div>
-                <Label htmlFor="boardUniversity">
-                  {getInstitutionFieldType(formData.level) === 'school' ? 'School' : 
-                   getInstitutionFieldType(formData.level) === 'college' ? 'College' :
-                   getInstitutionFieldType(formData.level) === 'institute' ? 'Institute' : 'University'}
-                </Label>
-                <Select value={formData.boardUniversity} onValueChange={(value) => setFormData({ ...formData, boardUniversity: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select institution" />
-                  </SelectTrigger>
-                  <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                    {getFilteredBoards(formData.level).map((board) => (
-                      <SelectItem key={board.value} value={board.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {board.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Custom Institution */}
-            {formData.boardUniversity === 'custom' && (
-              <div>
-                <Label htmlFor="customInstitution">Institution Name *</Label>
-                <Input
-                  id="customInstitution"
-                  value={formData.customInstitution}
-                  onChange={(e) => setFormData({ ...formData, customInstitution: e.target.value })}
-                  required
-                />
-              </div>
-            )}
-
-            {/* Location */}
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="City, Country"
-              />
-            </div>
-
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="startDate">Start Date *</Label>
-                <Input
-                  id="startDate"
-                  type="month"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="month"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  disabled={formData.isPresent}
-                />
-              </div>
-            </div>
-
-            {/* Currently Studying */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isPresent"
-                checked={formData.isPresent}
-                onCheckedChange={(checked) => setFormData({ ...formData, isPresent: checked, endDate: checked ? "" : formData.endDate })}
-              />
-              <Label htmlFor="isPresent" className="cursor-pointer">
-                Currently studying here
-              </Label>
-            </div>
-
-            {/* Grade */}
-            <div>
-              <Label htmlFor="grade">Grade/CGPA</Label>
-              <Input
-                id="grade"
-                value={formData.grade}
-                onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                placeholder="e.g., A+, 3.8/4.0"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Additional details, achievements, etc."
-                rows={3}
-              />
-            </div>
-
-            {/* Buttons */}
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={() => setIsAddModalOpen(false)}
-                disabled={isSubmitting}
-              >
-                <FiX className="mr-2" size={16} />
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <FiSave size={16} className="mr-2" />
-                    Add Education
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
+          <EducationForm onSubmit={handleSubmitAdd} isEdit={false} />
         </DialogContent>
       </Dialog>
 
@@ -675,188 +864,7 @@ const Education = () => {
               Update education entry details
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmitEdit} className="space-y-4">
-            {/* Same fields as Add Modal */}
-            <div>
-              <Label htmlFor="edit-level">Education Level *</Label>
-              <Select value={formData.level} onValueChange={(value) => setFormData({ ...formData, level: value, degree: "", specialization: "" })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select education level" />
-                </SelectTrigger>
-                <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border border-neutral-700 text-white' : 'bg-white border border-neutral-200 text-neutral-900'}`}>
-                  {educationOptions.levels.map((level) => (
-                    <SelectItem key={level.value} value={level.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                      {level.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {formData.level && (
-              <div>
-                <Label htmlFor="edit-degree">{getFieldLabel(formData.level)} *</Label>
-                <Select value={formData.degree} onValueChange={(value) => setFormData({ ...formData, degree: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={`Select ${getFieldLabel(formData.level).toLowerCase()}`} />
-                  </SelectTrigger>
-                  <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                    {getDegreeOptions(formData.level).map((degree) => (
-                      <SelectItem key={degree} value={degree} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {degree}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {shouldShowSpecialization(formData.level) && (
-              <div>
-                <Label htmlFor="edit-specialization">{getSpecializationLabel(formData.level)}</Label>
-                <Select value={formData.specialization} onValueChange={(value) => setFormData({ ...formData, specialization: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={`Select ${getSpecializationLabel(formData.level).toLowerCase()}`} />
-                  </SelectTrigger>
-                  <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                    {getSpecializationOptions(formData.level).map((spec) => (
-                      <SelectItem key={spec} value={spec} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {spec}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {formData.level && (
-              <div>
-                <Label htmlFor="edit-boardUniversity">
-                  {getInstitutionFieldType(formData.level) === 'school' ? 'School' : 
-                   getInstitutionFieldType(formData.level) === 'college' ? 'College' :
-                   getInstitutionFieldType(formData.level) === 'institute' ? 'Institute' : 'University'}
-                </Label>
-                <Select value={formData.boardUniversity} onValueChange={(value) => setFormData({ ...formData, boardUniversity: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select institution" />
-                  </SelectTrigger>
-                  <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-                    {getFilteredBoards(formData.level).map((board) => (
-                      <SelectItem key={board.value} value={board.value} className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
-                        {board.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {formData.boardUniversity === 'custom' && (
-              <div>
-                <Label htmlFor="edit-customInstitution">Institution Name *</Label>
-                <Input
-                  id="edit-customInstitution"
-                  value={formData.customInstitution}
-                  onChange={(e) => setFormData({ ...formData, customInstitution: e.target.value })}
-                  required
-                />
-              </div>
-            )}
-
-            <div>
-              <Label htmlFor="edit-location">Location</Label>
-              <Input
-                id="edit-location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="City, Country"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-startDate">Start Date *</Label>
-                <Input
-                  id="edit-startDate"
-                  type="month"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-endDate">End Date</Label>
-                <Input
-                  id="edit-endDate"
-                  type="month"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  disabled={formData.isPresent}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="edit-isPresent"
-                checked={formData.isPresent}
-                onCheckedChange={(checked) => setFormData({ ...formData, isPresent: checked, endDate: checked ? "" : formData.endDate })}
-              />
-              <Label htmlFor="edit-isPresent" className="cursor-pointer">
-                Currently studying here
-              </Label>
-            </div>
-
-            <div>
-              <Label htmlFor="edit-grade">Grade/CGPA</Label>
-              <Input
-                id="edit-grade"
-                value={formData.grade}
-                onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                placeholder="e.g., A+, 3.8/4.0"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="edit-description">Description</Label>
-              <Textarea
-                id="edit-description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Additional details, achievements, etc."
-                rows={3}
-              />
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={() => setIsEditModalOpen(false)}
-                disabled={isSubmitting}
-              >
-                <FiX className="mr-2" size={16} />
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Updating...
-                  </>
-                ) : (
-                  <>
-                    <FiSave size={16} className="mr-2" />
-                    Update Education
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
+          <EducationForm onSubmit={handleSubmitEdit} isEdit={true} />
         </DialogContent>
       </Dialog>
 

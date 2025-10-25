@@ -4,17 +4,13 @@ import {
   BOARDS_UNIVERSITIES,
   DEGREE_OPTIONS,
   SPECIALIZATION_OPTIONS,
-  getInstitutionFieldType,
-  getFilteredBoards,
-  shouldShowSpecialization,
-  getFieldLabel,
-  getSpecializationLabel
+  EDUCATION_STATUS_OPTIONS,
 } from '../constants/educationOptions.js';
 import { emitSocketEvent } from '../utils/socketEmitter.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
 
 // @desc    Get education metadata/options
-// @route   GET /api/education/options
+// @route   GET /api/education/options/metadata
 // @access  Public
 export const getEducationOptions = async (req, res, next) => {
   try {
@@ -22,7 +18,8 @@ export const getEducationOptions = async (req, res, next) => {
       levels: EDUCATION_LEVELS,
       boardsUniversities: BOARDS_UNIVERSITIES,
       degreeOptions: DEGREE_OPTIONS,
-      specializationOptions: SPECIALIZATION_OPTIONS
+      specializationOptions: SPECIALIZATION_OPTIONS,
+      educationStatusOptions: EDUCATION_STATUS_OPTIONS
     });
   } catch (err) {
     next(err);
@@ -75,8 +72,22 @@ export const createEducation = async (req, res, next) => {
       endDate,
       isPresent,
       grade,
-      description
+      description,
+      logoUrl,
+      academicDescription,
+      educationStatus
     } = req.body;
+
+    // Validate required fields
+    if (!level) {
+      return sendError(res, 'Education level is required', 400);
+    }
+    if (!degree) {
+      return sendError(res, 'Degree/qualification is required', 400);
+    }
+    if (!startDate) {
+      return sendError(res, 'Start date is required', 400);
+    }
 
     const educationData = {
       level,
@@ -85,7 +96,7 @@ export const createEducation = async (req, res, next) => {
       isPresent: isPresent || false
     };
 
-    // Optional fields
+    // Optional fields - only add if they have values
     if (specialization) educationData.specialization = specialization;
     if (board) educationData.board = board;
     if (university) educationData.university = university;
@@ -97,14 +108,18 @@ export const createEducation = async (req, res, next) => {
     if (grade) educationData.grade = grade;
     if (description) educationData.description = description;
     if (!isPresent && endDate) educationData.endDate = endDate;
+    if (logoUrl) educationData.logoUrl = logoUrl;
+    if (academicDescription) educationData.academicDescription = academicDescription;
+    if (educationStatus) educationData.educationStatus = educationStatus;
 
     const education = await Education.create(educationData);
 
-    // 🔴 Emit socket event (new education created)
-    emitSocketEvent('education_created', education);
+    // Emit socket event when new education is added
+    emitSocketEvent(req, 'education_created', education);
 
     return sendSuccess(res, 'Education entry created successfully', education, 201);
   } catch (err) {
+    console.error('Create education error:', err);
     next(err);
   }
 };
@@ -132,34 +147,51 @@ export const updateEducation = async (req, res, next) => {
       endDate,
       isPresent,
       grade,
-      description
+      description,
+      logoUrl,
+      academicDescription,
+      educationStatus
     } = req.body;
 
-    // Update fields
-    education.level = level;
-    education.degree = degree;
-    education.startDate = startDate;
-    education.isPresent = isPresent || false;
-    education.endDate = isPresent ? null : endDate;
+    // Update required fields
+    if (level) education.level = level;
+    if (degree) education.degree = degree;
+    if (startDate) education.startDate = startDate;
+    
+    // Handle isPresent and endDate
+    if (typeof isPresent !== 'undefined') {
+      education.isPresent = isPresent;
+      education.endDate = isPresent ? null : endDate;
+    }
 
-    education.specialization = specialization || undefined;
-    education.board = board || undefined;
-    education.university = university || undefined;
-    education.school = school || undefined;
-    education.college = college || undefined;
-    education.institute = institute || undefined;
-    education.customInstitution = customInstitution || undefined;
-    education.location = location || undefined;
-    education.grade = grade || undefined;
-    education.description = description || undefined;
+    // Update optional fields - use undefined to remove, null to keep empty
+    // This handles both clearing and updating fields
+    education.specialization = specialization !== undefined ? specialization || null : education.specialization;
+    education.board = board !== undefined ? board || null : education.board;
+    education.university = university !== undefined ? university || null : education.university;
+    education.school = school !== undefined ? school || null : education.school;
+    education.college = college !== undefined ? college || null : education.college;
+    education.institute = institute !== undefined ? institute || null : education.institute;
+    education.customInstitution = customInstitution !== undefined ? customInstitution || null : education.customInstitution;
+    education.location = location !== undefined ? location || null : education.location;
+    education.grade = grade !== undefined ? grade || null : education.grade;
+    education.description = description !== undefined ? description || null : education.description;
+    education.academicDescription = academicDescription !== undefined ? academicDescription || null : education.academicDescription;
+    education.educationStatus = educationStatus !== undefined ? educationStatus || 'Planned' : education.educationStatus;
+
+    // Critical fix for logoUrl - always update if provided
+    if (logoUrl !== undefined) {
+      education.logoUrl = logoUrl || null;
+    }
 
     const updatedEducation = await education.save();
 
-    // 🟢 Emit socket event (education updated)
-    emitSocketEvent('education_updated', updatedEducation);
+    // Emit socket event when education is updated
+    emitSocketEvent(req, 'education_updated', updatedEducation);
 
     return sendSuccess(res, 'Education entry updated successfully', updatedEducation);
   } catch (err) {
+    console.error('Update education error:', err);
     next(err);
   }
 };
@@ -174,8 +206,8 @@ export const deleteEducation = async (req, res, next) => {
 
     await education.deleteOne();
 
-    // 🔵 Emit socket event (education deleted)
-    emitSocketEvent('education_deleted', { id: req.params.id });
+    // Emit socket event when education is deleted
+    emitSocketEvent(req, 'education_deleted', { id: req.params.id });
 
     return sendSuccess(res, 'Education entry deleted successfully');
   } catch (err) {

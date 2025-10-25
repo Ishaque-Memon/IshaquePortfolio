@@ -3,6 +3,16 @@
  * Centralized education metadata for Pakistan & Global education systems
  */
 
+export const EDUCATION_STATUS_OPTIONS = [
+  { value: "InProgress", label: "In Progress" },
+  { value: "Completed", label: "Completed" },
+  { value: "Graduated", label: "Graduated" },
+  { value: "Undergraduate", label: "Undergraduate" },
+  { value: "Postgraduate", label: "Postgraduate" },
+  { value: "DroppedOut", label: "Dropped Out" },
+  { value: "Planned", label: "Planned" }
+];
+
 export const EDUCATION_LEVELS = [
   { value: "ssc", label: "SSC (Matriculation)" },
   { value: "hsc", label: "HSC (Intermediate)" },

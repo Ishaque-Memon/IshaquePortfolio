@@ -48,6 +48,11 @@ const educationSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  logoUrl: {
+    type: String,
+    trim: true,
+    default: null
+  },
   
   // Custom institution name (when "Other" is selected for any level)
   customInstitution: {
@@ -77,6 +82,17 @@ const educationSchema = new mongoose.Schema({
   description: {
     type: String,
     trim: true
+  },
+  academicDescription: {
+    type: String,
+    trim: true,
+    maxlength: [1000, 'Academic description cannot be more than 1000 characters'],
+    default: null
+  },
+  educationStatus: {
+    type: String,
+    enum: ['InProgress', 'Completed', 'Graduated', 'Undergraduate', 'Postgraduate', 'DroppedOut', 'Planned'],
+    default: 'Planned'
   }
 }, {
   timestamps: true

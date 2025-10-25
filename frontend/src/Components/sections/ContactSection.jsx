@@ -358,12 +358,6 @@ const ContactSection = () => {
                       </>
                     )}
                   </Button>
-
-                  <p className={`text-xs ${
-                    isDarkMode ? 'text-neutral-500' : 'text-neutral-500'
-                  }`}>
-                    * Required fields
-                  </p>
                 </form>
               </CardContent>
             </Card>

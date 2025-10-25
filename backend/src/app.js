@@ -14,6 +14,7 @@ import contactRoutes from './routes/contactRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import educationRoutes from './routes/educationRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 
@@ -80,6 +81,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/education', educationRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {
@@ -96,7 +98,8 @@ app.get('/', (req, res) => {
       contact: '/api/contact',
       admin: '/api/admin',
       education: '/api/education',
-      analytics: '/api/analytics'
+      analytics: '/api/analytics',
+      uploads: '/api/uploads'
     }
   });
 });
