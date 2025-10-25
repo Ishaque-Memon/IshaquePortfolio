@@ -355,7 +355,7 @@ const EducationSection = () => {
                                   <AvatarImage
                                     src={education.logoUrl}
                                     alt={`${education.institution} logo`}
-                                    className="object-contain"
+                                    className="object-fit"
                                   />
                                   <AvatarFallback>
                                     <IconComponent className="h-6 w-6 text-primary-500" />
@@ -400,8 +400,6 @@ const EducationSection = () => {
                                         : "text-neutral-600 hover:text-primary-600"
                                     } transition-colors`}
                                   >
-                                    <FiLink className="w-3 h-3" />
-                                    <span>Logo URL</span>
                                   </a>
                                 )}
                               </div>
