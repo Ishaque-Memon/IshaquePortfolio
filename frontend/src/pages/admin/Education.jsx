@@ -358,7 +358,7 @@ const EducationForm = React.memo((props) => {
       <div className="flex justify-end gap-3 pt-4">
         <Button
           type="button"
-          variant="outline"
+          variant="destructive"
           onClick={() => isEdit ? setIsEditModalOpen(false) : setIsAddModalOpen(false)}
           disabled={isSubmitting}
         >
@@ -608,7 +608,7 @@ const Education = () => {
         isPresent: formData.isPresent,
         grade: formData.grade || undefined,
         description: formData.description || undefined,
-        logoUrl: formData.logoUrl || undefined,
+        logoUrl: formData.logoUrl === "" ? null : formData.logoUrl,
         academicDescription: formData.academicDescription || undefined,
         educationStatus: formData.educationStatus
       };
@@ -676,7 +676,7 @@ const Education = () => {
         isPresent: formData.isPresent,
         grade: formData.grade || undefined,
         description: formData.description || undefined,
-        logoUrl: formData.logoUrl || undefined,
+        logoUrl: formData.logoUrl === "" ? null : formData.logoUrl,
         academicDescription: formData.academicDescription || undefined,
         educationStatus: formData.educationStatus
       };
@@ -736,8 +736,8 @@ const Education = () => {
         dataToSubmit.board = undefined;
         dataToSubmit.university = undefined;
       }
-
-      await updateEducationAPI(selectedEducation._id, dataToSubmit);
+ 
+       await updateEducationAPI(selectedEducation._id, dataToSubmit);
       setIsEditModalOpen(false);
     } catch (err) {
       console.error("Error updating education:", err);
@@ -915,7 +915,7 @@ const Education = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleOpenEditModal(edu)}
-                    className={isDarkMode ? 'hover:bg-neutral-700' : 'hover:bg-gray-100'}
+                    className={isDarkMode ? 'hover:bg-neutral-400' : 'hover:bg-gray-600'}
                   >
                     <FiEdit2 size={18} />
                   </Button>
@@ -1010,7 +1010,7 @@ const Education = () => {
             <DialogDescription>Are you sure you want to delete this education entry? This action cannot be undone.</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">Delete</Button>
           </div>
         </DialogContent>

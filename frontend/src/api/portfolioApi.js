@@ -232,7 +232,8 @@ export const uploadImage = async (file) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   // Expecting { url: 'https://...' }
-  return response.data.url;
+  console.log("API: uploadImage response data:", response.data);
+  return response.data.data.url; // Corrected to access the nested URL
 };
 
 // ==================== ANALYTICS ====================

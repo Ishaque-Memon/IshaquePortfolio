@@ -179,8 +179,8 @@ export const updateEducation = async (req, res, next) => {
     education.academicDescription = academicDescription !== undefined ? academicDescription || null : education.academicDescription;
     education.educationStatus = educationStatus !== undefined ? educationStatus || 'Planned' : education.educationStatus;
 
-    // Critical fix for logoUrl - always update if provided
-    if (logoUrl !== undefined) {
+    // Handle logoUrl: update if provided, clear if explicitly set to undefined (from frontend sending an empty string)
+    if (Object.prototype.hasOwnProperty.call(req.body, 'logoUrl')) {
       education.logoUrl = logoUrl || null;
     }
 

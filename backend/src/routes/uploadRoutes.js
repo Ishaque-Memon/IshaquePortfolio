@@ -19,7 +19,7 @@ router.post('/', upload.single('file'), async (req, res, next) => {
     const result = await uploadToCloudinary(req.file.buffer, 'education-logos');
 
     // Return the secure URL
-    return sendSuccess(res, 'File uploaded successfully', { url: result.secure_url });
+    return sendSuccess(res, 'File uploaded successfully', { url: result.url });
   } catch (error) {
     console.error('Upload error:', error);
     return sendError(res, 'File upload failed', 500);
