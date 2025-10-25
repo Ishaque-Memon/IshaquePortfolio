@@ -52,6 +52,9 @@ const EducationForm = React.memo((props) => {
     setIsAddModalOpen,
     setIsEditModalOpen,
     isDarkMode,
+    filteredInstitutions,
+    filteredInstitutionsLoading,
+    filteredInstitutionsError,
   } = props;
 
   if (!formData) return null;
@@ -146,13 +149,23 @@ const EducationForm = React.memo((props) => {
             {getInstitutionFieldType(formData.level) === 'institute' ? 'Institute' : 'University'} *
           </Label>
           <Select value={formData.boardUniversity} onValueChange={(value) => setFormData({ ...formData, boardUniversity: value, customInstitution: '' })}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select institution" />
+            <SelectTrigger disabled={filteredInstitutionsLoading}>
+              <SelectValue placeholder={filteredInstitutionsLoading ? "Loading institutions..." : "Select institution"} />
             </SelectTrigger>
             <SelectContent className={`max-h-[300px] overflow-y-auto ${isDarkMode ? 'bg-neutral-800 border-neutral-700' : 'bg-white'}`}>
-              {getFilteredBoards(formData.level).map((board) => (
-                <SelectItem key={board.value} value={board.value}>
-                  {board.label}
+              {filteredInstitutionsError && (
+                <SelectItem value="error" disabled>
+                  {filteredInstitutionsError}
+                </SelectItem>
+              )}
+              {!filteredInstitutionsLoading && filteredInstitutions.length === 0 && !filteredInstitutionsError && (
+                <SelectItem value="no-results" disabled>
+                  No institutions found for selected criteria
+                </SelectItem>
+              )}
+              {filteredInstitutions.map((institutionName) => (
+                <SelectItem key={institutionName} value={institutionName}>
+                  {institutionName}
                 </SelectItem>
               ))}
               <SelectItem value="custom">Other Institution</SelectItem>
@@ -401,7 +414,8 @@ const Education = () => {
     deleteEducation: deleteEducationAPI
   } = useEducation();
 
-  // Education options from backend
+
+  // --- HOOKS: Place all useState at the top ---
   const [educationOptions, setEducationOptions] = useState({
     levels: [],
     boardsUniversities: [],
@@ -410,76 +424,9 @@ const Education = () => {
     educationStatusOptions: []
   });
   const [optionsLoading, setOptionsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const response = await getEducationOptions();
-        const data = response.data || response;
-
-        setEducationOptions({
-          levels: data?.levels ?? [],
-          boardsUniversities: data?.boardsUniversities ?? [],
-          degreeOptions: data?.degreeOptions ?? {},
-          specializationOptions: data?.specializationOptions ?? {},
-          educationStatusOptions: data?.educationStatusOptions ?? []
-        });
-      } catch (err) {
-        console.error('Failed to load education options:', err);
-      } finally {
-        setOptionsLoading(false);
-      }
-    };
-    fetchOptions();
-  }, []);
-
-  // Helper functions
-  const getDegreeOptions = (level) => educationOptions.degreeOptions[level] || [];
-  const getSpecializationOptions = (level) => educationOptions.specializationOptions[level] || [];
-
-  const shouldShowSpecialization = (level) => {
-    return ['bachelor', 'master', 'mphil', 'phd'].includes(level);
-  };
-
-  const getFieldLabel = (level) => {
-    if (level === 'ssc' || level === 'hsc') return 'Group/Field';
-    if (level === 'olevel' || level === 'alevel') return 'Subject Group';
-    return 'Degree Name';
-  };
-
-  const getSpecializationLabel = (level) => {
-    if (level === 'bachelor' || level === 'master') return 'Major/Specialization';
-    if (level === 'mphil' || level === 'phd') return 'Research Area';
-    return 'Specialization';
-  };
-
-  const getInstitutionFieldType = (level) => {
-    if (level === 'ssc' || level === 'olevel') return 'school';
-    if (level === 'hsc' || level === 'alevel') return 'college';
-    if (level === 'diploma' || level === 'certification') return 'institute';
-    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) return 'university';
-    return 'board';
-  };
-
-  const getFilteredBoards = (level) => {
-    const boards = educationOptions.boardsUniversities;
-
-    if (level === 'ssc' || level === 'hsc') {
-      return boards.filter(b => b.type === 'board' && !['cambridge', 'edexcel'].includes(b.value));
-    }
-    if (level === 'olevel' || level === 'alevel') {
-      return boards.filter(b => ['cambridge', 'edexcel'].includes(b.value));
-    }
-    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) {
-      return boards.filter(b => b.type === 'university');
-    }
-    return boards;
-  };
-
-  const needsManualInstitutionInput = (level) => {
-    return ['ssc', 'hsc', 'olevel', 'alevel'].includes(level);
-  };
-
+  const [filteredInstitutions, setFilteredInstitutions] = useState([]);
+  const [filteredInstitutionsLoading, setFilteredInstitutionsLoading] = useState(false);
+  const [filteredInstitutionsError, setFilteredInstitutionsError] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -503,9 +450,85 @@ const Education = () => {
     educationStatus: "Planned"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoUploadError, setLogoUploadError] = useState("");
+
+  // --- HELPERS: Place all helper functions after hooks ---
+  const getDegreeOptions = (level) => educationOptions.degreeOptions[level] || [];
+  const getSpecializationOptions = (level) => educationOptions.specializationOptions[level] || [];
+  const shouldShowSpecialization = (level) => ['bachelor', 'master', 'mphil', 'phd'].includes(level);
+  const getFieldLabel = (level) => {
+    if (level === 'ssc' || level === 'hsc') return 'Group/Field';
+    if (level === 'olevel' || level === 'alevel') return 'Subject Group';
+    return 'Degree Name';
+  };
+  const getSpecializationLabel = (level) => {
+    if (level === 'bachelor' || level === 'master') return 'Major/Specialization';
+    if (level === 'mphil' || level === 'phd') return 'Research Area';
+    return 'Specialization';
+  };
+  const getInstitutionFieldType = (level) => {
+    if (level === 'ssc' || level === 'olevel') return 'school';
+    if (level === 'hsc' || level === 'alevel') return 'college';
+    if (level === 'diploma' || level === 'certification') return 'institute';
+    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) return 'university';
+    return 'board';
+  };
+  const getFilteredBoards = (level) => {
+    const boards = educationOptions.boardsUniversities;
+    if (level === 'ssc' || level === 'hsc') {
+      return boards.filter(b => b.type === 'board' && !['cambridge', 'edexcel'].includes(b.value));
+    }
+    if (level === 'olevel' || level === 'alevel') {
+      return boards.filter(b => ['cambridge', 'edexcel'].includes(b.value));
+    }
+    if (['bachelor', 'master', 'mphil', 'phd', 'associate'].includes(level)) {
+      return boards.filter(b => b.type === 'university');
+    }
+    return boards;
+  };
+  const needsManualInstitutionInput = (level) => ['ssc', 'hsc', 'olevel', 'alevel'].includes(level);
+
+  // --- EFFECTS: Place all useEffect after hooks and helpers ---
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const response = await getEducationOptions();
+        const data = response.data || response;
+        setEducationOptions({
+          levels: data?.levels ?? [],
+          boardsUniversities: data?.boardsUniversities ?? [],
+          degreeOptions: data?.degreeOptions ?? {},
+          specializationOptions: data?.specializationOptions ?? {},
+          educationStatusOptions: data?.educationStatusOptions ?? []
+        });
+      } catch (err) {
+        console.error('Failed to load education options:', err);
+      } finally {
+        setOptionsLoading(false);
+      }
+    };
+    fetchOptions();
+  }, []);
+
+  useEffect(() => {
+    // Use educationOptions.boardsUniversities for dropdown, filtered by level
+    if (formData.level && !needsManualInstitutionInput(formData.level)) {
+      setFilteredInstitutionsLoading(true);
+      setFilteredInstitutionsError(null);
+      let institutions = [];
+      const type = getInstitutionFieldType(formData.level);
+      if (type === 'university') {
+        institutions = educationOptions.boardsUniversities.filter(b => b.type === 'university').map(b => b.label);
+      } else if (type === 'institute') {
+        institutions = educationOptions.boardsUniversities.filter(b => b.type === 'institute').map(b => b.label);
+      }
+      setFilteredInstitutions(institutions);
+      setFilteredInstitutionsLoading(false);
+    } else {
+      setFilteredInstitutions([]);
+    }
+  }, [formData.level, educationOptions.boardsUniversities]);
 
   const handleLogoFileChange = async (e) => {
     const file = e.target.files && e.target.files[0];
@@ -794,6 +817,7 @@ const Education = () => {
     }
   };
 
+
   if (loading || optionsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -963,6 +987,9 @@ const Education = () => {
               setIsAddModalOpen={setIsAddModalOpen}
               setIsEditModalOpen={setIsEditModalOpen}
               isDarkMode={isDarkMode}
+              filteredInstitutions={filteredInstitutions}
+              filteredInstitutionsLoading={filteredInstitutionsLoading}
+              filteredInstitutionsError={filteredInstitutionsError}
             />
           )}
         </DialogContent>
@@ -997,6 +1024,9 @@ const Education = () => {
               setIsAddModalOpen={setIsAddModalOpen}
               setIsEditModalOpen={setIsEditModalOpen}
               isDarkMode={isDarkMode}
+              filteredInstitutions={filteredInstitutions}
+              filteredInstitutionsLoading={filteredInstitutionsLoading}
+              filteredInstitutionsError={filteredInstitutionsError}
             />
           )}
         </DialogContent>
