@@ -269,7 +269,7 @@ const EducationForm = React.memo((props) => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setFormData({ ...formData, logoUrl: "" })}
-                className="text-red-500 hover:text-red-600"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
                 <FiX size={16} />
               </Button>

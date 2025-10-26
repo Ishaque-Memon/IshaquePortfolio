@@ -9,6 +9,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -126,8 +133,19 @@ const CertificatesSection = () => {
             {/* Active control area */}
             <div className="flex-1">
               {controlMode === "slider" ? (
-                <div className="min-w-[140px]">
-                  <p className={`text-sm mb-1 ${isDarkMode ? "text-neutral-300" : "text-neutral-600"}`}>Items per page</p>
+                <div className="flex items-center gap-3 min-w-[140px]">
+                  <span className={`text-sm ${isDarkMode ? "text-neutral-300" : "text-neutral-600"}`}>Items per page</span>
+                  <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3">3 / page</SelectItem>
+                      <SelectItem value="6">6 / page</SelectItem>
+                      <SelectItem value="9">9 / page</SelectItem>
+                      <SelectItem value="12">12 / page</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               ) : (
                 <div>
@@ -156,7 +174,7 @@ const CertificatesSection = () => {
 
           {/* Right-side pagination controls (First / Prev / page list / Next / Last) */}
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               onClick={() => {
                 setPage(1);
                 window.scrollTo({ top: 0, behavior: "smooth" });
@@ -164,8 +182,8 @@ const CertificatesSection = () => {
               disabled={page === 1}
             >
               First
-            </Button>
-            <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+            </Button> */}
+            <Button variant="default" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               <FiChevronLeft />
             </Button>
 
@@ -185,10 +203,10 @@ const CertificatesSection = () => {
               })}
             </div>
 
-            <Button variant="outline" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+            <Button variant="Default" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
               <FiChevronRight />
             </Button>
-            <Button
+            {/* <Button
               onClick={() => {
                 setPage(totalPages);
                 window.scrollTo({ top: 0, behavior: "smooth" });
@@ -196,7 +214,7 @@ const CertificatesSection = () => {
               disabled={page === totalPages}
             >
               Last
-            </Button>
+            </Button> */}
           </div>
         </div>
 
@@ -343,7 +361,7 @@ const CertificatesSection = () => {
                       </a>
                     </Button>
                   )}
-                  <Button variant="outline" onClick={() => setSelectedCert(null)} className="flex-1">Close</Button>
+                  <Button variant="destructive" onClick={() => setSelectedCert(null)} className="flex-1">Close</Button>
                 </div>
               </div>
             </DialogContent>
