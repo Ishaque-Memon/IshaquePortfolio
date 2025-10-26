@@ -443,10 +443,13 @@ const PersonalInfo = () => {
                     id="bio"
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    placeholder="Tell us about yourself..."
+                    placeholder="Full-stack developer specializing in modern web technologies. Passionate about creating scalable applications and delivering exceptional user experiences."
                     rows={5}
                     required
                   />
+                  <p className="text-xs text-neutral-500 mt-1">
+                    This will appear on your footer and about sections
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -554,16 +557,17 @@ const PersonalInfo = () => {
               </CardContent>
             </Card>
 
-            {/* Social Links */}
+            {/* Social Links - UPDATED WITH ALL PLATFORMS */}
             <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
               <CardHeader>
                 <CardTitle className={isDarkMode ? 'text-white' : 'text-neutral-900'}>
                   Social Media Links
                 </CardTitle>
-                <CardDescription>Your social media profiles</CardDescription>
+                <CardDescription>Your social media profiles (enter full URLs)</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* GitHub */}
                   <div>
                     <Label htmlFor="github">GitHub</Label>
                     <div className="relative">
@@ -574,6 +578,96 @@ const PersonalInfo = () => {
                         onChange={(e) => setFormData({ 
                           ...formData, 
                           socialLinks: { ...formData.socialLinks, github: e.target.value }
+                        })}
+                        placeholder="https://github.com/yourusername"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* LinkedIn */}
+                  <div>
+                    <Label htmlFor="linkedin">LinkedIn</Label>
+                    <div className="relative">
+                      <FiLinkedin className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                      <Input
+                        id="linkedin"
+                        value={formData.socialLinks.linkedin}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          socialLinks: { ...formData.socialLinks, linkedin: e.target.value }
+                        })}
+                        placeholder="https://linkedin.com/in/yourusername"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Twitter */}
+                  <div>
+                    <Label htmlFor="twitter">Twitter</Label>
+                    <div className="relative">
+                      <FiTwitter className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                      <Input
+                        id="twitter"
+                        value={formData.socialLinks.twitter}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          socialLinks: { ...formData.socialLinks, twitter: e.target.value }
+                        })}
+                        placeholder="https://twitter.com/yourusername"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Facebook */}
+                  <div>
+                    <Label htmlFor="facebook">Facebook</Label>
+                    <div className="relative">
+                      <FiFacebook className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                      <Input
+                        id="facebook"
+                        value={formData.socialLinks.facebook}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          socialLinks: { ...formData.socialLinks, facebook: e.target.value }
+                        })}
+                        placeholder="https://facebook.com/yourusername"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Instagram */}
+                  <div>
+                    <Label htmlFor="instagram">Instagram</Label>
+                    <div className="relative">
+                      <FiInstagram className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                      <Input
+                        id="instagram"
+                        value={formData.socialLinks.instagram}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          socialLinks: { ...formData.socialLinks, instagram: e.target.value }
+                        })}
+                        placeholder="https://instagram.com/yourusername"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Website */}
+                  <div>
+                    <Label htmlFor="website">Personal Website</Label>
+                    <div className="relative">
+                      <FiGlobe className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                      <Input
+                        id="website"
+                        value={formData.socialLinks.website}
+                        onChange={(e) => setFormData({ 
+                          ...formData, 
+                          socialLinks: { ...formData.socialLinks, website: e.target.value }
                         })}
                         placeholder="https://yourwebsite.com"
                         className="pl-10"
@@ -657,20 +751,24 @@ const PersonalInfo = () => {
             <Card className={isDarkMode ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'}>
               <CardHeader>
                 <CardTitle>Social Media Stats</CardTitle>
-                <CardDescription>Track your connections or followers</CardDescription>
+                <CardDescription>Track your connections or followers (optional)</CardDescription>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { key: "linkedinFollowers", label: "LinkedIn Followers" },
-                  { key: "githubFollowers", label: "GitHub Followers" },
-                  { key: "twitterFollowers", label: "Twitter Followers" },
-                  { key: "facebookFollowers", label: "Facebook Followers" },
-                  { key: "instagramFollowers", label: "Instagram Followers" },
-                ].map(({ key, label }) => (
+                  { key: "linkedinFollowers", label: "LinkedIn Followers", icon: FiLinkedin },
+                  { key: "githubFollowers", label: "GitHub Followers", icon: FiGithub },
+                  { key: "twitterFollowers", label: "Twitter Followers", icon: FiTwitter },
+                  { key: "facebookFollowers", label: "Facebook Followers", icon: FiFacebook },
+                  { key: "instagramFollowers", label: "Instagram Followers", icon: FiInstagram },
+                ].map(({ key, label, icon: Icon }) => (
                   <div key={key}>
-                    <Label>{label}</Label>
+                    <Label className="flex items-center gap-2">
+                      <Icon size={16} className="text-neutral-500" />
+                      {label}
+                    </Label>
                     <Input
                       type="number"
+                      min="0"
                       value={formData.statistics[key] || ""}
                       onChange={(e) =>
                         setFormData({
@@ -678,6 +776,7 @@ const PersonalInfo = () => {
                           statistics: { ...formData.statistics, [key]: parseInt(e.target.value) || 0 },
                         })
                       }
+                      placeholder="0"
                     />
                   </div>
                 ))}

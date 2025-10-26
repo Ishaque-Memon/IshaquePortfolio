@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  FiMail,
-  FiPhone,
-  FiMapPin,
-  FiGithub,
-  FiLinkedin,
-  FiInstagram,
-  FiTwitter,
-  FiHome,
-  FiUser,
-  FiCode,
-  FiBriefcase,
-  FiAward,
-  FiMessageCircle,
-  FiHeart,
-} from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
 import portfolioApi from "@/api/portfolioApi";
+import { Button } from "@/components/ui/button";
+import { outlineIcon, SidebarIcons } from "@/assets/Icons/Icons";
 
 const Footer = () => {
   const { isDarkMode } = useTheme();
@@ -56,65 +42,72 @@ const Footer = () => {
 
   const footerLinks = {
     navigation: [
-      { label: "Home", sectionId: "home", icon: FiHome },
-      { label: "About", sectionId: "about", icon: FiUser },
-      { label: "Skills", sectionId: "skills", icon: FiCode },
-      { label: "Projects", sectionId: "projects", icon: FiBriefcase },
-      { label: "Education", sectionId: "education", icon: FiAward },
-      { label: "Contact", sectionId: "contact", icon: FiMessageCircle }
+      { label: "Home", sectionId: "home", icon: SidebarIcons.FiHome },
+      { label: "About", sectionId: "about", icon: SidebarIcons.FiUser },
+      { label: "Skills", sectionId: "skills", icon: SidebarIcons.FiCode },
+      { label: "Projects", sectionId: "projects", icon: SidebarIcons.FiBriefcase },
+      { label: "Education", sectionId: "education", icon: SidebarIcons.FiAward },
+      { label: "Contact", sectionId: "contact", icon: SidebarIcons.FiMessageSquare }
     ]
   };
 
   // Build social links dynamically from API
   const socialLinks = personalInfo?.socialLinks ? [
     {
-      icon: FiGithub,
+      icon: outlineIcon.github,
       label: "GitHub",
       href: personalInfo.socialLinks.github,
       color: "hover:text-gray-400",
       show: !!personalInfo.socialLinks.github
     },
     {
-      icon: FiLinkedin,
+      icon: outlineIcon.linkedin,
       label: "LinkedIn",
       href: personalInfo.socialLinks.linkedin,
       color: "hover:text-blue-400",
       show: !!personalInfo.socialLinks.linkedin
     },
     {
-      icon: FiTwitter,
+      icon: outlineIcon.mail,
       label: "Twitter",
       href: personalInfo.socialLinks.twitter,
       color: "hover:text-blue-300",
       show: !!personalInfo.socialLinks.twitter
     },
     {
-      icon: FiInstagram,
+      icon: outlineIcon.envelope,
       label: "Instagram",
       href: personalInfo.socialLinks.instagram,
       color: "hover:text-pink-400",
       show: !!personalInfo.socialLinks.instagram
+    },
+    {
+      icon: outlineIcon.globe,
+      label: "Website",
+      href: personalInfo.socialLinks.website,
+      color: "hover:text-green-400",
+      show: !!personalInfo.socialLinks.website
     }
   ].filter(social => social.show) : [];
 
   // Build contact info dynamically from API
   const contactInfo = [
     {
-      icon: FiMail,
+      icon: outlineIcon.Mail,
       label: "Email",
       value: personalInfo?.email || "Loading...",
       href: personalInfo?.email ? `mailto:${personalInfo.email}` : "#",
       show: true
     },
     {
-      icon: FiPhone,
+      icon: outlineIcon.Phone,
       label: "Phone",
       value: personalInfo?.phone || "Loading...",
       href: personalInfo?.phone ? `tel:${personalInfo.phone}` : "#",
       show: true
     },
     {
-      icon: FiMapPin,
+      icon: outlineIcon.globe,
       label: "Location",
       value: personalInfo?.location 
         ? `${personalInfo.location.city || ''}${personalInfo.location.city && personalInfo.location.country ? ', ' : ''}${personalInfo.location.country || ''}`.trim() || "Loading..."
@@ -186,15 +179,17 @@ const Footer = () => {
                 ) : (
                   <>
                     <h3 className={`text-3xl font-bold mb-4 ${
-                      isDarkMode ? 'gradient-text' : 'text-gray-900'
+                      isDarkMode ? 'text-white' : 'text-gray-900'
                     }`}>
-                      {personalInfo?.name || 'Muhammad Ishaque'}
-                       {/* <span className="gradient-text">{personalInfo?.title?.split(' ').pop() || ''}</span> */}
+                      {personalInfo?.name || 'Muhammad Ishaque'}{' '}
+                      {/* <span className="gradient-text">
+                        {personalInfo?.title || ''}
+                      </span> */}
                     </h3>
                     <p className={`text-lg leading-relaxed max-w-md ${
                       isDarkMode ? 'text-neutral-300' : 'text-gray-600'
                     }`}>
-                      {/* {personalInfo?.bio || 'Software Engineering student specializing in full-stack development. Building innovative web solutions and learning cutting-edge technologies.'} */}
+                      {/* {personalInfo?.bio || 'Full-stack developer specializing in modern web technologies. Passionate about creating scalable applications and delivering exceptional user experiences.'} */}
                       Software engineer with expertise in full-stack development. Building innovative solutions with cutting-edge technologies and best practices.
                     </p>
                   </>
@@ -206,38 +201,35 @@ const Footer = () => {
                 <h4 className={`font-semibold mb-4 ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>Follow Me</h4>
-                <div className="flex space-x-4">
+                <div className="flex flex-wrap gap-3">
                   {loading ? (
                     // Loading skeleton for social links
-                    Array(2).fill(0).map((_, index) => (
+                    Array(3).fill(0).map((_, index) => (
                       <div
                         key={index}
-                        className={`w-11 h-11 rounded-xl animate-pulse ${
+                        className={`w-10 h-10 rounded-lg animate-pulse ${
                           isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
                         }`}
                       ></div>
                     ))
                   ) : socialLinks.length > 0 ? (
-                    socialLinks.map((social, index) => {
-                      const IconComponent = social.icon;
-                      return (
-                        <motion.a
-                          key={index}
-                          href={social.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`p-3 rounded-xl transition-all duration-300 ${
-                            isDarkMode 
-                              ? 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700' 
-                              : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                          } ${social.color}`}
-                          whileHover={{ scale: 1.1, y: -2 }}
-                          whileTap={{ scale: 0.95 }}
+                    socialLinks.map((social, index) => (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          hover={false}
                         >
-                          <IconComponent className="w-5 h-5" />
-                        </motion.a>
-                      );
-                    })
+                          <a
+                            href={social.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={social.label}
+                          >
+                            <span className="text-xl">{social.icon}</span>
+                          </a>
+                        </Button>
+                    ))
                   ) : (
                     <p className={`text-sm ${
                       isDarkMode ? 'text-neutral-400' : 'text-gray-500'
@@ -252,25 +244,23 @@ const Footer = () => {
               <h4 className={`font-semibold mb-6 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Quick Links</h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {footerLinks.navigation.map((link, index) => {
                   const IconComponent = link.icon;
                   return (
                     <li key={index}>
-                      <motion.button
+                      <Button
+                        variant="ghost"
                         onClick={() => scrollToSection(link.sectionId)}
-                        className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                        className={`w-full justify-start gap-3 transition-all duration-300 ${
                           isDarkMode 
-                            ? 'text-neutral-300 hover:text-primary-400' 
-                            : 'text-gray-600 hover:text-primary-600'
+                            ? 'text-neutral-300 hover:text-primary-400 hover:bg-neutral-800' 
+                            : 'text-gray-600 hover:text-primary-600 hover:bg-gray-200'
                         }`}
-                        whileHover={{ x: 5 }}
                       >
-                        <IconComponent className={`w-4 h-4 ${
-                          isDarkMode ? 'group-hover:text-primary-400' : 'group-hover:text-primary-600'
-                        }`} />
+                        <IconComponent className="w-4 h-4" />
                         <span>{link.label}</span>
-                      </motion.button>
+                      </Button>
                     </li>
                   );
                 })}
@@ -282,7 +272,7 @@ const Footer = () => {
               <h4 className={`font-semibold mb-6 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Get in Touch</h4>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {loading ? (
                   // Loading skeleton for contact info
                   Array(3).fill(0).map((_, index) => (
@@ -301,40 +291,46 @@ const Footer = () => {
                     </div>
                   ))
                 ) : (
-                  contactInfo.map((contact, index) => {
-                    const IconComponent = contact.icon;
-                    return (
-                      <motion.a
-                        key={index}
-                        href={contact.href}
-                        target={contact.label === "Location" ? "_blank" : undefined}
-                        rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
-                        className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                  contactInfo.map((contact, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ x: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Button
+                        variant="ghost"
+                        asChild
+                        className={`w-full justify-start gap-3 h-auto py-3 transition-all duration-300 ${
                           isDarkMode 
-                            ? 'text-neutral-300 hover:text-primary-400' 
-                            : 'text-gray-600 hover:text-primary-600'
+                            ? 'text-neutral-300 hover:text-primary-400 hover:bg-neutral-800' 
+                            : 'text-gray-600 hover:text-primary-600 hover:bg-gray-200'
                         }`}
-                        whileHover={{ x: 5 }}
                       >
-                        <div className={`p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300 ${
-                          isDarkMode ? 'bg-neutral-800' : 'bg-gray-200'
-                        }`}>
-                          <IconComponent className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className={`text-sm ${
-                            isDarkMode ? 'text-neutral-400' : 'text-gray-500'
-                          }`}>{contact.label}</p>
-                          <p className="font-medium">{contact.value}</p>
-                        </div>
-                      </motion.a>
-                    );
-                  })
+                        <a
+                          href={contact.href}
+                          target={contact.label === "Location" ? "_blank" : undefined}
+                          rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
+                        >
+                          <div className={`p-2 rounded-lg flex-shrink-0 ${
+                            isDarkMode ? 'bg-neutral-800' : 'bg-gray-200'
+                          }`}>
+                            <span className="text-lg">{contact.icon}</span>
+                          </div>
+                          <div className="text-left">
+                            <p className={`text-xs ${
+                              isDarkMode ? 'text-neutral-400' : 'text-gray-500'
+                            }`}>{contact.label}</p>
+                            <p className="font-medium text-sm">{contact.value}</p>
+                          </div>
+                        </a>
+                      </Button>
+                    </motion.div>
+                  ))
                 )}
               </div>
 
               {/* Availability Status */}
-              <div className={`mt-8 p-4 rounded-xl ${
+              <div className={`mt-6 p-4 rounded-xl ${
                 isDarkMode 
                   ? 'bg-green-900/20 border border-green-500/30' 
                   : 'bg-green-100 border border-green-300'
@@ -363,21 +359,21 @@ const Footer = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             
             {/* Copyright */}
-            <div className={`flex items-center space-x-2 mb-4 md:mb-0 ${
+            <div className="flex justify-center w-full">
+            <div className={`flex items-center flex-wrap justify-center gap-2 text-sm ${
               isDarkMode ? 'text-neutral-400' : 'text-gray-600'
             }`}>
               <span>&copy; {new Date().getFullYear()}</span>
-              <span>Made with</span>
-              <FiHeart className="text-red-500 animate-pulse" />
-              <span>by</span>
+              <span>Developed by</span>
               <span className={`font-semibold ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 {loading ? 'Loading...' : (personalInfo?.name || 'Muhammad Ishaque')}
               </span>
+            </div>
             </div>
           </div>
         </motion.div>

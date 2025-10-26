@@ -98,7 +98,9 @@ import {
   FiLayers as FiLayersRaw,
   FiTool as FiToolRaw,
   FiCloud as FiCloudRaw,
-  FiGlobe as FiGlobeRaw
+  FiGlobe as FiGlobeRaw,
+  FiGithub as FiGithub,
+  FiLinkedin as FiLinkedin,
 } from "react-icons/fi";
 
 // --- Simple Icons (Si) for technologies ---
@@ -238,8 +240,8 @@ export const outlineIcon = {
   OpenEye: <FiEye />,
   CloseEye: <FiEyeOff />,
   ArrowRight: <FiArrowRight />,
-  github: <FaGithub />,
-  linkedin: <FaLinkedin />,
+  github: <FiGithub />,
+  linkedin: <FiLinkedin />,
   mail: <FaEnvelope />,
   envelope: <FaEnvelope />,
   phoneAlt: <FiPhone />,

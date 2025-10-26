@@ -166,7 +166,7 @@ const HomeSection = () => {
               className="flex gap-4"
             >
               {infoToDisplay?.socialLinks?.github && (
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="outline" size="icon" asChild>
                   <a
                     href={infoToDisplay.socialLinks.github}
                     target="_blank"
@@ -178,7 +178,7 @@ const HomeSection = () => {
                 </Button>
               )}
               {infoToDisplay?.socialLinks?.linkedin && (
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="outline" size="icon" asChild>
                   <a
                     href={infoToDisplay.socialLinks.linkedin}
                     target="_blank"
@@ -190,7 +190,7 @@ const HomeSection = () => {
                 </Button>
               )}
               {infoToDisplay?.socialLinks?.email && (
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="outline" size="icon" asChild>
                   <a
                     href={infoToDisplay.socialLinks.email}
                     aria-label="Email"

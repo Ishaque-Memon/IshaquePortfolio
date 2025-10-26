@@ -26,6 +26,10 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
       },
+      hover: {
+        true: "",
+        false: "hover:no-underline",
+      },
     },
     defaultVariants: {
       variant: "default",
@@ -34,7 +38,7 @@ const buttonVariants = cva(
   }
 )
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = React.forwardRef(({ className, variant, size, asChild, hover = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"
   return (
     <Comp
