@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   FiMail,
@@ -17,9 +17,35 @@ import {
   FiHeart,
 } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
+import portfolioApi from "@/api/portfolioApi";
 
 const Footer = () => {
   const { isDarkMode } = useTheme();
+  
+  // State for personal info from API
+  const [personalInfo, setPersonalInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch personal info on component mount
+  useEffect(() => {
+    const fetchPersonalInfo = async () => {
+      try {
+        setLoading(true);
+        const response = await portfolioApi.getPersonalInfo();
+        console.log('Footer - Personal Info Response:', response);
+        
+        // Handle both response.data and direct response
+        const data = response?.data || response;
+        setPersonalInfo(data);
+      } catch (error) {
+        console.error('Error fetching personal info in footer:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPersonalInfo();
+  }, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -36,42 +62,67 @@ const Footer = () => {
       { label: "Projects", sectionId: "projects", icon: FiBriefcase },
       { label: "Education", sectionId: "education", icon: FiAward },
       { label: "Contact", sectionId: "contact", icon: FiMessageCircle }
-    ],
-    social: [
-      {
-        icon: FiGithub,
-        label: "GitHub",
-        href: "https://github.com/Ishaque-Memon",
-        color: "hover:text-gray-400"
-      },
-      {
-        icon: FiLinkedin,
-        label: "LinkedIn",
-        href: "https://www.linkedin.com/in/muhammad-ishaque-574492249/",
-        color: "hover:text-blue-400"
-      }
-    ],
-    contact: [
-      {
-        icon: FiMail,
-        label: "Email",
-        value: "m.ishaq031530@gmail.com",
-        href: "mailto:m.ishaq031530@gmail.com"
-      },
-      {
-        icon: FiPhone,
-        label: "Phone",
-        value: "+92 315 3057848",
-        href: "tel:+923153057848"
-      },
-      {
-        icon: FiMapPin,
-        label: "Location",
-        value: "Qasimabad, Hyderabad",
-        href: "https://maps.google.com/"
-      }
     ]
   };
+
+  // Build social links dynamically from API
+  const socialLinks = personalInfo?.socialLinks ? [
+    {
+      icon: FiGithub,
+      label: "GitHub",
+      href: personalInfo.socialLinks.github,
+      color: "hover:text-gray-400",
+      show: !!personalInfo.socialLinks.github
+    },
+    {
+      icon: FiLinkedin,
+      label: "LinkedIn",
+      href: personalInfo.socialLinks.linkedin,
+      color: "hover:text-blue-400",
+      show: !!personalInfo.socialLinks.linkedin
+    },
+    {
+      icon: FiTwitter,
+      label: "Twitter",
+      href: personalInfo.socialLinks.twitter,
+      color: "hover:text-blue-300",
+      show: !!personalInfo.socialLinks.twitter
+    },
+    {
+      icon: FiInstagram,
+      label: "Instagram",
+      href: personalInfo.socialLinks.instagram,
+      color: "hover:text-pink-400",
+      show: !!personalInfo.socialLinks.instagram
+    }
+  ].filter(social => social.show) : [];
+
+  // Build contact info dynamically from API
+  const contactInfo = [
+    {
+      icon: FiMail,
+      label: "Email",
+      value: personalInfo?.email || "Loading...",
+      href: personalInfo?.email ? `mailto:${personalInfo.email}` : "#",
+      show: true
+    },
+    {
+      icon: FiPhone,
+      label: "Phone",
+      value: personalInfo?.phone || "Loading...",
+      href: personalInfo?.phone ? `tel:${personalInfo.phone}` : "#",
+      show: true
+    },
+    {
+      icon: FiMapPin,
+      label: "Location",
+      value: personalInfo?.location 
+        ? `${personalInfo.location.city || ''}${personalInfo.location.city && personalInfo.location.country ? ', ' : ''}${personalInfo.location.country || ''}`.trim() || "Loading..."
+        : "Loading...",
+      href: "https://maps.google.com/",
+      show: true
+    }
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -122,17 +173,32 @@ const Footer = () => {
             {/* Brand Section */}
             <motion.div variants={itemVariants} className="lg:col-span-2">
               <div className="mb-8">
-                <h3 className={`text-3xl font-bold mb-4 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>
-                  Muhammad <span className="gradient-text">Ishaque</span>
-                </h3>
-                <p className={`text-lg leading-relaxed max-w-md ${
-                  isDarkMode ? 'text-neutral-300' : 'text-gray-600'
-                }`}>
-                  Software Engineering student specializing in full-stack development. 
-                  Building innovative web solutions and learning cutting-edge technologies.
-                </p>
+                {loading ? (
+                  // Loading skeleton for name
+                  <>
+                    <div className={`h-9 w-64 rounded mb-4 animate-pulse ${
+                      isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
+                    }`}></div>
+                    <div className={`h-20 w-full max-w-md rounded animate-pulse ${
+                      isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
+                    }`}></div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className={`text-3xl font-bold mb-4 ${
+                      isDarkMode ? 'gradient-text' : 'text-gray-900'
+                    }`}>
+                      {personalInfo?.name || 'Muhammad Ishaque'}
+                       {/* <span className="gradient-text">{personalInfo?.title?.split(' ').pop() || ''}</span> */}
+                    </h3>
+                    <p className={`text-lg leading-relaxed max-w-md ${
+                      isDarkMode ? 'text-neutral-300' : 'text-gray-600'
+                    }`}>
+                      {/* {personalInfo?.bio || 'Software Engineering student specializing in full-stack development. Building innovative web solutions and learning cutting-edge technologies.'} */}
+                      Software engineer with expertise in full-stack development. Building innovative solutions with cutting-edge technologies and best practices.
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* Social Links */}
@@ -141,26 +207,42 @@ const Footer = () => {
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>Follow Me</h4>
                 <div className="flex space-x-4">
-                  {footerLinks.social.map((social, index) => {
-                    const IconComponent = social.icon;
-                    return (
-                      <motion.a
+                  {loading ? (
+                    // Loading skeleton for social links
+                    Array(2).fill(0).map((_, index) => (
+                      <div
                         key={index}
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`p-3 rounded-xl transition-all duration-300 ${
-                          isDarkMode 
-                            ? 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700' 
-                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                        } ${social.color}`}
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <IconComponent className="w-5 h-5" />
-                      </motion.a>
-                    );
-                  })}
+                        className={`w-11 h-11 rounded-xl animate-pulse ${
+                          isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
+                        }`}
+                      ></div>
+                    ))
+                  ) : socialLinks.length > 0 ? (
+                    socialLinks.map((social, index) => {
+                      const IconComponent = social.icon;
+                      return (
+                        <motion.a
+                          key={index}
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-3 rounded-xl transition-all duration-300 ${
+                            isDarkMode 
+                              ? 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700' 
+                              : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                          } ${social.color}`}
+                          whileHover={{ scale: 1.1, y: -2 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <IconComponent className="w-5 h-5" />
+                        </motion.a>
+                      );
+                    })
+                  ) : (
+                    <p className={`text-sm ${
+                      isDarkMode ? 'text-neutral-400' : 'text-gray-500'
+                    }`}>No social links available</p>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -201,35 +283,54 @@ const Footer = () => {
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>Get in Touch</h4>
               <div className="space-y-4">
-                {footerLinks.contact.map((contact, index) => {
-                  const IconComponent = contact.icon;
-                  return (
-                    <motion.a
-                      key={index}
-                      href={contact.href}
-                      target={contact.label === "Location" ? "_blank" : undefined}
-                      rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
-                      className={`flex items-center space-x-3 transition-colors duration-300 group ${
-                        isDarkMode 
-                          ? 'text-neutral-300 hover:text-primary-400' 
-                          : 'text-gray-600 hover:text-primary-600'
-                      }`}
-                      whileHover={{ x: 5 }}
-                    >
-                      <div className={`p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300 ${
-                        isDarkMode ? 'bg-neutral-800' : 'bg-gray-200'
-                      }`}>
-                        <IconComponent className="w-4 h-4" />
+                {loading ? (
+                  // Loading skeleton for contact info
+                  Array(3).fill(0).map((_, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <div className={`w-10 h-10 rounded-lg animate-pulse ${
+                        isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
+                      }`}></div>
+                      <div className="flex-1">
+                        <div className={`h-3 w-16 rounded mb-2 animate-pulse ${
+                          isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
+                        }`}></div>
+                        <div className={`h-4 w-32 rounded animate-pulse ${
+                          isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
+                        }`}></div>
                       </div>
-                      <div>
-                        <p className={`text-sm ${
-                          isDarkMode ? 'text-neutral-400' : 'text-gray-500'
-                        }`}>{contact.label}</p>
-                        <p className="font-medium">{contact.value}</p>
-                      </div>
-                    </motion.a>
-                  );
-                })}
+                    </div>
+                  ))
+                ) : (
+                  contactInfo.map((contact, index) => {
+                    const IconComponent = contact.icon;
+                    return (
+                      <motion.a
+                        key={index}
+                        href={contact.href}
+                        target={contact.label === "Location" ? "_blank" : undefined}
+                        rel={contact.label === "Location" ? "noopener noreferrer" : undefined}
+                        className={`flex items-center space-x-3 transition-colors duration-300 group ${
+                          isDarkMode 
+                            ? 'text-neutral-300 hover:text-primary-400' 
+                            : 'text-gray-600 hover:text-primary-600'
+                        }`}
+                        whileHover={{ x: 5 }}
+                      >
+                        <div className={`p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-primary-500/20 group-hover:to-accent-500/20 transition-all duration-300 ${
+                          isDarkMode ? 'bg-neutral-800' : 'bg-gray-200'
+                        }`}>
+                          <IconComponent className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className={`text-sm ${
+                            isDarkMode ? 'text-neutral-400' : 'text-gray-500'
+                          }`}>{contact.label}</p>
+                          <p className="font-medium">{contact.value}</p>
+                        </div>
+                      </motion.a>
+                    );
+                  })
+                )}
               </div>
 
               {/* Availability Status */}
@@ -270,10 +371,13 @@ const Footer = () => {
             }`}>
               <span>&copy; {new Date().getFullYear()}</span>
               <span>Made with</span>
+              <FiHeart className="text-red-500 animate-pulse" />
               <span>by</span>
               <span className={`font-semibold ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>Muhammad Ishaque</span>
+              }`}>
+                {loading ? 'Loading...' : (personalInfo?.name || 'Muhammad Ishaque')}
+              </span>
             </div>
           </div>
         </motion.div>

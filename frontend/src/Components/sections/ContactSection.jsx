@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
-import { contactInfo, personalInfo } from "@/data/portfolioData";
 import portfolioApi from "@/api/portfolioApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,16 +14,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Enhanced ContactSection with ModernContact design
- * - Uses icons from Icons.jsx only
- * - Follows global CSS patterns
- * - GSAP scroll animations
- * - shadcn/ui components
+ * Enhanced ContactSection with API integration
+ * Fetches email, phone, and location from the About API
  */
 const ContactSection = () => {
   const { isDarkMode } = useTheme();
   const sectionRef = useRef(null);
   const formRef = useRef(null);
+  
+  // State for personal info from API
+  const [personalInfo, setPersonalInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -34,9 +34,29 @@ const ContactSection = () => {
   });
   const [formStatus, setFormStatus] = useState('idle');
 
+  // Fetch personal info on component mount
+  useEffect(() => {
+    const fetchPersonalInfo = async () => {
+      try {
+        setLoading(true);
+        const response = await portfolioApi.getPersonalInfo();
+        console.log('Personal Info Response:', response);
+        
+        // Handle both response.data and direct response
+        const data = response?.data || response;
+        setPersonalInfo(data);
+      } catch (error) {
+        console.error('Error fetching personal info:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPersonalInfo();
+  }, []);
+
   useEffect(() => {
     const formElements = formRef.current?.querySelectorAll('.form-element');
-    
     if (formElements && formElements.length > 0) {
       gsap.fromTo(
         formElements,
@@ -68,61 +88,76 @@ const ContactSection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormStatus('sending');
-
     try {
       await portfolioApi.submitContactForm(formData);
-      
       setFormStatus('success');
-      
       setFormData({
         name: "",
         email: "",
         subject: "",
         message: ""
       });
-
       setTimeout(() => {
         setFormStatus('idle');
       }, 5000);
     } catch (error) {
       console.error("Error sending message:", error);
       setFormStatus('error');
-      
       setTimeout(() => {
         setFormStatus('idle');
       }, 5000);
     }
   };
 
+  // Build contact info items from API data
   const contactInfoItems = [
     {
       icon: outlineIcon.Mail,
       label: "Email",
-      value: contactInfo.email || "your@email.com",
-      href: `mailto:${contactInfo.email}`,
+      value: personalInfo?.email || "Loading...",
+      href: personalInfo?.email ? `mailto:${personalInfo.email}` : "#",
       color: "from-blue-500 to-cyan-500"
     },
     {
       icon: outlineIcon.Phone,
       label: "Phone",
-      value: contactInfo.phone || "+1 234 567 8900",
-      href: `tel:${contactInfo.phone}`,
+      value: personalInfo?.phone || "Loading...",
+      href: personalInfo?.phone ? `tel:${personalInfo.phone}` : "#",
       color: "from-green-500 to-emerald-500"
     },
     {
       icon: outlineIcon.globe,
       label: "Location",
-      value: contactInfo.address || "Your Location",
+      value: personalInfo?.location 
+        ? `${personalInfo.location.city || ''}${personalInfo.location.city && personalInfo.location.country ? ', ' : ''}${personalInfo.location.country || ''}`.trim() || "Loading..."
+        : "Loading...",
       href: "https://maps.google.com/",
       color: "from-red-500 to-pink-500"
     }
   ];
 
-  const socialLinks = personalInfo.social ? [
-    { platform: 'github', icon: outlineIcon.github, url: personalInfo.social.github },
-    { platform: 'linkedin', icon: outlineIcon.linkedin, url: personalInfo.social.linkedin },
-    { platform: 'twitter', icon: outlineIcon.mail, url: personalInfo.social.twitter },
-    { platform: 'mail', icon: outlineIcon.envelope, url: personalInfo.social.mail }
+  // Build social links from API data
+  const socialLinks = personalInfo?.socialLinks ? [
+    { 
+      platform: 'github', 
+      icon: outlineIcon.github, 
+      url: personalInfo.socialLinks.github 
+    },
+    { 
+      platform: 'linkedin', 
+      icon: outlineIcon.linkedin, 
+      url: personalInfo.socialLinks.linkedin 
+    },
+    { 
+      platform: 'twitter', 
+      icon: outlineIcon.mail, 
+      url: personalInfo.socialLinks.twitter 
+    },
+    { 
+      platform: 'website', 
+      icon: outlineIcon.envelope, 
+      url: personalInfo.socialLinks.website 
+    }
   ].filter(link => link.url) : [];
 
   const containerVariants = {
@@ -163,7 +198,6 @@ const ContactSection = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
@@ -187,7 +221,6 @@ const ContactSection = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16">
-          
           {/* Contact Information */}
           <motion.div
             className="space-y-8"
@@ -202,42 +235,64 @@ const ContactSection = () => {
               }`}>
                 Get in Touch
               </h3>
-              
+
               {/* Contact Info Cards */}
               <div className="space-y-6">
-                {contactInfoItems.map((info, index) => (
-                  <motion.a
-                    key={index}
-                    href={info.href}
-                    target={info.label === "Location" ? "_blank" : undefined}
-                    rel={info.label === "Location" ? "noopener noreferrer" : undefined}
-                    className={`block p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
-                      isDarkMode 
-                        ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600' 
-                        : 'bg-neutral-50 border-neutral-200 hover:border-neutral-300'
-                    }`}
-                    whileHover={{ y: -2, scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-3 rounded-xl bg-gradient-to-r ${info.color}/20 text-2xl`}>
-                        {info.icon}
-                      </div>
-                      <div>
-                        <h4 className={`font-semibold ${
-                          isDarkMode ? 'text-white' : 'text-neutral-900'
-                        }`}>
-                          {info.label}
-                        </h4>
-                        <p className={`${
-                          isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
-                        }`}>
-                          {info.value}
-                        </p>
+                {loading ? (
+                  // Loading skeleton
+                  Array(3).fill(0).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`p-6 rounded-2xl border animate-pulse ${
+                        isDarkMode
+                          ? 'bg-neutral-800 border-neutral-700'
+                          : 'bg-neutral-50 border-neutral-200'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 rounded-xl bg-neutral-600"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-neutral-600 rounded w-20"></div>
+                          <div className="h-3 bg-neutral-600 rounded w-32"></div>
+                        </div>
                       </div>
                     </div>
-                  </motion.a>
-                ))}
+                  ))
+                ) : (
+                  contactInfoItems.map((info, index) => (
+                    <motion.a
+                      key={index}
+                      href={info.href}
+                      target={info.label === "Location" ? "_blank" : undefined}
+                      rel={info.label === "Location" ? "noopener noreferrer" : undefined}
+                      className={`block p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
+                        isDarkMode
+                          ? 'bg-neutral-800 border-neutral-700 hover:border-neutral-600'
+                          : 'bg-neutral-50 border-neutral-200 hover:border-neutral-300'
+                      }`}
+                      whileHover={{ y: -2, scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`p-3 rounded-xl bg-gradient-to-r ${info.color}/20 text-2xl`}>
+                          {info.icon}
+                        </div>
+                        <div>
+                          <h4 className={`font-semibold ${
+                            isDarkMode ? 'text-white' : 'text-neutral-900'
+                          }`}>
+                            {info.label}
+                          </h4>
+                          <p className={`${
+                            isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
+                          }`}>
+                            {info.value}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.a>
+                  ))
+                )}
               </div>
             </motion.div>
 
@@ -257,8 +312,8 @@ const ContactSection = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`p-3 rounded-xl border transition-all duration-300 text-xl ${
-                        isDarkMode 
-                          ? 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-600' 
+                        isDarkMode
+                          ? 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-600'
                           : 'bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300'
                       }`}
                       whileHover={{ scale: 1.1, y: -2 }}
@@ -275,8 +330,8 @@ const ContactSection = () => {
             <motion.div
               variants={itemVariants}
               className={`p-6 rounded-2xl border ${
-                isDarkMode 
-                  ? 'bg-green-900/20 border-green-700/50' 
+                isDarkMode
+                  ? 'bg-green-900/20 border-green-700/50'
                   : 'bg-green-50 border-green-200'
               }`}
             >
@@ -305,8 +360,8 @@ const ContactSection = () => {
             viewport={{ once: true }}
           >
             <Card className={`p-8 rounded-3xl border ${
-              isDarkMode 
-                ? 'bg-neutral-800 border-neutral-700' 
+              isDarkMode
+                ? 'bg-neutral-800 border-neutral-700'
                 : 'bg-neutral-50 border-neutral-200'
             }`}>
               <CardHeader className="p-0 mb-8">
@@ -316,9 +371,8 @@ const ContactSection = () => {
                   Send Me a Message
                 </CardTitle>
               </CardHeader>
-
               <CardContent className="p-0">
-                <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name Field */}
                   <div className="form-element">
                     <Label className={`block text-sm font-semibold mb-2 ${
@@ -339,8 +393,8 @@ const ContactSection = () => {
                         onChange={handleChange}
                         required
                         className={`pl-12 pr-4 py-6 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
-                          isDarkMode 
-                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                          isDarkMode
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400'
                             : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
                         }`}
                         placeholder="Enter your full name"
@@ -368,8 +422,8 @@ const ContactSection = () => {
                         onChange={handleChange}
                         required
                         className={`pl-12 pr-4 py-6 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
-                          isDarkMode 
-                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                          isDarkMode
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400'
                             : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
                         }`}
                         placeholder="your@email.com"
@@ -397,8 +451,8 @@ const ContactSection = () => {
                         onChange={handleChange}
                         required
                         className={`pl-12 pr-4 py-6 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
-                          isDarkMode 
-                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                          isDarkMode
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400'
                             : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
                         }`}
                         placeholder="What's this about?"
@@ -426,8 +480,8 @@ const ContactSection = () => {
                         required
                         rows={6}
                         className={`pl-12 pr-4 py-4 rounded-xl border transition-all duration-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none ${
-                          isDarkMode 
-                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400' 
+                          isDarkMode
+                            ? 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400'
                             : 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-500'
                         }`}
                         placeholder="Tell me about your project or just say hello!"
@@ -441,8 +495,7 @@ const ContactSection = () => {
                     whileTap={formStatus !== 'sending' ? { scale: 0.98 } : {}}
                   >
                     <Button
-                      type="button"
-                      onClick={handleSubmit}
+                      type="submit"
                       disabled={formStatus === 'sending'}
                       className={`w-full py-6 px-8 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
                         formStatus === 'sending'
@@ -527,7 +580,7 @@ const ContactSection = () => {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </form>
               </CardContent>
             </Card>
           </motion.div>
