@@ -36,7 +36,7 @@ import {
 import Loader from "@/Components/common/Loader";
 
 // slider (exports named Slider + track/range/thumb)
-import { Slider, SliderTrack, SliderRange, SliderThumb } from "../ui/slider";
+// import { Slider, SliderTrack, SliderRange, SliderThumb } from "../ui/slider";
 
 const CertificatesSection = () => {
   const { isDarkMode } = useTheme();
@@ -174,15 +174,7 @@ const CertificatesSection = () => {
 
           {/* Right-side pagination controls (First / Prev / page list / Next / Last) */}
           <div className="flex items-center gap-2">
-            {/* <Button
-              onClick={() => {
-                setPage(1);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              disabled={page === 1}
-            >
-              First
-            </Button> */}
+            {/* First page button removed for simplicity */}
             <Button variant="default" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               <FiChevronLeft />
             </Button>
@@ -194,7 +186,11 @@ const CertificatesSection = () => {
                   <Button
                     key={pageNum}
                     size={page === pageNum ? "default" : "sm"}
-                    className={`${page === pageNum ? "bg-primary-600 text-white" : "bg-transparent"} `}
+                    className={
+                      page === pageNum
+                        ? `${isDarkMode ? "bg-primary-600 text-white" : "bg-primary-600 text-white border border-primary-600"}`
+                        : `${isDarkMode ? "bg-transparent text-neutral-300" : "bg-white text-neutral-700 border border-neutral-300"}`
+                    }
                     onClick={() => setPage(pageNum)}
                   >
                     {pageNum}
@@ -203,18 +199,10 @@ const CertificatesSection = () => {
               })}
             </div>
 
-            <Button variant="Default" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+            <Button variant="default" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
               <FiChevronRight />
             </Button>
-            {/* <Button
-              onClick={() => {
-                setPage(totalPages);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              disabled={page === totalPages}
-            >
-              Last
-            </Button> */}
+            {/* Last page button removed for simplicity */}
           </div>
         </div>
 
