@@ -173,37 +173,7 @@ const CertificatesSection = () => {
           </div>
 
           {/* Right-side pagination controls (First / Prev / page list / Next / Last) */}
-          <div className="flex items-center gap-2">
-            {/* First page button removed for simplicity */}
-            <Button variant="default" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
-              <FiChevronLeft />
-            </Button>
 
-            <div className="hidden md:flex items-center gap-1">
-              {Array.from({ length: totalPages }).map((_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <Button
-                    key={pageNum}
-                    size={page === pageNum ? "default" : "sm"}
-                    className={
-                      page === pageNum
-                        ? `${isDarkMode ? "bg-primary-600 text-white" : "bg-primary-600 text-white border border-primary-600"}`
-                        : `${isDarkMode ? "bg-transparent text-neutral-300" : "bg-white text-neutral-700 border border-neutral-300"}`
-                    }
-                    onClick={() => setPage(pageNum)}
-                  >
-                    {pageNum}
-                  </Button>
-                );
-              })}
-            </div>
-
-            <Button variant="default" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
-              <FiChevronRight />
-            </Button>
-            {/* Last page button removed for simplicity */}
-          </div>
         </div>
 
         {/* Certificates Grid (paginated) */}
@@ -290,7 +260,39 @@ const CertificatesSection = () => {
             })}
           </motion.div>
         )}
+        <div className="flex items-center justify-center mt-10">
+          <div className="flex items-center gap-2">
+            {/* First page button removed for simplicity */}
+            <Button variant="default" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+              <FiChevronLeft />
+            </Button>
 
+            <div className="hidden md:flex items-center gap-1">
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <Button
+                    key={pageNum}
+                    size={page === pageNum ? "default" : "sm"}
+                    className={
+                      page === pageNum
+                        ? `${isDarkMode ? "bg-primary-600 text-white" : "bg-primary-600 text-white border border-primary-600"}`
+                        : `${isDarkMode ? "bg-transparent text-neutral-300" : "bg-white text-neutral-700 border border-neutral-300"}`
+                    }
+                    onClick={() => setPage(pageNum)}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+            </div>
+
+            <Button variant="default" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+              <FiChevronRight />
+            </Button>
+            {/* Last page button removed for simplicity */}
+          </div>
+        </div>
       </div>
 
       {/* Certificate Detail Dialog */}
