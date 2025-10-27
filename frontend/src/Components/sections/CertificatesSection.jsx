@@ -44,7 +44,7 @@ const CertificatesSection = () => {
 
   // Pagination + slider state
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6); // default items per page
+  const [pageSize, setPageSize] = useState(3); // default items per page
 
   // controlMode: 'slider' | 'pagination' - single control area toggles between these
   const [controlMode, setControlMode] = useState("slider");
