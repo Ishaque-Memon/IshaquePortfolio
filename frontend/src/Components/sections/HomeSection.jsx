@@ -82,20 +82,22 @@ const HomeSection = () => {
         <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-blue-500/15 to-purple-500/15 rounded-full blur-3xl animate-gentle-glow animate-bubble-float delay-1000"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10 w-full">
+        {/* Responsive Profile Layout */}
+        <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-12 items-center w-full">
+          {/* Left Content (Profile Info) */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
+            className="w-full"
           >
             {/* Status Badge */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mb-6"
+              className="mb-6 flex justify-center lg:justify-start"
             >
               <Badge variant="outline" className="px-4 py-2 text-sm border-primary-500 text-primary-500 dark:border-accent-500 dark:text-accent-500">
                 ✨ {infoToDisplay?.availability || "Available for opportunities"}
@@ -107,52 +109,49 @@ const HomeSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
+              className="text-center lg:text-left"
             >
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
+              <h1 className="text-4xl xs:text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
                 Hi, I'm{" "}
                 <span className="gradient-text">
                   {infoToDisplay?.name || "Developer"}
                 </span>
               </h1>
-              <h2 className={`text-2xl md:text-3xl font-semibold mb-6 ${
+              <h2 className={`text-xl xs:text-2xl md:text-3xl font-semibold mb-6 ${
                 isDarkMode ? 'text-neutral-300' : 'text-neutral-700'
               }`}>
                 {infoToDisplay?.title || "Full Stack Developer"}
               </h2>
-              {/* <p className={`text-lg md:text-xl mb-8 max-w-2xl ${
-                isDarkMode ? 'text-neutral-400' : 'text-neutral-600'
-              }`}>
-                {infoToDisplay?.bio || "Building amazing web experiences"}
-              </p> */}
             </motion.div>
 
-           {/* CTA Buttons */}
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="flex flex-wrap gap-4 mb-8"
+             className="flex flex-wrap gap-4 mb-8 justify-center lg:justify-start"
             >
               <Link to="projects" smooth={true} duration={500}>
-                <Button size="lg" className="gap-2 btn-primary">
+                <Button size="lg" className="gap-2 btn-primary w-full sm:w-auto">
                   View My Work
                 </Button>
               </Link>
               {infoToDisplay?.resumeFile?.url && (
-                <Button 
+                <Button
                   variant="outline"
                   size="lg"
-                  className="gap-2 btn-secondary"
+                  className="gap-2 btn-secondary w-[50%] sm:w-auto items-center justify-center"
                   asChild
                 >
-                  <a 
+                  <a
                     href={infoToDisplay.resumeFile.url}
-                    download="resume"
+                    download
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="flex items-center gap-2 w-full justify-center"
                   >
-                    <FiDownload /> Download Resume
+                    <FiDownload />
+                    <span>Download Resume</span>
                   </a>
                 </Button>
               )}
@@ -163,7 +162,7 @@ const HomeSection = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex gap-4"
+              className="flex gap-4 justify-center lg:justify-start"
             >
               {infoToDisplay?.socialLinks?.github && (
                 <Button variant="outline" size="icon" asChild>
@@ -202,20 +201,21 @@ const HomeSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Content - Profile Image */}
+          {/* Right Content - Profile Image (Mobile: Top Center, Desktop: Right) */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex justify-center items-center relative"
+            className="flex justify-center items-center relative w-full mb-10 lg:mb-0"
+            style={{ gridColumn: '2', gridRow: '1' }}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-full h-full max-w-md max-h-md rounded-full bg-gradient-to-br from-primary-500/30 to-accent-500/30 blur-2xl animate-spin-slow opacity-70"></div>
+              <div className="w-full h-full max-w-xs max-h-xs sm:max-w-md sm:max-h-md rounded-full bg-gradient-to-br from-primary-500/30 to-accent-500/30 blur-2xl animate-spin-slow opacity-70"></div>
             </div>
             <Avatar
               size="3xl"
               glow={true}
-              className="relative z-10 shadow-lg transition-all duration-300 hover:shadow-xl h-40 w-40 text-3xl lg:h-[60%] lg:w-[60%] lg:text-5xl"
+              className="relative z-10 shadow-lg transition-all duration-300 hover:shadow-xl h-32 w-32 xs:h-40 xs:w-40 text-3xl lg:h-[60%] lg:w-[60%] lg:text-5xl"
             >
               <AvatarImage
                 src={getProfileImage()}
@@ -241,12 +241,12 @@ const HomeSection = () => {
               transition={{ repeat: Infinity, duration: 2 }}
               className="cursor-pointer"
             >
-              <div className={`w-6 h-10 rounded-full border-2 ${
-                isDarkMode ? 'border-primary-400' : 'border-primary-600'
-              } flex justify-center p-2`}>
-                <div className={`w-1 h-2 rounded-full ${
-                  isDarkMode ? 'bg-primary-400' : 'bg-primary-600'
-                } animate-pulse`}></div>
+              <div className={
+                `w-6 h-10 rounded-full border-2 flex justify-center p-2 scroll-indicator-gradient`
+              }>
+                <div className={
+                  `w-1 h-2 rounded-full animate-pulse scroll-indicator-inner`
+                }></div>
               </div>
             </motion.div>
           </Link>

@@ -311,6 +311,24 @@
   color: #999;
 }
 
+.scroll-indicator-gradient {
+  background: linear-gradient(135deg, theme('colors.primary.500'), theme('colors.accent.500'));
+}
+
+.scroll-indicator-inner {
+  background: linear-gradient(135deg, theme('colors.primary.400'), theme('colors.accent.400'));
+}
+
+@media (prefers-color-scheme: dark) {
+  .scroll-indicator-gradient {
+    background: linear-gradient(135deg, theme('colors.primary.400'), theme('colors.accent.400'));
+  }
+  .scroll-indicator-inner {
+    background: linear-gradient(135deg, theme('colors.accent.500'), theme('colors.primary.500'));
+  }
+}
+
+
 /* Outer Circle Rotation */
 @keyframes rotateClockwise {
   0% {
