@@ -34,15 +34,19 @@ const Login = () => {
     try {
       const response = await authApi.login(email, password);
       const { token, admin } = response.data;
-      
+
       const expiresIn = 7 * 24 * 60 * 60 * 1000;
-      
+
       login(token, admin, expiresIn);
       toast.success('Login successful!');
       navigate('/admin');
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      // Show a prominent, non-dismissible error toast at the top-right for 5 seconds
+      toast.error('Invalid username or password. Please try again.', {
+        duration: 5000,
+        position: 'top-right',
+        dismissible: false
+      });
     } finally {
       setIsLoading(false);
     }
