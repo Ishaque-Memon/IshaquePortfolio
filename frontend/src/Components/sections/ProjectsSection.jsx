@@ -174,7 +174,7 @@ const ProjectsSection = () => {
 
                           <CardFooter className="flex gap-2">
                             {project.githubUrl && (
-                              <Button variant="outline" size="sm" className="flex-1" asChild>
+                              <Button variant="secondary" size="sm" className="flex-1" asChild>
                                 <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                                   <FiGithub className="mr-2" /> GitHub
                                 </a>
@@ -271,7 +271,7 @@ const ProjectsSection = () => {
 
                       <div className="flex gap-3">
                         {selectedProject.githubUrl && (
-                          <Button variant="outline" asChild>
+                          <Button variant="secondary" asChild>
                             <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer">
                               <FiGithub className="mr-2" /> View on GitHub
                             </a>
