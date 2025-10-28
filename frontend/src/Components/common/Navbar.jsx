@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FiMenu, FiX, FiHome, FiUser, FiCode, FiBriefcase, FiMail, FiSun, FiMoon, FiLogIn } from "react-icons/fi";
-import { Link } from "react-scroll";
+import { motion } from "framer-motion";
+import { FiUser, FiSun, FiMoon, FiLogIn } from "react-icons/fi";
 import { Link as RouterLink } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
-import AnimatedLogo from "./AnimatedLogo.jsx";
 import gsap from "gsap";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
   const { isDarkMode, toggleTheme } = useTheme();
   const { user } = useAuthContext();
-
-  const navItems = [
-    { name: "Home", to: "home", icon: FiHome },
-    { name: "About", to: "about", icon: FiUser },
-    { name: "Skills", to: "skills", icon: FiCode },
-    { name: "Projects", to: "projects", icon: FiBriefcase },
-    { name: "Contact", to: "contact", icon: FiMail },
-  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,25 +21,23 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // Responsive smooth header animation on mount
     gsap.fromTo(
       ".modern-header",
-      { 
-        y: -50, 
+      {
+        y: -50,
         opacity: 0,
         scale: 0.95
       },
-      { 
-        y: 0, 
-        opacity: 1, 
+      {
+        y: 0,
+        opacity: 1,
         scale: 1,
-        duration: 0.8, 
-        ease: "power3.out", 
-        delay: 0.1 
+        duration: 0.8,
+        ease: "power3.out",
+        delay: 0.1
       }
     );
 
-    // Animate logo letters individually
     gsap.fromTo(
       ".modern-header .gradient-text, .modern-header .logo-letter",
       {
@@ -84,164 +70,139 @@ const Navbar = () => {
     }
   };
 
-  const mobileMenuVariants = {
-    closed: {
-      opacity: 0,
-      x: "100%",
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 40
-      }
-    },
-    open: {
-      opacity: 1,
-      x: "0%",
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 40
-      }
-    }
-  };
-
   return (
-    <>
-      <motion.header
-        className="modern-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent"
-        variants={headerVariants}
-        initial="transparent"
-        animate={isScrolled ? "scrolled" : "transparent"}
-        style={{
-          borderBottomColor: isScrolled 
-            ? (isDarkMode ? "rgba(var(--foreground-rgb), 0.1)" : "rgba(var(--foreground-rgb), 0.1)")
-            : "transparent"
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20">
+    <motion.header
+      className="modern-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent"
+      variants={headerVariants}
+      initial="transparent"
+      animate={isScrolled ? "scrolled" : "transparent"}
+      style={{
+        borderBottomColor: isScrolled
+          ? (isDarkMode ? "rgba(var(--foreground-rgb), 0.1)" : "rgba(var(--foreground-rgb), 0.1)")
+          : "transparent"
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex items-center justify-around lg:justify-between md:justify-between sm:justify-between h-14 sm:h-16 md:h-18 lg:h-20">
 
-            {/* Theme Toggle - Left side */}
-            <motion.button
-              onClick={toggleTheme}
-              className={`p-2 sm:p-3 rounded-lg transition-all duration-300 ${
-                isDarkMode 
-                  ? 'bg-neutral-800 hover:bg-neutral-700 text-yellow-400 hover:text-yellow-300' 
-                  : 'bg-neutral-100 hover:bg-neutral-200 text-orange-500 hover:text-orange-600'
-              } shadow-lg backdrop-blur-sm`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-            >
-              {isDarkMode ? <FiSun className="w-4 h-4 sm:w-5 sm:h-5" /> : <FiMoon className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </motion.button>
+          {/* Theme Toggle - Left side */}
+          <motion.button
+            onClick={toggleTheme}
+            className={`p-2 sm:p-3 rounded-lg transition-all duration-300 ${
+              isDarkMode
+                ? 'bg-neutral-800 hover:bg-neutral-700 text-yellow-400 hover:text-yellow-300'
+                : 'bg-neutral-100 hover:bg-neutral-200 text-orange-500 hover:text-orange-600'
+            } shadow-lg backdrop-blur-sm`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+          >
+            {isDarkMode ? <FiSun className="w-4 h-4 sm:w-5 sm:h-5" /> : <FiMoon className="w-4 h-4 sm:w-5 sm:h-5" />}
+          </motion.button>
 
-            {/* Logo - Center */}
-            <Link
-              to="home"
-              smooth={true}
-              duration={1000}
-              className="cursor-pointer z-10 group"
-            >
-              <div className="flex flex-col items-center space-x-5">
-                {/* Responsive MI Logo */}
-                <motion.div 
-                  className="flex items-center space-x-2 sm:space-x-3"
+          {/* Logo - Center */}
+          <RouterLink
+            to="/"
+            className="cursor-pointer z-10 group"
+          >
+            <div className="flex flex-col items-center space-x-5">
+              {/* Responsive MI Logo */}
+              <motion.div
+                className="flex items-center space-x-2 sm:space-x-3"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <span
+                  className="gradient-text logo-letter block select-none"
+                  style={{
+                    fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
+                    fontWeight: "900",
+                    lineHeight: "1",
+                    textShadow: isDarkMode
+                      ? "0px 0px 20px rgba(var(--foreground-rgb),0.5)"
+                      : "0px 0px 20px rgba(var(--foreground-rgb),0.3)",
+                    filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
+                  }}
+                >
+                  M
+                </span>
+                <span
+                  className={`logo-letter block select-none transition-colors duration-300 ${
+                    isDarkMode ? "text-white group-hover:text-blue-300" : "text-neutral-900 group-hover:text-blue-600"
+                  }`}
+                  style={{
+                    fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
+                    fontWeight: "900",
+                    lineHeight: "1",
+                    textShadow: isDarkMode
+                      ? "0px 0px 15px rgba(var(--foreground-rgb),0.4)"
+                      : "0px 0px 15px rgba(var(--foreground-rgb),0.3)",
+                    filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
+                  }}
+                >
+                  I
+                </span>
+              </motion.div>
+              
+              {/* Responsive subtitle - hidden on very small screens */}
+              <motion.div
+                className="hidden sm:block text-center mt-1"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+              >
+                <p className={`text-xs sm:text-sm font-medium tracking-wide transition-colors duration-300 ${
+                  isDarkMode ? 'text-neutral-400 group-hover:text-neutral-300' : 'text-neutral-600 group-hover:text-neutral-700'
+                }`}>
+                  Full Stack Developer
+                </p>
+              </motion.div>
+            </div>
+          </RouterLink>
+
+          {/* Login/Admin Button - Right side */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+          >
+            {user ? (
+              <RouterLink to="/admin">
+                <motion.button
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    isDarkMode
+                      ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                      : 'bg-primary-500 hover:bg-primary-600 text-white'
+                  } shadow-lg backdrop-blur-sm flex items-center gap-2`}
                   whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <span
-                    className="gradient-text logo-letter block select-none"
-                    style={{
-                      fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
-                      fontWeight: "900",
-                      lineHeight: "1",
-                      textShadow: isDarkMode
-                        ? "0px 0px 20px rgba(var(--foreground-rgb),0.5)"
-                        : "0px 0px 20px rgba(var(--foreground-rgb),0.3)",
-                      filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
-                    }}
-                  >
-                    M
-                  </span>
-                  <span
-                    className={`logo-letter block select-none transition-colors duration-300 ${
-                      isDarkMode ? "text-white group-hover:text-blue-300" : "text-neutral-900 group-hover:text-blue-600"
-                    }`}
-                    style={{
-                      fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
-                      fontWeight: "900",
-                      lineHeight: "1",
-                      textShadow: isDarkMode
-                        ? "0px 0px 15px rgba(var(--foreground-rgb),0.4)"
-                        : "0px 0px 15px rgba(var(--foreground-rgb),0.3)",
-                      filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
-                    }}
-                  >
-                    I
-                  </span>
-                </motion.div>
-                
-                {/* Responsive subtitle - hidden on very small screens */}
-                <motion.div 
-                  className="hidden sm:block text-center mt-1"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.4 }}
+                  <FiUser className="w-4 h-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </motion.button>
+              </RouterLink>
+            ) : (
+              <RouterLink to="/login">
+                <motion.button
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    isDarkMode
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700'
+                      : 'bg-white hover:bg-neutral-50 text-neutral-900 border border-neutral-200'
+                  } shadow-lg backdrop-blur-sm flex items-center gap-2`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <p className={`text-xs sm:text-sm font-medium tracking-wide transition-colors duration-300 ${
-                    isDarkMode ? 'text-neutral-400 group-hover:text-neutral-300' : 'text-neutral-600 group-hover:text-neutral-700'
-                  }`}>
-                    Full Stack Developer
-                  </p>
-                </motion.div>
-              </div>
-            </Link>
-
-            {/* Login/Admin Button - Right side */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-            >
-              {user ? (
-                <RouterLink to="/admin">
-                  <motion.button
-                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-primary-600 hover:bg-primary-700 text-white' 
-                        : 'bg-primary-500 hover:bg-primary-600 text-white'
-                    } shadow-lg backdrop-blur-sm flex items-center gap-2`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FiUser className="w-4 h-4" />
-                    <span className="hidden sm:inline">Admin</span>
-                  </motion.button>
-                </RouterLink>
-              ) : (
-                <RouterLink to="/login">
-                  <motion.button
-                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700' 
-                        : 'bg-white hover:bg-neutral-50 text-neutral-900 border border-neutral-200'
-                    } shadow-lg backdrop-blur-sm flex items-center gap-2`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FiLogIn className="w-4 h-4" />
-                    <span className="hidden sm:inline">Login</span>
-                  </motion.button>
-                </RouterLink>
-              )}
-            </motion.div>
-          </div>
+                  <FiLogIn className="w-4 h-4" />
+                  <span className="hidden sm:inline">Login</span>
+                </motion.button>
+              </RouterLink>
+            )}
+          </motion.div>
         </div>
-      </motion.header>
-    </>
+      </div>
+    </motion.header>
   );
 };
 
