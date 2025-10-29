@@ -125,6 +125,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For any inquiries or feedback, please reach out to Ishaque:
 
-*   **Email:** haseebmeymon123@gmail.com (Replace with actual email)
+*   **Email:** haseebmeymon123@gmail.com 
 *   **LinkedIn:** https://www.linkedin.com/in/muhammad-ishaque-574492249/ (Replace with actual LinkedIn URL)
 *   **GitHub:** https://github.com/Ishaque-Memon
