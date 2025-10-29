@@ -18,7 +18,8 @@ const router = express.Router();
                   protect, 
                   upload.fields([
                   { name: 'profileImage', maxCount: 1 },
-                  { name: 'resumeFile', maxCount: 1 }
+                  { name: 'resumeFile', maxCount: 1 },
+                  { name: 'aboutImage',   maxCount: 1 } 
                 ]), 
                 createOrUpdateAbout);
                 

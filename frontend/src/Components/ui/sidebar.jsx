@@ -100,7 +100,7 @@ const Sidebar = () => {
     >
       <div className="flex flex-col h-full">
         {/* Header Section */}
-        <div className={`flex items-center h-20 px-3 border-b ${isDarkMode ? 'border-neutral-800' : 'border-neutral-200'}`}>
+        <div className={`flex items-center h-16 px-3 border-b ${isDarkMode ? 'border-neutral-800' : 'border-neutral-200'}`}>
           {sidebarOpen ? (
             <>
               <button

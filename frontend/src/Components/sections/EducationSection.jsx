@@ -274,20 +274,18 @@ const EducationSection = () => {
           viewport={{ once: true }}
         >
           <h2
-            className={`text-4xl lg:text-5xl font-bold mb-6 ${
+            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight sm:leading-tight md:leading-snug ${
               isDarkMode ? "text-white" : "text-neutral-900"
             }`}
           >
             Educational <span className="gradient-text">Journey</span>
           </h2>
           <p
-            className={`text-xl max-w-3xl mx-auto ${
+            className={`text-base sm:text-lg md:text-xl max-w-3xl mx-auto mb-4 sm:mb-6 leading-relaxed sm:leading-relaxed md:leading-normal ${
               isDarkMode ? "text-neutral-300" : "text-neutral-700"
             }`}
           >
-            My academic path has been focused on building a strong foundation in
-            computer science and continuously expanding my knowledge in emerging
-            technologies
+            My academic path has been focused on building a strong foundation in computer science and continuously expanding my knowledge in emerging technologies
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full mt-8"></div>
         </motion.div>
@@ -304,9 +302,14 @@ const EducationSection = () => {
           >
             {/* Timeline Line */}
             <div
-              className={`absolute left-8 lg:left-1/2 top-0 w-0.5 h-full transform lg:-translate-x-px ${
+              className={`absolute left-1/2 top-0 w-0.5 h-full transform -translate-x-px ${
                 isDarkMode ? "bg-neutral-700" : "bg-neutral-300"
-              }`}
+              } hidden md:block`}
+            ></div>
+            <div
+              className={`absolute left-8 top-0 w-0.5 h-full ${
+                isDarkMode ? "bg-neutral-700" : "bg-neutral-300"
+              } md:hidden`}
             ></div>
 
             {educationData.map((education, index) => {
@@ -323,19 +326,19 @@ const EducationSection = () => {
                 >
                   {/* Timeline Icon */}
                   <div
-                    className={`absolute left-6 lg:left-1/2 w-6 h-6 transform lg:-translate-x-3 z-10 flex items-center justify-center rounded-full border-4 ${
+                    className={`absolute left-6 w-6 h-6 z-10 flex items-center justify-center rounded-full border-4 ${
                       isDarkMode
                         ? "bg-neutral-900 border-neutral-700"
                         : "bg-white border-neutral-300"
-                    }`}
+                    } md:left-1/2 md:-translate-x-3`}
                   >
                     <div className="w-2 h-2 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></div>
                   </div>
 
                   {/* Education Card */}
                   <div
-                    className={`ml-16 lg:ml-0 w-full lg:w-5/12 ${
-                      isEven ? "lg:pr-12" : "lg:pl-12"
+                    className={`ml-16 w-full md:w-5/12 ${
+                      isEven ? "md:ml-auto md:pr-12" : "md:mr-auto md:pl-12"
                     }`}
                   >
                     <motion.div whileHover={{ y: -5 }}>
@@ -348,8 +351,8 @@ const EducationSection = () => {
                       >
                         {/* Header */}
                         <CardHeader className="p-0 mb-6">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center space-x-3">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-8">
+                            <div className="flex items-center gap-3 mb-4 sm:mb-0 flex-wrap">
                               {education.logoUrl ? (
                                 <Avatar className="h-12 w-12 border-2 border-primary-500/50">
                                   <AvatarImage
@@ -380,7 +383,7 @@ const EducationSection = () => {
                                       ? "default"
                                       : "outline"
                                   }
-                                  className={`text-xs font-semibold ${
+                                  className={`px-2 sm:px-3 py-1 text-sm sm:text-base font-semibold ${
                                     education.status === "Graduated" ||
                                     education.status === "Completed"
                                       ? "bg-green-500/20 text-green-400 border-green-500/30"
@@ -405,22 +408,22 @@ const EducationSection = () => {
                               </div>
                             </div>
                             <div
-                              className={`text-right ${
+                              className={`text-left sm:text-right mt-4 sm:mt-0 ${
                                 isDarkMode
                                   ? "text-neutral-400"
                                   : "text-neutral-600"
                               }`}
                             >
                               {education.duration && (
-                                <div className="flex items-center space-x-1 text-sm mb-1">
+                                <div className="flex items-center space-x-1 text-sm sm:text-base mb-1 break-words">
                                   <FiCalendar className="w-4 h-4" />
-                                  <span>{education.duration}</span>
+                                  <span className="break-words">{education.duration}</span>
                                 </div>
                               )}
                               {education.location && (
-                                <div className="flex items-center space-x-1 text-sm">
+                                <div className="flex items-center space-x-1 text-sm sm:text-base break-words">
                                   <FiMapPin className="w-4 h-4" />
-                                  <span>{education.location}</span>
+                                  <span className="break-words">{education.location}</span>
                                 </div>
                               )}
                             </div>
@@ -430,14 +433,14 @@ const EducationSection = () => {
                         <CardContent className="p-0">
                           {/* Degree Info */}
                           <CardTitle
-                            className={`text-xl lg:text-2xl mb-2 ${
+                            className={`text-base sm:text-lg md:text-xl mb-2 font-bold leading-tight break-words ${
                               isDarkMode ? "text-white" : "text-neutral-900"
                             }`}
                           >
                             {education.degree}
                           </CardTitle>
                           <h4
-                            className={`text-lg font-semibold mb-4 ${
+                            className={`text-sm sm:text-base font-semibold mb-4 leading-snug break-words ${
                               isDarkMode
                                 ? "text-primary-400"
                                 : "text-primary-600"
@@ -450,16 +453,16 @@ const EducationSection = () => {
                           {education.gpa && (
                             <div className="flex items-center space-x-2 mb-4">
                               <FiStar
-                                className={`w-5 h-5 ${
+                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
                                   isDarkMode
                                     ? "text-yellow-400"
                                     : "text-yellow-500"
                                 }`}
                               />
                               <span
-                                className={`font-semibold ${
+                                className={`font-semibold text-sm sm:text-base md:text-lg ${
                                   isDarkMode ? "text-white" : "text-neutral-900"
-                                }`}
+                                } break-words`}
                               >
                                 {education.gpa.toString().includes(".")
                                   ? `CGPA: ${education.gpa}`
@@ -471,7 +474,7 @@ const EducationSection = () => {
                           {/* Description */}
                           {education.description && (
                             <p
-                              className={`mb-6 leading-relaxed ${
+                              className={`mb-6 leading-relaxed text-sm sm:text-base md:text-lg break-words ${
                                 isDarkMode
                                   ? "text-neutral-300"
                                   : "text-neutral-700"
@@ -628,7 +631,7 @@ const EducationSection = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
