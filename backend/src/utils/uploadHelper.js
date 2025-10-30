@@ -8,7 +8,7 @@ const storage = multer.memoryStorage();
 // File filter function
 const fileFilter = (req, file, cb) => {
   // Allowed file types
-  const allowedTypes = /jpeg|jpg|png|gif|webp|pdf/;
+  const allowedTypes = /jpeg|jpg|png|gif|webp|heic/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = allowedTypes.test(file.mimetype);
 

@@ -415,13 +415,13 @@ const EducationSection = () => {
                               }`}
                             >
                               {education.duration && (
-                                <div className="flex items-center space-x-1 text-sm sm:text-base mb-1 break-words">
+                                <div className="flex items-center space-x-1 text-sm sm:text-md mb-1 break-words">
                                   <FiCalendar className="w-4 h-4" />
                                   <span className="break-words">{education.duration}</span>
                                 </div>
                               )}
                               {education.location && (
-                                <div className="flex items-center space-x-1 text-sm sm:text-base break-words">
+                                <div className="flex items-center space-x-1 text-sm sm:text-md break-words">
                                   <FiMapPin className="w-4 h-4" />
                                   <span className="break-words">{education.location}</span>
                                 </div>
