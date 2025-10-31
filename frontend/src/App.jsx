@@ -17,7 +17,7 @@ function App() {
     }
 
     // Connect socket.io (for live analytics)
-    const socket = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:5000");
+    const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000");
 
     socket.on("connect", () => {
       console.log("✅ Socket connected:", socket.id);
