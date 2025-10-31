@@ -14,6 +14,7 @@ import { Label } from '@/Components/ui/label';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import * as authApi from '../api/authApi';
+import { checkAdminIP } from '../api/authApi';
 import { toast } from '../Components/ui/sonner';
 
 const Login = () => {
@@ -51,6 +52,15 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+  // Check if admin IP is allowed
+  React.useEffect(() => {
+    checkAdminIP()
+      .catch(() => {
+        toast.error("Sorry ,you are not allowed to access this page.");
+        navigate('/');
+      });
+  }, [navigate]);
+
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 ${

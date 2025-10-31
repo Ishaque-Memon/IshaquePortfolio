@@ -4,12 +4,21 @@ import { FiUser, FiSun, FiMoon, FiLogIn } from "react-icons/fi";
 import { Link as RouterLink } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
+import { checkAdminIP } from "../../api/authApi";
 import gsap from "gsap";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
   const { user } = useAuthContext();
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+
+  // Check if admin IP is allowed
+  useEffect(() => {
+  checkAdminIP()
+    .then(() => setShowAdminLogin(true))
+    .catch(() => setShowAdminLogin(false));
+    }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -195,7 +204,10 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <FiLogIn className="w-4 h-4" />
+
+                  {showAdminLogin && !localStorage.getItem("authToken") && (
                   <span className="hidden sm:inline">Login</span>
+                    )}
                 </motion.button>
               </RouterLink>
             )}

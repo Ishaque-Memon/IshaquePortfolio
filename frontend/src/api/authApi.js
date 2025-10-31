@@ -4,6 +4,11 @@ import { axiosInstance } from './portfolioApi';
  * Authentication API calls
  */
 
+// Check if admin IP is allowed
+export const checkAdminIP = async () => {
+  return axiosInstance.get('/admin/access-check');
+};
+
 // Admin login
 export const login = async (email, password) => {
   const response = await axiosInstance.post('/admin/login', { email, password });

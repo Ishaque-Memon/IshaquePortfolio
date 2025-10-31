@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 401) {
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        window.location.href = '/admin/login';
       }
       console.error('API Error:', error.response.data);
     } else if (error.request) {
