@@ -2,21 +2,20 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-scroll";
 import { useTheme } from "@/contexts/ThemeContext";
-import { personalInfo } from "@/data/portfolioData";
 import { usePersonalInfo } from "@/hooks/usePortfolio";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/Components/ui/avatar"; // Import Avatar Components
+import { Avatar, AvatarImage, AvatarFallback } from "@/Components/ui/avatar";
 import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
 import Loader from "@/Components/common/Loader";
 
 const HomeSection = () => {
   const { isDarkMode } = useTheme();
   
-  // API Integration
+  // API Integration - fully dynamic
   const { personalInfo: apiPersonalInfo, loading, error } = usePersonalInfo();
-  const [infoToDisplay, setInfoToDisplay] = useState(personalInfo);
+  const [infoToDisplay, setInfoToDisplay] = useState(null);
 
   // Update info when API data arrives
   useEffect(() => {
@@ -56,6 +55,38 @@ const HomeSection = () => {
   };
 
   if (loading) {
+    return (
+      <section
+        id="home"
+        className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
+          isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
+        }`}
+      >
+        <Loader variant="spinner" text="Loading Portfolio..." />
+      </section>
+    );
+  }
+
+  // Show error state if API fails
+  if (error) {
+    return (
+      <section
+        id="home"
+        className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
+          isDarkMode ? 'bg-neutral-950' : 'bg-neutral-50'
+        }`}
+      >
+        <div className="text-center">
+          <p className={isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}>
+            Failed to load portfolio data. Please try refreshing the page.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  // Wait for data to load
+  if (!infoToDisplay) {
     return (
       <section
         id="home"
@@ -222,7 +253,7 @@ const HomeSection = () => {
                 alt={infoToDisplay?.name || "Profile"}
               />
               <AvatarFallback className="bg-gradient-to-br from-primary-500 to-accent-500 text-white font-semibold">
-                {infoToDisplay?.name?.charAt(0).toUpperCase() || "MI"}
+                {infoToDisplay?.name?.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
           </motion.div>

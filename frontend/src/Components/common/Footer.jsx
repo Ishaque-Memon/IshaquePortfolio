@@ -54,6 +54,7 @@ const Footer = () => {
   // Build social links dynamically from API
   const socialLinks = personalInfo?.socialLinks ? [
     {
+      id: 'github',
       icon: outlineIcon.github,
       label: "GitHub",
       href: personalInfo.socialLinks.github,
@@ -61,6 +62,7 @@ const Footer = () => {
       show: !!personalInfo.socialLinks.github
     },
     {
+      id: 'linkedin',
       icon: outlineIcon.linkedin,
       label: "LinkedIn",
       href: personalInfo.socialLinks.linkedin,
@@ -68,6 +70,7 @@ const Footer = () => {
       show: !!personalInfo.socialLinks.linkedin
     },
     {
+      id: 'twitter',
       icon: outlineIcon.mail,
       label: "Twitter",
       href: personalInfo.socialLinks.twitter,
@@ -75,6 +78,7 @@ const Footer = () => {
       show: !!personalInfo.socialLinks.twitter
     },
     {
+      id: 'instagram',
       icon: outlineIcon.envelope,
       label: "Instagram",
       href: personalInfo.socialLinks.instagram,
@@ -82,6 +86,7 @@ const Footer = () => {
       show: !!personalInfo.socialLinks.instagram
     },
     {
+      id: 'website',
       icon: outlineIcon.globe,
       label: "Website",
       href: personalInfo.socialLinks.website,
@@ -181,15 +186,11 @@ const Footer = () => {
                     <h3 className={`text-3xl font-bold mb-4 ${
                       isDarkMode ? 'text-white' : 'text-gray-900'
                     }`}>
-                      {personalInfo?.name || 'Muhammad Ishaque'}{' '}
-                      {/* <span className="gradient-text">
-                        {personalInfo?.title || ''}
-                      </span> */}
+                      {personalInfo?.name || 'Muhammad Ishaque'}
                     </h3>
                     <p className={`text-lg leading-relaxed max-w-md ${
                       isDarkMode ? 'text-neutral-300' : 'text-gray-600'
                     }`}>
-                      {/* {personalInfo?.bio || 'Full-stack developer specializing in modern web technologies. Passionate about creating scalable applications and delivering exceptional user experiences.'} */}
                       Software engineer with expertise in full-stack development. Building innovative solutions with cutting-edge technologies and best practices.
                     </p>
                   </>
@@ -206,29 +207,30 @@ const Footer = () => {
                     // Loading skeleton for social links
                     Array(3).fill(0).map((_, index) => (
                       <div
-                        key={index}
+                        key={`social-skeleton-${index}`}
                         className={`w-10 h-10 rounded-lg animate-pulse ${
                           isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
                         }`}
                       ></div>
                     ))
                   ) : socialLinks.length > 0 ? (
-                    socialLinks.map((social, index) => (
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          asChild
-                          hover={false}
+                    socialLinks.map((social) => (
+                      <Button
+                        key={social.id}
+                        variant="outline"
+                        size="icon"
+                        asChild
+                        hover={false}
+                      >
+                        <a
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={social.label}
                         >
-                          <a
-                            href={social.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={social.label}
-                          >
-                            <span className="text-xl">{social.icon}</span>
-                          </a>
-                        </Button>
+                          <span className="text-xl">{social.icon}</span>
+                        </a>
+                      </Button>
                     ))
                   ) : (
                     <p className={`text-sm ${
@@ -276,7 +278,7 @@ const Footer = () => {
                 {loading ? (
                   // Loading skeleton for contact info
                   Array(3).fill(0).map((_, index) => (
-                    <div key={index} className="flex items-center space-x-3">
+                    <div key={`contact-skeleton-${index}`} className="flex items-center space-x-3">
                       <div className={`w-10 h-10 rounded-lg animate-pulse ${
                         isDarkMode ? 'bg-neutral-800' : 'bg-gray-300'
                       }`}></div>
@@ -293,7 +295,7 @@ const Footer = () => {
                 ) : (
                   contactInfo.map((contact, index) => (
                     <motion.div
-                      key={index}
+                      key={contact.label}
                       whileHover={{ x: 5 }}
                       transition={{ duration: 0.2 }}
                     >
@@ -363,17 +365,17 @@ const Footer = () => {
             
             {/* Copyright */}
             <div className="flex justify-center w-full">
-            <div className={`flex items-center flex-wrap justify-center gap-2 text-sm ${
-              isDarkMode ? 'text-neutral-400' : 'text-gray-600'
-            }`}>
-              <span>&copy; {new Date().getFullYear()}</span>
-              <span>Developed by</span>
-              <span className={`font-semibold ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
+              <div className={`flex items-center flex-wrap justify-center gap-2 text-sm ${
+                isDarkMode ? 'text-neutral-400' : 'text-gray-600'
               }`}>
-                {loading ? 'Loading...' : (personalInfo?.name || 'Muhammad Ishaque')}
-              </span>
-            </div>
+                <span>&copy; {new Date().getFullYear()}</span>
+                <span>Developed by</span>
+                <span className={`font-semibold ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {loading ? 'Loading...' : (personalInfo?.name || 'Muhammad Ishaque')}
+                </span>
+              </div>
             </div>
           </div>
         </motion.div>

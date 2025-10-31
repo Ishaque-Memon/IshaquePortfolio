@@ -34,11 +34,17 @@ if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && proce
 // Create HTTP server
 const server = http.createServer(app);
 
+// FIXED: Socket.IO CORS with multiple origins
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ['http://localhost:3000'];
+
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
+    credentials: true
   },
 });
 
@@ -63,6 +69,8 @@ server.listen(PORT, () => {
   console.log(`🌐 URL: http://localhost:${PORT}`);
   console.log(`📡 API: http://localhost:${PORT}/api`);
   console.log(`💚 Health: http://localhost:${PORT}/health`);
+  console.log(`🔓 CORS Allowed Origins:`);
+  allowedOrigins.forEach(origin => console.log(`   - ${origin}`));
   console.log('='.repeat(50));
   console.log('');
 });
