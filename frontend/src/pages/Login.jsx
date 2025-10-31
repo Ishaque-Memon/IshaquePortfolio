@@ -89,7 +89,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="admin@portfolio.com"
+                placeholder="Admin Access Only"
               />
             </div>
 
