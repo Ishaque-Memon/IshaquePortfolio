@@ -35,7 +35,7 @@ const SkillsSection = () => {
         const skillsArray = Array.isArray(data) ? data : (data?.data || []);
         setSkills(skillsArray);
       } catch (err) {
-        console.error("Error fetching skills:", err);
+  // ...removed console.error("Error fetching skills:", err);
         setError("Failed to load skills.");
         setSkills([]);
       } finally {

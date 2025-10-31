@@ -129,7 +129,7 @@ const Messages = () => {
       try {
         await markAsRead(selectedMessage._id);
       } catch (err) {
-        console.error("Failed to mark message as read:", err);
+  // ...removed console.error("Failed to mark message as read:", err);
       }
     }
     
@@ -155,7 +155,7 @@ const Messages = () => {
       setIsDeleteDialogOpen(false);
       setMessageToDelete(null);
     } catch (err) {
-      console.error("Failed to delete message:", err);
+  // ...removed console.error("Failed to delete message:", err);
       alert(err.response?.data?.message || "Failed to delete message. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -170,10 +170,10 @@ const Messages = () => {
     setIsMarkingAllRead(true);
     try {
       await Promise.all(
-        unreadMessages.map(msg => markAsRead(msg._id).catch(err => console.error(err)))
+  unreadMessages.map(msg => markAsRead(msg._id).catch(err => {/* removed console.error */}))
       );
     } catch (err) {
-      console.error("Failed to mark all as read:", err);
+  // ...removed console.error("Failed to mark all as read:", err);
     } finally {
       setIsMarkingAllRead(false);
     }
@@ -186,11 +186,11 @@ const Messages = () => {
     setIsProcessing(true);
     try {
       await Promise.all(
-        messages.map(msg => deleteMessage(msg._id).catch(err => console.error(err)))
+  messages.map(msg => deleteMessage(msg._id).catch(err => {/* removed console.error */}))
       );
       setIsDeleteAllDialogOpen(false);
     } catch (err) {
-      console.error("Failed to delete all messages:", err);
+  // ...removed console.error("Failed to delete all messages:", err);
       alert("Failed to delete all messages. Please try again.");
     } finally {
       setIsProcessing(false);

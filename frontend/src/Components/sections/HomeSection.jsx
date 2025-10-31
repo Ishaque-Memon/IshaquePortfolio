@@ -20,10 +20,10 @@ const HomeSection = () => {
   // Update info when API data arrives
   useEffect(() => {
     if (apiPersonalInfo) {
-      console.log('API Personal Info received:', apiPersonalInfo);
+  // ...removed console.log('API Personal Info received:', apiPersonalInfo);
       // The API returns { success, data, message }, so extract data
       const dataToUse = apiPersonalInfo?.data || apiPersonalInfo;
-      console.log('Data to display:', dataToUse);
+  // ...removed console.log('Data to display:', dataToUse);
       setInfoToDisplay(dataToUse);
     }
   }, [apiPersonalInfo]);
@@ -32,7 +32,7 @@ const HomeSection = () => {
   const getProfileImage = () => {
     const imageData = infoToDisplay?.profileImage;
     
-    console.log('getProfileImage called with imageData:', imageData);
+  // ...removed console.log('getProfileImage called with imageData:', imageData);
     
     let imageUrl = null;
     
@@ -42,7 +42,7 @@ const HomeSection = () => {
       imageUrl = imageData.url;
     }
     
-    console.log('Final imageUrl:', imageUrl);
+  // ...removed console.log('Final imageUrl:', imageUrl);
     
     if (imageUrl) {
       return imageUrl;
@@ -50,7 +50,7 @@ const HomeSection = () => {
     
     // Fallback avatar
     const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(infoToDisplay?.name || 'User')}&size=400&background=6366f1&color=fff`;
-    console.log('Using fallback:', fallback);
+  // ...removed console.log('Using fallback:', fallback);
     return fallback;
   };
 

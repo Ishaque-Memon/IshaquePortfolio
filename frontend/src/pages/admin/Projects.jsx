@@ -215,7 +215,7 @@ const Projects = () => {
       });
       setImagesToUpload([]);
     } catch (err) {
-      console.error("Error creating project:", err);
+  // ...removed console.error("Error creating project:", err);
       alert(err.response?.data?.message || "Failed to create project");
     } finally {
       setIsSubmitting(false);
@@ -256,7 +256,7 @@ const Projects = () => {
       setImagesToUpload([]);
       setImagesToDelete([]);
     } catch (err) {
-      console.error("Error updating project:", err);
+  // ...removed console.error("Error updating project:", err);
       alert(err.response?.data?.message || "Failed to update project");
     } finally {
       setIsSubmitting(false);
@@ -271,7 +271,7 @@ const Projects = () => {
       setIsDeleteDialogOpen(false);
       setSelectedProject(null);
     } catch (err) {
-      console.error("Error deleting project:", err);
+  // ...removed console.error("Error deleting project:", err);
       alert(err.response?.data?.message || "Failed to delete project");
     } finally {
       setIsSubmitting(false);

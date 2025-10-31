@@ -178,7 +178,7 @@ const IconButton = ({ icon, isSelected, onClick, isDarkMode, categoryColor }) =>
   // Defensive: if icon component is undefined, avoid throwing
   if (!IconComponent) {
     // eslint-disable-next-line no-console
-    console.error("IconComponent is undefined for", icon);
+  // ...removed console.error("IconComponent is undefined for", icon);
     return null;
   }
 

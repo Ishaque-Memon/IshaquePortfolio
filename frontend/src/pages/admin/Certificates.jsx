@@ -158,7 +158,7 @@ const Certificates = () => {
       });
       setImageFile(null);
     } catch (err) {
-      console.error("Error creating certificate:", err);
+  // ...removed console.error("Error creating certificate:", err);
       alert(err.response?.data?.message || "Failed to create certificate");
     } finally {
       setIsSubmitting(false);
@@ -189,7 +189,7 @@ const Certificates = () => {
       setIsEditModalOpen(false);
       setSelectedCertificate(null);
     } catch (err) {
-      console.error("Error updating certificate:", err);
+  // ...removed console.error("Error updating certificate:", err);
       alert(err.response?.data?.message || "Failed to update certificate");
     } finally {
       setIsSubmitting(false);
@@ -204,7 +204,7 @@ const Certificates = () => {
       setIsDeleteDialogOpen(false);
       setSelectedCertificate(null);
     } catch (err) {
-      console.error("Error deleting certificate:", err);
+  // ...removed console.error("Error deleting certificate:", err);
       alert(err.response?.data?.message || "Failed to delete certificate");
     } finally {
       setIsSubmitting(false);

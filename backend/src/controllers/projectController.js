@@ -96,7 +96,7 @@ export const createProject = async (req, res, next) => {
 
     return sendSuccess(res, 'Project created successfully', normalizeProjectImages(project), 201);
   } catch (error) {
-    console.error('Error creating project:', error);
+  // ...removed console.error('Error creating project:', error);
     next(error);
   }
 };
@@ -137,7 +137,7 @@ export const updateProject = async (req, res, next) => {
             await deleteFromCloudinary(publicId);
             currentImages.splice(imageIndex, 1);
           } catch (err) {
-            console.error(`Failed to delete image ${publicId} from Cloudinary:`, err);
+            // ...removed console.error(`Failed to delete image ${publicId} from Cloudinary:`, err);
           }
         }
       }
@@ -169,7 +169,7 @@ export const updateProject = async (req, res, next) => {
 
     return sendSuccess(res, 'Project updated successfully', normalizeProjectImages(project));
   } catch (error) {
-    console.error('Error updating project:', error);
+  // ...removed console.error('Error updating project:', error);
     next(error);
   }
 };
@@ -192,7 +192,7 @@ export const deleteProject = async (req, res, next) => {
           try {
             await deleteFromCloudinary(img.publicId);
           } catch (err) {
-            console.error('Failed to delete image from Cloudinary:', img.publicId);
+            // ...removed console.error('Failed to delete image from Cloudinary:', img.publicId);
           }
         }
       }
@@ -205,7 +205,7 @@ export const deleteProject = async (req, res, next) => {
 
     return sendSuccess(res, 'Project deleted successfully');
   } catch (error) {
-    console.error('Error deleting project:', error);
+  // ...removed console.error('Error deleting project:', error);
     next(error);
   }
 };

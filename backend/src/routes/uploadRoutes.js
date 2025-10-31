@@ -21,7 +21,7 @@ router.post('/', upload.single('file'), async (req, res, next) => {
     // Return the secure URL
     return sendSuccess(res, 'File uploaded successfully', { url: result.url });
   } catch (error) {
-    console.error('Upload error:', error);
+  // ...removed console.error('Upload error:', error);
     return sendError(res, 'File upload failed', 500);
   }
 });

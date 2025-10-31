@@ -16,7 +16,7 @@ export const useSkills = () => {
       const response = await portfolioApi.getAllSkills();
       setSkills(response.data || []);
     } catch (err) {
-      console.error('Error fetching skills:', err);
+  // ...removed console.error('Error fetching skills:', err);
       setError(err.response?.data?.message || 'Failed to fetch skills');
     } finally {
       setLoading(false);
@@ -83,7 +83,7 @@ export const useProjects = () => {
       const response = await portfolioApi.getAllProjects();
       setProjects(response.data || []);
     } catch (err) {
-      console.error('Error fetching projects:', err);
+  // ...removed console.error('Error fetching projects:', err);
       setError(err.response?.data?.message || 'Failed to fetch projects');
     } finally {
       setLoading(false);
@@ -150,7 +150,7 @@ export const useCertificates = () => {
       const response = await portfolioApi.getAllCertificates();
       setCertificates(response.data || []);
     } catch (err) {
-      console.error('Error fetching certificates:', err);
+  // ...removed console.error('Error fetching certificates:', err);
       setError(err.response?.data?.message || 'Failed to fetch certificates');
     } finally {
       setLoading(false);
@@ -217,16 +217,16 @@ export const usePersonalInfo = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Fetching personal info...');
+  // ...removed console.log('Fetching personal info...');
       
       const response = await portfolioApi.getPersonalInfo();
-      console.log('Personal Info Response:', response);
+  // ...removed console.log('Personal Info Response:', response);
       
       // Handle both response.data and direct response
       const data = response?.data || response;
       setPersonalInfo(data);
     } catch (err) {
-      console.error('Error fetching personal info:', err);
+  // ...removed console.error('Error fetching personal info:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch personal info';
       setError(errorMessage);
       setPersonalInfo(null);
@@ -241,13 +241,13 @@ export const usePersonalInfo = () => {
 
   const updatePersonalInfo = async (data) => {
     try {
-      console.log('Updating personal info with:', data);
+  // ...removed console.log('Updating personal info with:', data);
       const response = await portfolioApi.updatePersonalInfo(data);
-      console.log('Update response:', response);
+  // ...removed console.log('Update response:', response);
       await fetchPersonalInfo(); // Refresh data
       return response;
     } catch (err) {
-      console.error('Error updating personal info:', err);
+  // ...removed console.error('Error updating personal info:', err);
       throw err;
     }
   };
@@ -275,7 +275,7 @@ export const useContactMessages = () => {
       const response = await portfolioApi.getAllMessages();
       setMessages(response.data || []);
     } catch (err) {
-      console.error('Error fetching messages:', err);
+  // ...removed console.error('Error fetching messages:', err);
       setError(err.response?.data?.message || 'Failed to fetch messages');
     } finally {
       setLoading(false);
@@ -337,7 +337,7 @@ export const useEducation = () => {
       // Ensure it's always an array
       setEducation(Array.isArray(educationData) ? educationData : []);
     } catch (err) {
-      console.error('Error fetching education:', err);
+  // ...removed console.error('Error fetching education:', err);
       setError(err.response?.data?.message || 'Failed to fetch education');
       setEducation([]); // Set empty array on error
     } finally {

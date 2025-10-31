@@ -20,15 +20,15 @@ function App() {
     const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000");
 
     socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
+  // ...removed console.log("✅ Socket connected:", socket.id);
     });
 
     socket.on("visitUpdate", (data) => {
-      console.log("🌍 Live total visits:", data.totalVisits);
+  // ...removed console.log("🌍 Live total visits:", data.totalVisits);
     });
 
     socket.on("disconnect", () => {
-      console.log("⚠️ Socket disconnected");
+  // ...removed console.log("⚠️ Socket disconnected");
     });
 
     return () => {

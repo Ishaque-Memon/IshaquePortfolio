@@ -18,13 +18,13 @@ const Footer = () => {
       try {
         setLoading(true);
         const response = await portfolioApi.getPersonalInfo();
-        console.log('Footer - Personal Info Response:', response);
+  // ...removed console.log('Footer - Personal Info Response:', response);
         
         // Handle both response.data and direct response
         const data = response?.data || response;
         setPersonalInfo(data);
       } catch (error) {
-        console.error('Error fetching personal info in footer:', error);
+  // ...removed console.error('Error fetching personal info in footer:', error);
       } finally {
         setLoading(false);
       }

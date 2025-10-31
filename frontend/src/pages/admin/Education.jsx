@@ -503,7 +503,7 @@ const Education = () => {
           educationStatusOptions: data?.educationStatusOptions ?? []
         });
       } catch (err) {
-        console.error('Failed to load education options:', err);
+  // ...removed console.error('Failed to load education options:', err);
       } finally {
         setOptionsLoading(false);
       }
@@ -541,7 +541,7 @@ const Education = () => {
       const uploadedUrl = await uploadImage(file);
       setFormData((prev) => ({ ...prev, logoUrl: uploadedUrl }));
     } catch (err) {
-      console.error('Logo upload error:', err);
+  // ...removed console.error('Logo upload error:', err);
       setLogoUploadError("Failed to upload image. Please try again.");
     } finally {
       setLogoUploading(false);
@@ -677,7 +677,7 @@ const Education = () => {
       await createEducationAPI(dataToSubmit);
       setIsAddModalOpen(false);
     } catch (err) {
-      console.error("Error creating education:", err);
+  // ...removed console.error("Error creating education:", err);
       alert(err.response?.data?.message || "Failed to create education entry");
     } finally {
       setIsSubmitting(false);
@@ -763,7 +763,7 @@ const Education = () => {
        await updateEducationAPI(selectedEducation._id, dataToSubmit);
       setIsEditModalOpen(false);
     } catch (err) {
-      console.error("Error updating education:", err);
+  // ...removed console.error("Error updating education:", err);
       alert(err.response?.data?.message || "Failed to update education entry");
     } finally {
       setIsSubmitting(false);
@@ -776,7 +776,7 @@ const Education = () => {
       setIsDeleteDialogOpen(false);
       setSelectedEducation(null);
     } catch (err) {
-      console.error("Error deleting education:", err);
+  // ...removed console.error("Error deleting education:", err);
       alert(err.response?.data?.message || "Failed to delete education entry");
     }
   };

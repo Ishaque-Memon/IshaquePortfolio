@@ -391,7 +391,7 @@ const Skills = () => {
       setIsAddModalOpen(false);
       setFormData({ name: "", category: "", level: "", proficiency: 50, icon: "FiCode" });
     } catch (err) {
-      console.error("Error creating skill:", err);
+  // ...removed console.error("Error creating skill:", err);
       alert(err.response?.data?.message || "Failed to create skill");
     } finally {
       setIsSubmitting(false);
@@ -407,7 +407,7 @@ const Skills = () => {
       setSelectedSkill(null);
       setFormData({ name: "", category: "", level: "", proficiency: 50, icon: "FiCode" });
     } catch (err) {
-      console.error("Error updating skill:", err);
+  // ...removed console.error("Error updating skill:", err);
       alert(err.response?.data?.message || "Failed to update skill");
     } finally {
       setIsSubmitting(false);
@@ -421,7 +421,7 @@ const Skills = () => {
       setIsDeleteDialogOpen(false);
       setSelectedSkill(null);
     } catch (err) {
-      console.error("Error deleting skill:", err);
+  // ...removed console.error("Error deleting skill:", err);
       alert(err.response?.data?.message || "Failed to delete skill");
     } finally {
       setIsSubmitting(false);

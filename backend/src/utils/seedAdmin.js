@@ -14,10 +14,10 @@ const createDefaultAdmin = async () => {
     const existingAdmin = await Admin.findOne({ email: 'admin@portfolio.com' });
 
     if (existingAdmin) {
-      console.log('⚠️  Admin user already exists!');
-      console.log('📧 Email:', existingAdmin.email);
-      console.log('');
-      console.log('To reset password, delete the admin from MongoDB and run this script again.');
+  // ...removed console.log('⚠️  Admin user already exists!');
+  // ...removed console.log('📧 Email:', existingAdmin.email);
+  // ...removed console.log('');
+  // ...removed console.log('To reset password, delete the admin from MongoDB and run this script again.');
       process.exit(0);
     }
 
@@ -30,23 +30,23 @@ const createDefaultAdmin = async () => {
       isActive: true
     });
 
-    console.log('');
-    console.log('✅ Admin user created successfully!');
-    console.log('='.repeat(50));
-    console.log('📧 Email:', admin.email);
-    console.log('🔑 Password: admin123');
-    console.log('👤 Role:', admin.role);
-    console.log('='.repeat(50));
-    console.log('');
-    console.log('⚠️  IMPORTANT: Change the password after first login!');
-    console.log('');
-    console.log('Login URL: http://localhost:5000/api/admin/login');
-    console.log('');
+  // ...removed console.log('');
+  // ...removed console.log('✅ Admin user created successfully!');
+  // ...removed console.log('='.repeat(50));
+  // ...removed console.log('📧 Email:', admin.email);
+  // ...removed console.log('🔑 Password: admin123');
+  // ...removed console.log('👤 Role:', admin.role);
+  // ...removed console.log('='.repeat(50));
+  // ...removed console.log('');
+  // ...removed console.log('⚠️  IMPORTANT: Change the password after first login!');
+  // ...removed console.log('');
+  // ...removed console.log('Login URL: http://localhost:5000/api/admin/login');
+  // ...removed console.log('');
 
     process.exit(0);
 
   } catch (error) {
-    console.error('❌ Error creating admin user:', error.message);
+  // ...removed console.error('❌ Error creating admin user:', error.message);
     process.exit(1);
   }
 };

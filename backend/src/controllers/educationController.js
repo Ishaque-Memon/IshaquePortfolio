@@ -119,7 +119,7 @@ export const createEducation = async (req, res, next) => {
 
     return sendSuccess(res, 'Education entry created successfully', education, 201);
   } catch (err) {
-    console.error('Create education error:', err);
+  // ...removed console.error('Create education error:', err);
     next(err);
   }
 };
@@ -191,7 +191,7 @@ export const updateEducation = async (req, res, next) => {
 
     return sendSuccess(res, 'Education entry updated successfully', updatedEducation);
   } catch (err) {
-    console.error('Update education error:', err);
+  // ...removed console.error('Update education error:', err);
     next(err);
   }
 };

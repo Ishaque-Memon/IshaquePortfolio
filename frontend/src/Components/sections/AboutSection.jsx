@@ -132,7 +132,7 @@ const AboutSection = () => {
         const skillsArray = Array.isArray(data) ? data : (data?.data || []);
         setSkills(skillsArray);
       } catch (err) {
-        console.error('Error fetching skills:', err);
+  // ...removed console.error('Error fetching skills:', err);
         setSkills([]);
       } finally {
         setSkillsLoading(false);

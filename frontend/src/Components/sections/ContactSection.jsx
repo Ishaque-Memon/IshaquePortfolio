@@ -40,7 +40,7 @@ const ContactSection = () => {
       try {
         setLoading(true);
         const response = await portfolioApi.getPersonalInfo();
-        console.log('Personal Info Response:', response);
+  // ...removed console.log('Personal Info Response:', response);
         
         // Handle both response.data and direct response
         const data = response?.data || response;

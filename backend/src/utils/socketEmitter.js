@@ -15,7 +15,7 @@ export const emitSocketEvent = (req, eventName, data) => {
   try {
     const io = req.app.get("io");
     if (!io) {
-      console.warn("⚠️ Socket.io instance not found in app.");
+  // ...removed console.warn("⚠️ Socket.io instance not found in app.");
       return;
     }
 
@@ -23,8 +23,8 @@ export const emitSocketEvent = (req, eventName, data) => {
     io.emit(eventName, data);
 
     // Optional: Log event emission
-    console.log(`📡 Socket Event Emitted → ${eventName}`);
+  // ...removed console.log(`📡 Socket Event Emitted → ${eventName}`);
   } catch (error) {
-    console.error(`❌ Socket Emit Error (${eventName}):`, error.message);
+  // ...removed console.error(`❌ Socket Emit Error (${eventName}):`, error.message);
   }
 };

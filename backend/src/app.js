@@ -37,8 +37,8 @@ const corsOptions = {
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.log('❌ Blocked by CORS:', origin);
-      console.log('✅ Allowed origins:', allowedOrigins);
+  // ...removed console.log('❌ Blocked by CORS:', origin);
+  // ...removed console.log('✅ Allowed origins:', allowedOrigins);
       callback(new Error('Not allowed by CORS'));
     }
   },

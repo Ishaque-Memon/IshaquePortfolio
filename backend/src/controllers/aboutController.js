@@ -11,7 +11,7 @@ const safeParse = (val) => {
   try {
     return JSON.parse(val);
   } catch (err) {
-    console.warn('safeParse failed for value:', String(val).slice(0, 200));
+  // ...removed console.warn('safeParse failed for value:', String(val).slice(0, 200));
     return undefined;
   }
 };
@@ -31,12 +31,12 @@ export const getAbout = async (req, res, next) => {
 export const createOrUpdateAbout = async (req, res, next) => {
   try {
     // DEBUG: log incoming request keys (temporary)
-    console.log('--- createOrUpdateAbout received ---');
-    console.log('req.body keys:', Object.keys(req.body || {}));
-    console.log('req.files keys:', req.files ? Object.keys(req.files) : '(no files)');
+  // ...removed console.log('--- createOrUpdateAbout received ---');
+  // ...removed console.log('req.body keys:', Object.keys(req.body || {}));
+  // ...removed console.log('req.files keys:', req.files ? Object.keys(req.files) : '(no files)');
     if (req.files) {
       Object.entries(req.files).forEach(([k, arr]) => {
-        console.log(`file field "${k}" count:`, arr.length, 'originalname:', arr[0]?.originalname);
+  // ...removed console.log(`file field "${k}" count:`, arr.length, 'originalname:', arr[0]?.originalname);
       });
     }
 
@@ -78,11 +78,11 @@ export const createOrUpdateAbout = async (req, res, next) => {
       try {
         const imgResult = await uploadToCloudinary(req.files.profileImage[0].buffer, "portfolio/profile");
         if (about?.profileImage?.publicId) {
-          try { await deleteFromCloudinary(about.profileImage.publicId); } catch (e) { console.warn('Failed deleting old profileImage:', e.message); }
+          try { await deleteFromCloudinary(about.profileImage.publicId); } catch (e) { /* removed console.warn */ }
         }
         updateData.profileImage = { url: imgResult.url, publicId: imgResult.publicId };
       } catch (err) {
-        console.error('Profile image upload failed:', err);
+  // ...removed console.error('Profile image upload failed:', err);
         return sendError(res, `File upload error: profileImage upload failed`, 500);
       }
     }
@@ -91,11 +91,11 @@ export const createOrUpdateAbout = async (req, res, next) => {
       try {
         const fileResult = await uploadToCloudinary(req.files.resumeFile[0].buffer, "portfolio/resume");
         if (about?.resumeFile?.publicId) {
-          try { await deleteFromCloudinary(about.resumeFile.publicId); } catch (e) { console.warn('Failed deleting old resumeFile:', e.message); }
+          try { await deleteFromCloudinary(about.resumeFile.publicId); } catch (e) { /* removed console.warn */ }
         }
         updateData.resumeFile = { url: fileResult.url, publicId: fileResult.publicId };
       } catch (err) {
-        console.error('Resume file upload failed:', err);
+  // ...removed console.error('Resume file upload failed:', err);
         return sendError(res, `File upload error: resumeFile upload failed`, 500);
       }
     }
@@ -104,11 +104,11 @@ export const createOrUpdateAbout = async (req, res, next) => {
       try {
         const aboutImgRes = await uploadToCloudinary(req.files.aboutImage[0].buffer, "portfolio/about");
         if (about?.aboutImage?.publicId) {
-          try { await deleteFromCloudinary(about.aboutImage.publicId); } catch (e) { console.warn('Failed deleting old aboutImage:', e.message); }
+          try { await deleteFromCloudinary(about.aboutImage.publicId); } catch (e) { /* removed console.warn */ }
         }
         updateData.aboutImage = { url: aboutImgRes.url, publicId: aboutImgRes.publicId };
       } catch (err) {
-        console.error('About image upload failed:', err);
+  // ...removed console.error('About image upload failed:', err);
         return sendError(res, `File upload error: aboutImage upload failed`, 500);
       }
     }
@@ -138,7 +138,7 @@ export const createOrUpdateAbout = async (req, res, next) => {
     // emit global socket event
     emitSocketEvent("aboutUpdated", responseAbout);
   } catch (error) {
-    console.error('createOrUpdateAbout error:', error);
+  // ...removed console.error('createOrUpdateAbout error:', error);
     next(error);
   }
 };

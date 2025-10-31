@@ -29,11 +29,11 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('authToken');
         window.location.href = '/admin/login';
       }
-      console.error('API Error:', error.response.data);
+  // ...removed console.error('API Error:', error.response.data);
     } else if (error.request) {
-      console.error('Network Error:', error.request);
+  // ...removed console.error('Network Error:', error.request);
     } else {
-      console.error('Error:', error.message);
+  // ...removed console.error('Error:', error.message);
     }
     return Promise.reject(error);
   }
@@ -232,7 +232,7 @@ export const uploadImage = async (file) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   // Expecting { url: 'https://...' }
-  console.log("API: uploadImage response data:", response.data);
+  // ...removed console.log("API: uploadImage response data:", response.data);
   return response.data.data.url; // Corrected to access the nested URL
 };
 

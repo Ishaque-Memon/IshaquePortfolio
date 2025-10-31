@@ -19,7 +19,7 @@ const useFetchData = (apiFunction, dependencies = []) => {
       setData(result);
     } catch (err) {
       setError(err.message || 'An error occurred while fetching data');
-      console.error('Fetch error:', err);
+  // ...removed console.error('Fetch error:', err);
     } finally {
       setLoading(false);
     }

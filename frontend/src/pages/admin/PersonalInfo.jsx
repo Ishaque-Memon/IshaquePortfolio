@@ -144,7 +144,7 @@ const PersonalInfo = () => {
       setSuccessMessage("Personal information saved successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
-      console.error("Error updating personal info:", err);
+  // ...removed console.error("Error updating personal info:", err);
       alert(err.response?.data?.message || "Failed to save personal information");
     } finally {
       setIsSubmitting(false);

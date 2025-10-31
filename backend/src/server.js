@@ -13,8 +13,8 @@ const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingEnvVars.length > 0) {
-  console.error('❌ Error: Missing required environment variables:');
-  missingEnvVars.forEach(varName => console.error(`   - ${varName}`));
+  // ...removed console.error('❌ Error: Missing required environment variables:');
+  missingEnvVars.forEach(varName => {/* removed console.error */});
   process.exit(1);
 }
 
@@ -28,7 +28,7 @@ connectDB();
 if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
   connectCloudinary();
 } else {
-  console.warn('⚠️  Cloudinary credentials not found. File uploads will not work.');
+  // ...removed console.warn('⚠️  Cloudinary credentials not found. File uploads will not work.');
 }
 
 // Create HTTP server
@@ -52,25 +52,25 @@ const io = new Server(server, {
 app.set("io", io);
 
 io.on("connection", (socket) => {
-  console.log("🟢 New client connected:", socket.id);
+  // ...removed console.log("🟢 New client connected:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
+  // ...removed console.log("🔴 Client disconnected:", socket.id);
   });
 });
 
 // Start server
 server.listen(PORT, () => {
-  console.log('');
-  console.log('='.repeat(50));
-  console.log('🚀 Portfolio Backend Server');
-  console.log('='.repeat(50));
-  console.log(`✅ Server running in ${process.env.NODE_ENV || 'development'} mode`);
-  console.log(`🌐 URL: http://localhost:${PORT}`);
-  console.log(`📡 API: http://localhost:${PORT}/api`);
-  console.log(`💚 Health: http://localhost:${PORT}/health`);
-  console.log(`🔓 CORS Allowed Origins:`);
-  allowedOrigins.forEach(origin => console.log(`   - ${origin}`));
-  console.log('='.repeat(50));
-  console.log('');
+  // ...removed console.log('');
+  // ...removed console.log('='.repeat(50));
+  // ...removed console.log('🚀 Portfolio Backend Server');
+  // ...removed console.log('='.repeat(50));
+  // ...removed console.log(`✅ Server running in ${process.env.NODE_ENV || 'development'} mode`);
+  // ...removed console.log(`🌐 URL: http://localhost:${PORT}`);
+  // ...removed console.log(`📡 API: http://localhost:${PORT}/api`);
+  // ...removed console.log(`💚 Health: http://localhost:${PORT}/health`);
+  // ...removed console.log(`🔓 CORS Allowed Origins:`);
+  allowedOrigins.forEach(origin => {/* removed console.log */});
+  // ...removed console.log('='.repeat(50));
+  // ...removed console.log('');
 });
