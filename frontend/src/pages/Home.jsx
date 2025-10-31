@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { logVisit } from '../api/portfolioApi';
 import { useTheme } from '../contexts/ThemeContext.jsx';
-import Navbar from '../components/common/Navbar';
-import AnimatedLogo from '../components/common/AnimatedLogo';
-import HomeSection from '../components/sections/HomeSection';
-import AboutSection from '../components/sections/AboutSection';
-import SkillsSection from '../components/sections/SkillsSection';
-import CounterSection from '../components/sections/CounterSection';
-import EducationSection from '../components/sections/EducationSection';
-import CertificatesSection from '../components/sections/CertificatesSection';
-import ProjectsSection from '../components/sections/ProjectsSection';
-import ContactSection from '../components/sections/ContactSection';
-import Footer from '../components/common/Footer';
-import ScrollBot from '../components/common/ScrollBot';
-import MacOSDock from '../components/common/MacOSDock';
+import Navbar from '../Components/common/Navbar';
+import AnimatedLogo from '../Components/common/AnimatedLogo';
+import HomeSection from '../Components/sections/HomeSection';
+import AboutSection from '../Components/sections/AboutSection';
+import SkillsSection from '../Components/sections/SkillsSection';
+import CounterSection from '../Components/sections/CounterSection';
+import EducationSection from '../Components/sections/EducationSection';
+import CertificatesSection from '../Components/sections/CertificatesSection';
+import ProjectsSection from '../Components/sections/ProjectsSection';
+import ContactSection from '../Components/sections/ContactSection';
+import Footer from '../Components/common/Footer';
+import ScrollBot from '../Components/common/ScrollBot';
+import MacOSDock from '../Components/common/MacOSDock';
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);

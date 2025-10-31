@@ -4,10 +4,10 @@ import { Link } from "react-scroll";
 import { useTheme } from "@/contexts/ThemeContext";
 import { personalInfo } from "@/data/portfolioData";
 import { usePersonalInfo } from "@/hooks/usePortfolio";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Import Avatar components
+import { Card, CardContent } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Badge } from "@/Components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/Components/ui/avatar"; // Import Avatar Components
 import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
 import Loader from "@/Components/common/Loader";
 

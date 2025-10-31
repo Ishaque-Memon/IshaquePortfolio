@@ -8,20 +8,20 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../../components/ui/dialog";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
-import { Checkbox } from "../../components/ui/checkbox";
+} from "../../Components/ui/dialog";
+import { Button } from "../../Components/ui/button";
+import { Input } from "../../Components/ui/input";
+import { Label } from "../../Components/ui/label";
+import { Textarea } from "../../Components/ui/textarea";
+import { Checkbox } from "../../Components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+} from "../../Components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "../../Components/ui/avatar";
 import Loader from "../../Components/common/Loader.jsx";
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen, FiCalendar, FiMapPin, FiAward, FiLink, FiUpload } from 'react-icons/fi';
 

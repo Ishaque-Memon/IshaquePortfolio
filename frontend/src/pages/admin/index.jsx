@@ -1,4 +1,4 @@
-import AdminLayout from "../../components/layout/AdminLayout";
+import AdminLayout from "../../Components/layout/AdminLayout";
 import Sidebar from "../../Components/ui/sidebar";
 import Header from "../../Components/ui/header";
 

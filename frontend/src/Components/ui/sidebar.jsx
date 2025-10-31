@@ -6,7 +6,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useProjects, useSkills, useCertificates, useContactMessages } from "../../hooks/usePortfolio";
 import { outlineIcon, SidebarIcons } from "../../assets/Icons/Icons";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Components/ui/badge";
 
 const Sidebar = () => {
   const sidebarOpen = useSelector((state) => state.layout.sidebarOpen);

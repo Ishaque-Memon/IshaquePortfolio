@@ -1,4 +1,4 @@
-// src/components/Skills.jsx
+// src/Components/Skills.jsx
 import React, { useState, useMemo } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSkills } from "../../hooks/usePortfolio";
@@ -6,10 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiX, FiSave } from "@/assets/Icons/Icons";
 import { SkillIcons } from "@/assets/Icons/Icons";
 import { Card, CardContent } from "@/Components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Components/ui/button";
+import { Badge } from "@/Components/ui/badge";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import IconSelector from "@/Components/ui/icon-selector";
 import {
   Select,
@@ -17,7 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Components/ui/select";
 import Loader from "../../Components/common/Loader.jsx";
 import {
   Dialog,
@@ -25,7 +25,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +35,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/Components/ui/alert-dialog";
 
 /**
  * ==========================================
@@ -57,7 +57,7 @@ const PROFICIENCY_LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
 
 /**
  * Helper to get icon component
- * SkillIcons maps names to React components (not JSX). We return a component
+ * SkillIcons maps names to React Components (not JSX). We return a component
  * so callers can render <Icon ... /> safely.
  */
 const getIconComponent = (iconName) => {

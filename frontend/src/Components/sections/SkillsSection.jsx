@@ -1,11 +1,11 @@
-// src/components/SkillsSection.jsx
+// src/Components/SkillsSection.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getAllSkills } from "@/api/portfolioApi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
+import { Progress } from "@/Components/ui/progress";
 import { SkillIcons, FiCode } from "@/assets/Icons/Icons";
 import Loader from "@/Components/common/Loader";
 import gsap from "gsap";
@@ -18,7 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
  * - Fetches skills from API
  * - Groups them by category
  * - Matches ModernSkills visual design exactly
- * - Uses shadcn/ui Card, Badge, and Progress components
+ * - Uses shadcn/ui Card, Badge, and Progress Components
  */
 const SkillsSection = () => {
   const { isDarkMode } = useTheme();

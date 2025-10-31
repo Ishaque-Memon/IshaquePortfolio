@@ -9,8 +9,8 @@ import {
   FiBriefcase, FiCode, FiAward, FiMessageSquare,
   FiTrendingUp, FiEye, FiUsers, FiActivity, FiStar, FiClock
 } from "react-icons/fi";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
 import Loader from "../../Components/common/Loader.jsx";
 
 const Dashboard = () => {

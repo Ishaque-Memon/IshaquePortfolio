@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext.jsx";
 import portfolioApi from "@/api/portfolioApi";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import { outlineIcon, SidebarIcons } from "@/assets/Icons/Icons";
 
 const Footer = () => {

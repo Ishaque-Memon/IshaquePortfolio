@@ -7,9 +7,9 @@ import {
   FiTrendingUp, FiUsers, FiMail, FiAward, FiCode, FiFolder,
   FiActivity, FiCalendar, FiEye, FiMessageSquare
 } from "react-icons/fi";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/Components/ui/card";
 import { ProjectStatusChart, SkillCategoryPie } from "../../Components/ui/charts.jsx";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Components/ui/badge";
 import Loader from "../../Components/common/Loader.jsx";
 
 const Analytics = () => {

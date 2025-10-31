@@ -1,12 +1,12 @@
-// src/components/AboutSection.jsx
+// src/Components/AboutSection.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { usePersonalInfo } from "@/hooks/usePortfolio";
 import { getAllSkills } from "@/api/portfolioApi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import { Badge } from "@/Components/ui/badge";
 import {
   FiCode, FiAward, FiCpu, FiCheckCircle,
   FiMapPin, FiMail, FiPhone, FiDownload,

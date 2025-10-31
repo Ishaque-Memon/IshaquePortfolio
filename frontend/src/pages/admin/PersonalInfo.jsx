@@ -8,13 +8,13 @@ import {
   FiFacebook, FiInstagram, FiGlobe, FiSave, FiAlertCircle, FiEye, FiEdit,
   FiBriefcase, FiAward, FiUsers, FiTrendingUp
 } from "react-icons/fi";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { Textarea } from "@/Components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import Loader from "@/Components/common/Loader";
 
 // Radix Select wrapper you provided
@@ -27,7 +27,7 @@ import {
   SelectGroup,
   SelectLabel,
   SelectSeparator,
-} from "@/components/ui/select";
+} from "@/Components/ui/select";
 
 const ICON_OPTIONS = [
   { value: "FiCode", label: "Code" },

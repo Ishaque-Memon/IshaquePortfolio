@@ -7,9 +7,9 @@ import {
   FiMail, FiTrash2, FiEye, FiEyeOff, FiCalendar, FiUser,
   FiMessageSquare, FiFilter, FiCheck, FiAlertCircle, FiSearch, FiX
 } from "react-icons/fi";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Badge } from "@/Components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,14 +19,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/Components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Components/ui/dialog";
 import Loader from "../../Components/common/Loader.jsx";
 
 const Messages = () => {
@@ -497,7 +497,7 @@ const Messages = () => {
   );
 };
 
-// Sub-components
+// Sub-Components
 const StatCard = ({ title, value, icon: Icon, iconColor, bgColor, isDarkMode, onClick, isActive }) => (
   <Card
     onClick={onClick}
