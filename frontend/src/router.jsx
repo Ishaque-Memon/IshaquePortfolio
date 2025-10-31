@@ -12,7 +12,7 @@ import Certificates from './pages/admin/Certificates';
 import Analytics from './pages/admin/Analytics';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
-import ProtectedRoute from './components/common/ProtectedRoute';
+import ProtectedRoute from './Components/common/ProtectedRoute';
 
 // Define routes
 const router = createBrowserRouter([
