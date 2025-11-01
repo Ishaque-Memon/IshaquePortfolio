@@ -25,11 +25,20 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // Only redirect to login on 401 if it's NOT the login request itself
-      // This prevents redirecting when login credentials are invalid
       if (error.response.status === 401 && !error.config.url.includes('/admin/login')) {
         localStorage.removeItem('authToken');
-        window.location.href = '/login';  // Fixed: use /login not /admin/login
+        localStorage.removeItem('tokenExpiry');
+        localStorage.removeItem('userData');
+        window.location.href = '/login';
+      }
+      
+      if (error.response.status === 403) {
+        const message = error.response.data?.message || 'Access denied';
+        console.error('[403 Forbidden]:', message);
+        
+        if (message.includes('IP not allowed') || message.includes('Access denied: IP')) {
+          console.error('IP Restriction Error - Your IP may have changed or is not in the allowlist');
+        }
       }
   // ...removed console.error('API Error:', error.response.data);
     } else if (error.request) {

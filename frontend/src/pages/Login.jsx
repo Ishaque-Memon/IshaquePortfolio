@@ -34,7 +34,7 @@ const Login = () => {
 
     try {
       const response = await authApi.login(email, password);
-      const { token, admin } = response.data;
+      const { token, admin } = response.data.data;
 
       const expiresIn = 7 * 24 * 60 * 60 * 1000;
 
@@ -57,6 +57,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+  
   // Check if admin IP is allowed
   React.useEffect(() => {
     checkAdminIP()

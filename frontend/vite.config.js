@@ -13,8 +13,11 @@ export default defineConfig({
       usePolling: true,
     },
   },
-  // Change cache directory to temp folder to avoid permission issues
-  cacheDir: path.join(process.env.TEMP || process.env.TMPDIR || 'C:\\Temp', '.vite-portfolio'),
+  // Fix for dependency optimization issues
+  optimizeDeps: {
+    exclude: [], // Add problematic dependencies here if needed
+    force: false, // Set to true to force re-optimization
+  },
   build: {
     outDir: 'build',
     sourcemap: true
