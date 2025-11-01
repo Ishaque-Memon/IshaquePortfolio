@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { checkAdminIP } from '../../api/authApi';
+import Loader from './Loader';
 
 /**
  * AdminIPProtectedRoute - Only allows access from admin IP addresses
@@ -30,8 +31,7 @@ const AdminIPProtectedRoute = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
-          <p className="mt-4 text-neutral-600 dark:text-neutral-400">Verifying access...</p>
+            <Loader variant="spinner" size="default" text="Verifying access..." />
         </div>
       </div>
     );
