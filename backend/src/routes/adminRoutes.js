@@ -13,18 +13,21 @@ import ipAllowMiddleware from '../middleware/ipAllowMiddleware.js';
 
 
 const router = express.Router();
-// Public routes
+
+// ===== PUBLIC ROUTES (IP restricted to prevent brute force) =====
 router.post('/login', ipAllowMiddleware, loginAdmin);
 
-// // You can also expose an access-check endpoint to drive frontend UI visibility
+// Access-check endpoint for frontend UI visibility (Login button)
 router.get('/access-check', ipAllowMiddleware, (req, res) => {
-  // simple response - frontend can hide/show login link based on this
   return res.json({ allowed: true });
 });
 
-// All routes below require request from allowed IPs, a valid token, and admin role
-router.use(ipAllowMiddleware, protect, requireAdmin);
+// ===== PROTECTED ROUTES (JWT authentication only) =====
+// IP middleware removed from here to prevent login loops when user's IP changes
+// JWT token authentication is sufficient and more reliable for authenticated users
+router.use(protect, requireAdmin);
 
+// Profile management
 router.get('/profile', getAdminProfile);
 router.put('/profile', updateAdminProfile);
 router.put('/change-password', changePassword);
