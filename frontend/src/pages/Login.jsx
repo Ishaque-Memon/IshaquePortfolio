@@ -42,11 +42,16 @@ const Login = () => {
       toast.success('Login successful!');
       navigate('/admin');
     } catch (err) {
-      // Show a prominent, non-dismissible error toast at the top-right for 5 seconds
-      toast.error('Invalid username or password. Please try again.', {
+      // Extract error message from response or use default
+      const errorMessage = err.response?.data?.message || 'Invalid username or password. Please try again.';
+      
+      // Show error in both toast and UI
+      setError(errorMessage);
+      
+      // Show a prominent error toast
+      toast.error(errorMessage, {
         duration: 5000,
         position: 'top-right',
-        dismissible: false
       });
     } finally {
       setIsLoading(false);

@@ -192,7 +192,7 @@ const Navbar = () => {
                   <span className="hidden sm:inline">Admin</span>
                 </motion.button>
               </RouterLink>
-            ) : (
+            ) : showAdminLogin ? (
               <RouterLink to="/login">
                 <motion.button
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
@@ -204,12 +204,12 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <FiLogIn className="w-4 h-4" />
-
-                  {showAdminLogin && !localStorage.getItem("authToken") && (
                   <span className="hidden sm:inline">Login</span>
-                    )}
                 </motion.button>
               </RouterLink>
+            ) : (
+              // Placeholder to maintain layout consistency
+              <div className="w-[88px] h-[42px]"></div>
             )}
           </motion.div>
         </div>

@@ -25,9 +25,11 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      if (error.response.status === 401) {
+      // Only redirect to login on 401 if it's NOT the login request itself
+      // This prevents redirecting when login credentials are invalid
+      if (error.response.status === 401 && !error.config.url.includes('/admin/login')) {
         localStorage.removeItem('authToken');
-        window.location.href = '/admin/login';
+        window.location.href = '/login';  // Fixed: use /login not /admin/login
       }
   // ...removed console.error('API Error:', error.response.data);
     } else if (error.request) {

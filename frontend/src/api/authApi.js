@@ -12,7 +12,7 @@ export const checkAdminIP = async () => {
 // Admin login
 export const login = async (email, password) => {
   const response = await axiosInstance.post('/admin/login', { email, password });
-  return response.data;
+  return response; // Return full response object to access data property
 };
 
 // Get admin profile

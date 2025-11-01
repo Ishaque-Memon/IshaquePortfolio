@@ -13,6 +13,7 @@ import Analytics from './pages/admin/Analytics';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './Components/common/ProtectedRoute';
+import AdminIPProtectedRoute from './Components/common/AdminIPProtectedRoute';
 
 // Define routes
 const router = createBrowserRouter([
@@ -23,7 +24,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Login />,
+    element: (
+      <AdminIPProtectedRoute>
+        <Login />
+      </AdminIPProtectedRoute>
+    ),
   },
   {
     path: '/admin',
